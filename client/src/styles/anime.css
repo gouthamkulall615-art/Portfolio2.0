@@ -1,0 +1,734 @@
+/* ==========================================================================
+   ANIME CYBERNETIC DESIGN SYSTEM (NEO-TOKYO CORE)
+   ========================================================================== */
+
+:root {
+  --bg-void: #06070a;
+  --bg-surface: #0c0e17;
+  --bg-card: rgba(14, 18, 30, 0.75);
+  
+  --neon-crimson: #ff0055;
+  --neon-crimson-glow: rgba(255, 0, 85, 0.45);
+  --neon-cyan: #00f0ff;
+  --neon-cyan-glow: rgba(0, 240, 255, 0.4);
+  --neon-purple: #8a2be2;
+  --neon-amber: #ffb703;
+  
+  --text-main: #f0f4fc;
+  --text-muted: #8b9bb4;
+  --text-dim: #4d5b75;
+  
+  --border-neon: rgba(0, 240, 255, 0.25);
+  --border-crimson: rgba(255, 0, 85, 0.35);
+  --glass-bg: rgba(12, 16, 28, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  --font-display: 'Orbitron', -apple-system, sans-serif;
+  --font-hud: 'Rajdhani', -apple-system, sans-serif;
+  --font-jp: 'Noto Sans JP', sans-serif;
+  --font-title: 'Syne', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body.anime-body {
+  background-color: var(--bg-void);
+  color: var(--text-main);
+  font-family: var(--font-hud);
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   CINEMATIC INTRO / LOADER SECTION
+   ========================================================================== */
+
+.anime-intro-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  background-color: #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  user-select: none;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anime-intro-container.exiting {
+  opacity: 0;
+  transform: scale(1.08);
+  filter: blur(8px) brightness(1.8);
+  pointer-events: none;
+}
+
+/* Background Video styling - seamless cinematic background, no player feel */
+.anime-video-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none; /* Disable all cursor interactions */
+}
+
+.anime-intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  filter: contrast(1.15) saturate(1.2) brightness(0.95);
+  transform: scale(1.02);
+  transition: transform 7s linear;
+}
+
+.anime-intro-container.playing .anime-intro-video {
+  transform: scale(1.08);
+}
+
+/* CRT Scanlines and Cinematic Vignette */
+.cinematic-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0) 35%,
+    rgba(6, 7, 10, 0.55) 70%,
+    rgba(6, 7, 10, 0.95) 100%
+  );
+  pointer-events: none;
+}
+
+.anime-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Cyber HUD Overlays */
+.anime-hud-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem;
+}
+
+/* Top Telemetry Bar */
+.hud-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.hud-sys-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(10, 14, 24, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-neon);
+  border-left: 3px solid var(--neon-cyan);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+}
+
+.hud-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-crimson);
+  box-shadow: 0 0 10px var(--neon-crimson);
+  animation: hudPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes hudPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+.hud-jp-tag {
+  font-family: var(--font-jp);
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Skip Button */
+.hud-skip-btn {
+  pointer-events: auto;
+  cursor: pointer;
+  background: rgba(14, 18, 30, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-crimson);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-skip-btn:hover {
+  background: var(--neon-crimson);
+  color: #fff;
+  border-color: var(--neon-crimson);
+  box-shadow: 0 0 20px var(--neon-crimson-glow);
+  transform: translateY(-2px);
+}
+
+/* Center Reticle & Anime Frame */
+.hud-center-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(85vw, 680px);
+  height: min(70vh, 420px);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Corner Reticles */
+.reticle-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--neon-cyan);
+  opacity: 0.85;
+}
+
+.reticle-tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+.reticle-tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+.reticle-bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+.reticle-br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+.reticle-center-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.reticle-circle {
+  width: 90px;
+  height: 90px;
+  border: 1px dashed rgba(0, 240, 255, 0.4);
+  border-radius: 50%;
+  animation: reticleSpin 12s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes reticleSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.reticle-inner-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--neon-crimson);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--neon-crimson);
+}
+
+.reticle-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+/* Bottom Telemetry & Progress */
+.hud-bottom-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hud-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+.hud-status-text {
+  font-family: var(--font-hud);
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hud-kanji-alert {
+  font-family: var(--font-jp);
+  color: var(--neon-crimson);
+  font-weight: 900;
+  text-shadow: 0 0 10px var(--neon-crimson-glow);
+}
+
+.hud-time-readout {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 12px var(--neon-cyan-glow);
+}
+
+/* Anime Glowing Progress Bar */
+.hud-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.hud-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-crimson), var(--neon-cyan));
+  box-shadow: 0 0 15px var(--neon-cyan);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.hud-sub-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  font-family: var(--font-display);
+}
+
+/* Cinematic Slash / Shutter Reveal Effect */
+.anime-slash-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  pointer-events: none;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.anime-slash-transition.active {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   MAIN PORTFOLIO HERO & CONTENT
+   ========================================================================== */
+
+.portfolio-shell {
+  min-height: 100vh;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 80% 20%, rgba(255, 0, 85, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(0, 240, 255, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg-void) 0%, var(--bg-surface) 100%);
+  animation: fadeInMain 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInMain {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Navigation Bar */
+.anime-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: rgba(6, 7, 10, 0.82);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-neon);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3rem;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.brand-kanji {
+  font-family: var(--font-jp);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--neon-crimson);
+  text-shadow: 0 0 12px var(--neon-crimson-glow);
+}
+
+.brand-text {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: var(--text-main);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-item {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  position: relative;
+  transition: color 0.2s ease;
+  padding: 0.4rem 0;
+}
+
+.nav-item:hover, .nav-item.active {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px var(--neon-cyan-glow);
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan);
+  transition: width 0.3s ease;
+}
+
+.nav-item:hover::after, .nav-item.active::after {
+  width: 100%;
+}
+
+.nav-action-btn {
+  background: transparent;
+  border: 1px solid var(--neon-crimson);
+  color: var(--neon-crimson);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 0.5rem 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-action-btn:hover {
+  background: var(--neon-crimson);
+  color: #fff;
+  box-shadow: 0 0 18px var(--neon-crimson-glow);
+}
+
+/* Hero Section */
+.hero-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 4rem;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+}
+
+.hero-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  background: rgba(255, 0, 85, 0.1);
+  border: 1px solid var(--border-crimson);
+  color: var(--neon-crimson);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+}
+
+.hero-headline {
+  font-family: var(--font-title);
+  font-size: clamp(2.5rem, 5vw, 4.2rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.neon-gradient-text {
+  background: linear-gradient(135deg, #ffffff 20%, var(--neon-cyan) 65%, var(--neon-crimson) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-subtext {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 580px;
+  margin-bottom: 2.5rem;
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary-neon {
+  background: var(--neon-crimson);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  padding: 0.9rem 2rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 0 25px var(--neon-crimson-glow);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn-primary-neon:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 0 35px rgba(255, 0, 85, 0.65);
+}
+
+.btn-secondary-cyber {
+  background: rgba(14, 18, 30, 0.6);
+  backdrop-filter: blur(10px);
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  padding: 0.9rem 2rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-neon);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-secondary-cyber:hover {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px var(--neon-cyan-glow);
+  transform: translateY(-2px);
+}
+
+/* Character / Shinobi HUD Card */
+.shinobi-card {
+  position: relative;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-neon);
+  border-radius: 12px;
+  padding: 2.2rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 240, 255, 0.08);
+  overflow: hidden;
+}
+
+.shinobi-card::before {
+  content: '秘伝';
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-family: var(--font-jp);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+}
+
+.card-header-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1rem;
+}
+
+.shinobi-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: 0.1em;
+}
+
+.shinobi-level {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.1);
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-neon);
+}
+
+.stat-bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stat-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.stat-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.fill-crimson {
+  background: linear-gradient(90deg, #ff0055, #ff5500);
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+}
+
+.fill-cyan {
+  background: linear-gradient(90deg, #00f0ff, #0077ff);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.fill-purple {
+  background: linear-gradient(90deg, #8a2be2, #ff0055);
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+}
+
+.system-status-indicator {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1rem;
+  background: rgba(6, 8, 14, 0.6);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .hero-wrapper {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding-top: 3rem;
+  }
+  .anime-nav {
+    padding: 1rem 1.5rem;
+  }
+  .hud-center-frame {
+    width: 90vw;
+  }
+}
