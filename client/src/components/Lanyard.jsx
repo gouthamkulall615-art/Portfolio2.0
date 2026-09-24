@@ -30,14 +30,14 @@ const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
 export default function Lanyard({
   position = [0, 0, 13],
   gravity = [0, -40, 0],
-  fov = 20,
+  fov = 28,
   transparent = true,
   frontImage = null,
   backImage = null,
   imageFit = 'cover',
   lanyardImage = null,
   lanyardWidth = 1.3,
-  cardScale = 3.0
+  cardScale = 1.8
 }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
@@ -111,7 +111,7 @@ function Band({
   imageFit = 'cover',
   lanyardImage = null,
   lanyardWidth = 1.3,
-  cardScale = 3.0
+  cardScale = 1.8
 }) {
   const band = useRef(),
     fixed = useRef(),
