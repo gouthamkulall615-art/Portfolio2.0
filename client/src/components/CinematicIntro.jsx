@@ -9,10 +9,10 @@ const DEFAULT_CUTOFF_SECONDS = 7.0; // Cut intro video at 7 seconds
  * 
  * Specs:
  * - Full-viewport 100vw x 100vh pure black background (#000000)
- * - Video plays centered with object-fit: contain, capped max-width/max-height
- * - Intro video cuts at exactly 7 seconds
- * - After 7 seconds, shows "Under my Genjutsu" right in the middle with FuzzyText & Poppins font
- * - Holds for ~2 seconds, then smoothly fades out the overlay to reveal the portfolio
+ * - Video plays centered with audio enabled until 7.0 seconds
+ * - At 7.0 seconds, video audio and playback cut immediately
+ * - Shows centered "UNDER MY GENJUTSU" with FuzzyText in Poppins font
+ * - Holds for ~2 seconds, then smoothly reveals the portfolio
  * - Click or tap anywhere to smoothly skip ahead
  */
 export default function CinematicIntro({
@@ -38,6 +38,13 @@ export default function CinematicIntro({
     if (isExitingRef.current) return;
     isExitingRef.current = true;
 
+    // Immediately stop and mute audio on exit/skip
+    const video = videoRef.current;
+    if (video) {
+      video.pause();
+      video.muted = true;
+    }
+
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -52,7 +59,7 @@ export default function CinematicIntro({
     }, overlayFadeDuration);
   }, [onComplete, overlayFadeDuration]);
 
-  // Cut video at 7 seconds & show text in the middle
+  // Cut video and sound at 7 seconds & show text in the middle
   const triggerCutoff = useCallback(() => {
     if (hasCutRef.current || isExitingRef.current) return;
     hasCutRef.current = true;
@@ -60,6 +67,7 @@ export default function CinematicIntro({
     const video = videoRef.current;
     if (video) {
       video.pause();
+      video.muted = true; // Cut sound dead at 7 seconds
     }
 
     setIsVideoCut(true);
@@ -71,20 +79,47 @@ export default function CinematicIntro({
     }, textFadeDuration + holdDuration);
   }, [startExitTransition, textFadeDuration, holdDuration]);
 
-  // Video playback & 7-second cutoff tracking
+  // Video playback, audio, & 7-second cutoff tracking
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    video.muted = true;
+    // Enable sound for the video
+    video.muted = false;
+    video.volume = 1.0;
     video.playsInline = true;
 
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((err) => {
-        console.warn('Cinematic intro autoplay notice:', err);
-      });
-    }
+    const attemptPlay = async () => {
+      try {
+        await video.play();
+      } catch (err) {
+        // In case browser policy restricts unmuted autoplay before any user gesture
+        console.warn('Unmuted autoplay prevented by browser policy; starting muted with click-to-unmute:', err);
+        video.muted = true;
+        try {
+          await video.play();
+        } catch (e) {
+          console.warn('Autoplay error:', e);
+        }
+
+        // Unmute on the first user interaction if still within the 7-second window
+        const unmuteOnInteraction = () => {
+          if (!hasCutRef.current && videoRef.current) {
+            videoRef.current.muted = false;
+            videoRef.current.volume = 1.0;
+          }
+          window.removeEventListener('click', unmuteOnInteraction);
+          window.removeEventListener('touchstart', unmuteOnInteraction);
+          window.removeEventListener('keydown', unmuteOnInteraction);
+        };
+
+        window.addEventListener('click', unmuteOnInteraction, { once: true });
+        window.addEventListener('touchstart', unmuteOnInteraction, { once: true });
+        window.addEventListener('keydown', unmuteOnInteraction, { once: true });
+      }
+    };
+
+    attemptPlay();
 
     let animationFrameId;
 
@@ -109,6 +144,10 @@ export default function CinematicIntro({
       }
       if (timerRef.current) {
         clearTimeout(timerRef.current);
+      }
+      if (video) {
+        video.pause();
+        video.muted = true;
       }
     };
   }, [cutoffSeconds, triggerCutoff]);
@@ -145,7 +184,6 @@ export default function CinematicIntro({
           src={videoSrc}
           className={`cinematic-video ${isVideoCut ? 'video-cut' : ''}`}
           autoPlay
-          muted
           playsInline
           controls={false}
           disablePictureInPicture
