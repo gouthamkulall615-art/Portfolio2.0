@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import CinematicIntro from './components/CinematicIntro';
-import SplashCursor from './components/SplashCursor';
 import GooeyNav from './components/GooeyNav';
 import Lanyard from './components/Lanyard';
+import Floating3DParticles from './components/Floating3DParticles';
 import './styles/anime.css';
 
 const navItems = [
@@ -26,8 +26,15 @@ export default function App() {
 
   return (
     <div className="portfolio-app-root">
-      {/* Fluid Interactive Mouse Cursor Effect */}
-      <SplashCursor />
+      {/* 3D Floating Particle Background — sits below everything */}
+      <Floating3DParticles
+        quantity={350}
+        color="#ffffff"
+        size={3}
+        opacity={0.18}
+        drift={0.6}
+        depth={0.55}
+      />
 
       {/* Minimal Cinematic Intro Sequence */}
       {showIntro && (
