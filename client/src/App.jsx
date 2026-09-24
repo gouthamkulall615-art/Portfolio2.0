@@ -29,11 +29,11 @@ export default function App() {
       {/* 3D Floating Particle Background — sits below everything */}
       <Floating3DParticles
         quantity={350}
-        color="#ffffff"
-        size={3}
-        opacity={0.18}
+        color="#374151"
+        size={7}
+        opacity={0.55}
         drift={0.6}
-        depth={0.55}
+        depth={0.65}
       />
 
       {/* Minimal Cinematic Intro Sequence */}
