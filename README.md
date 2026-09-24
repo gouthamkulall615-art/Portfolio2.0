@@ -1,12 +1,12 @@
-# 🌸 Cyber Anime Portfolio
+#  Portfolio
 
 An anime-styled portfolio web application built with **React**, **Node.js**, and **Express**, featuring a seamless 7-second cinematic intro loader.
 
-## ⚡ Tech Stack
+## Tech Stack
 - **Frontend**: React + Vite, Custom Anime/Cyberpunk CSS
 - **Backend**: Node.js + Express
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Install Dependencies
 ```bash
