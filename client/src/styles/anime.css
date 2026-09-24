@@ -1,32 +1,33 @@
 /* ==========================================================================
-   ANIME CYBERNETIC DESIGN SYSTEM (NEO-TOKYO CORE)
+   PORTFOLIO DESIGN SYSTEM & STYLES (DARK MINIMAL + CRIMSON ACCENT)
    ========================================================================== */
 
 :root {
-  --bg-void: #06070a;
-  --bg-surface: #0c0e17;
-  --bg-card: rgba(14, 18, 30, 0.75);
+  --bg-black: #000000;
+  --accent-crimson: #c41e3a;
+  --accent-crimson-bright: #e12b48;
+  --accent-crimson-glow: rgba(196, 30, 58, 0.35);
   
-  --neon-crimson: #ff0055;
-  --neon-crimson-glow: rgba(255, 0, 85, 0.45);
-  --neon-cyan: #00f0ff;
-  --neon-cyan-glow: rgba(0, 240, 255, 0.4);
-  --neon-purple: #8a2be2;
-  --neon-amber: #ffb703;
-  
-  --text-main: #f0f4fc;
-  --text-muted: #8b9bb4;
-  --text-dim: #4d5b75;
-  
-  --border-neon: rgba(0, 240, 255, 0.25);
-  --border-crimson: rgba(255, 0, 85, 0.35);
-  --glass-bg: rgba(12, 16, 28, 0.82);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: #9aa0a6;
+  --text-muted: #5f6368;
 
-  --font-display: 'Orbitron', -apple-system, sans-serif;
-  --font-hud: 'Rajdhani', -apple-system, sans-serif;
-  --font-jp: 'Noto Sans JP', sans-serif;
-  --font-title: 'Syne', sans-serif;
+  --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-black);
+}
+
+body.anime-body {
+  background-color: var(--bg-black);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
@@ -35,37 +36,53 @@
   box-sizing: border-box;
 }
 
-body.anime-body {
-  background-color: #000000;
-  color: var(--text-main);
-  font-family: 'Poppins', var(--font-hud), sans-serif;
-  overflow-x: hidden;
-  min-height: 100vh;
-  position: relative;
-  -webkit-font-smoothing: antialiased;
+/* ==========================================================================
+   FLOATING TOP HEADER WITH GOOEYNAV
+   ========================================================================== */
+
+.portfolio-header {
+  position: fixed;
+  top: 1.5rem;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: 95vw;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.5rem;
+  background: rgba(8, 8, 10, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(196, 30, 58, 0.15);
+  transition: all 0.3s ease;
+}
+
+.portfolio-header:hover {
+  border-color: rgba(196, 30, 58, 0.4);
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.9), 0 0 30px rgba(196, 30, 58, 0.25);
 }
 
 /* ==========================================================================
-   CINEMATIC INTRO STYLES
-   Maintained independently in src/components/CinematicIntro.css
-   ========================================================================== */
-
-/* ==========================================================================
-   PORTFOLIO DARK CANVAS
+   APP ROOT & DARK CANVAS CONTAINER
    ========================================================================== */
 
 .portfolio-app-root {
   min-height: 100vh;
   width: 100vw;
-  background-color: #000000;
-  overflow: hidden;
+  background-color: var(--bg-black);
   position: relative;
+  overflow: hidden;
 }
 
 .portfolio-dark-canvas {
   min-height: 100vh;
   width: 100vw;
-  background-color: #000000;
+  background-color: var(--bg-black);
   position: relative;
   display: flex;
   align-items: center;
@@ -73,9 +90,10 @@ body.anime-body {
   overflow: hidden;
 }
 
+/* 2-Column Layout: Left for details, Right for 3D Draggable Lanyard Card */
 .portfolio-layout {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   width: 100vw;
   height: 100vh;
   position: relative;
@@ -84,7 +102,7 @@ body.anime-body {
 }
 
 .portfolio-details-col {
-  padding: 4rem 3rem 4rem 5rem;
+  padding: 6rem 3rem 4rem 5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -101,31 +119,21 @@ body.anime-body {
   pointer-events: auto;
 }
 
-@media (max-width: 900px) {
-  .portfolio-layout {
-    grid-template-columns: 1fr;
-    height: auto;
-    min-height: 100vh;
-  }
-  .portfolio-details-col {
-    padding: 3rem 1.5rem;
-  }
-  .portfolio-lanyard-col {
-    height: 70vh;
-  }
-}
+/* ==========================================================================
+   FLOATING REPLAY PILL
+   ========================================================================== */
 
 .replay-intro-pill {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
   z-index: 60;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(18, 18, 22, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.65);
-  font-family: 'Poppins', sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-main);
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.18em;
   padding: 0.55rem 1.15rem;
   border-radius: 9999px;
@@ -133,6 +141,7 @@ body.anime-body {
   backdrop-filter: blur(12px);
   transition: all 0.3s ease;
   user-select: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
 .replay-intro-pill:hover {
@@ -143,352 +152,28 @@ body.anime-body {
   transform: translateY(-2px);
 }
 
+/* ==========================================================================
+   RESPONSIVENESS (MOBILE & TABLET)
+   ========================================================================== */
 
-@keyframes fadeInMain {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-/* Navigation Bar */
-.anime-nav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 100%;
-  background: rgba(6, 7, 10, 0.82);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-neon);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 3rem;
-}
-
-.nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-}
-
-.brand-kanji {
-  font-family: var(--font-jp);
-  font-size: 1.4rem;
-  font-weight: 900;
-  color: var(--neon-crimson);
-  text-shadow: 0 0 12px var(--neon-crimson-glow);
-}
-
-.brand-text {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 900;
-  letter-spacing: 0.2em;
-  color: var(--text-main);
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  list-style: none;
-}
-
-.nav-item {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  letter-spacing: 0.15em;
-  position: relative;
-  transition: color 0.2s ease;
-  padding: 0.4rem 0;
-}
-
-.nav-item:hover, .nav-item.active {
-  color: var(--neon-cyan);
-  text-shadow: 0 0 10px var(--neon-cyan-glow);
-}
-
-.nav-item::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background: var(--neon-cyan);
-  box-shadow: 0 0 8px var(--neon-cyan);
-  transition: width 0.3s ease;
-}
-
-.nav-item:hover::after, .nav-item.active::after {
-  width: 100%;
-}
-
-.nav-action-btn {
-  background: transparent;
-  border: 1px solid var(--neon-crimson);
-  color: var(--neon-crimson);
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  padding: 0.5rem 1.1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.nav-action-btn:hover {
-  background: var(--neon-crimson);
-  color: #fff;
-  box-shadow: 0 0 18px var(--neon-crimson-glow);
-}
-
-/* Hero Section */
-.hero-wrapper {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 5rem 2rem 6rem;
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 4rem;
-  align-items: center;
-  min-height: calc(100vh - 80px);
-}
-
-.hero-tag-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.4rem 1rem;
-  border-radius: 4px;
-  background: rgba(255, 0, 85, 0.1);
-  border: 1px solid var(--border-crimson);
-  color: var(--neon-crimson);
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  letter-spacing: 0.15em;
-  margin-bottom: 1.5rem;
-}
-
-.hero-headline {
-  font-family: var(--font-title);
-  font-size: clamp(2.5rem, 5vw, 4.2rem);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  margin-bottom: 1.5rem;
-}
-
-.neon-gradient-text {
-  background: linear-gradient(135deg, #ffffff 20%, var(--neon-cyan) 65%, var(--neon-crimson) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-}
-
-.hero-subtext {
-  font-size: 1.15rem;
-  line-height: 1.6;
-  color: var(--text-muted);
-  max-width: 580px;
-  margin-bottom: 2.5rem;
-}
-
-.hero-cta-group {
-  display: flex;
-  gap: 1.25rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.btn-primary-neon {
-  background: var(--neon-crimson);
-  color: #fff;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.9rem;
-  letter-spacing: 0.15em;
-  padding: 0.9rem 2rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 0 25px var(--neon-crimson-glow);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  text-decoration: none;
-}
-
-.btn-primary-neon:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 0 35px rgba(255, 0, 85, 0.65);
-}
-
-.btn-secondary-cyber {
-  background: rgba(14, 18, 30, 0.6);
-  backdrop-filter: blur(10px);
-  color: var(--neon-cyan);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.9rem;
-  letter-spacing: 0.15em;
-  padding: 0.9rem 2rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-neon);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-
-.btn-secondary-cyber:hover {
-  background: rgba(0, 240, 255, 0.15);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 20px var(--neon-cyan-glow);
-  transform: translateY(-2px);
-}
-
-/* Character / Shinobi HUD Card */
-.shinobi-card {
-  position: relative;
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border-neon);
-  border-radius: 12px;
-  padding: 2.2rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 240, 255, 0.08);
-  overflow: hidden;
-}
-
-.shinobi-card::before {
-  content: '秘伝';
-  position: absolute;
-  top: 1rem;
-  right: 1.5rem;
-  font-family: var(--font-jp);
-  font-size: 3.5rem;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.03);
-  pointer-events: none;
-}
-
-.card-header-status {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 1rem;
-}
-
-.shinobi-name {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: 0.1em;
-}
-
-.shinobi-level {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  color: var(--neon-cyan);
-  background: rgba(0, 240, 255, 0.1);
-  padding: 0.3rem 0.7rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-neon);
-}
-
-.stat-bars-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin: 1.5rem 0;
-}
-
-.stat-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.stat-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-.stat-bar-track {
-  width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.stat-bar-fill {
-  height: 100%;
-  border-radius: 3px;
-}
-
-.fill-crimson {
-  background: linear-gradient(90deg, #ff0055, #ff5500);
-  box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
-}
-
-.fill-cyan {
-  background: linear-gradient(90deg, #00f0ff, #0077ff);
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-}
-
-.fill-purple {
-  background: linear-gradient(90deg, #8a2be2, #ff0055);
-  box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
-}
-
-.system-status-indicator {
-  margin-top: 1.5rem;
-  padding: 0.8rem 1rem;
-  background: rgba(6, 8, 14, 0.6);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-/* Responsive adjustments */
 @media (max-width: 900px) {
-  .hero-wrapper {
+  .portfolio-header {
+    top: 1rem;
+    max-width: 96vw;
+  }
+
+  .portfolio-layout {
     grid-template-columns: 1fr;
-    gap: 3rem;
-    padding-top: 3rem;
+    height: auto;
+    min-height: 100vh;
   }
-  .anime-nav {
-    padding: 1rem 1.5rem;
+
+  .portfolio-details-col {
+    padding: 6rem 1.5rem 2rem 1.5rem;
   }
-  .hud-center-frame {
-    width: 90vw;
+
+  .portfolio-lanyard-col {
+    height: 70vh;
+    min-height: 480px;
   }
 }
