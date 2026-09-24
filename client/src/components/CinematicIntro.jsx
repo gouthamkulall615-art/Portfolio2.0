@@ -1,35 +1,39 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import FuzzyText from './FuzzyText';
 import './CinematicIntro.css';
+
+const DEFAULT_CUTOFF_SECONDS = 7.0; // Cut intro video at 7 seconds
 
 /**
  * CinematicIntro
  * 
- * Minimal, cinematic intro sequence matching exact specifications:
+ * Specs:
  * - Full-viewport 100vw x 100vh pure black background (#000000)
- * - Zero borders, frames, corner brackets, HUD panels, header bars, or timers
- * - Video is the only visual element on screen, centered horizontally and vertically
- * - Video has object-fit: contain, capped max-width (900px) & max-height (75-80vh)
- * - Autoplay, muted, plays once, playsInline for mobile compatibility
- * - Listens for video `ended` event -> fades in "Under my Genjutsu" (1.3s ease-in, soft red #c41e3a, widened letter-spacing)
- * - Holds for ~2s -> fades out entire overlay to opacity 0 -> reveals portfolio
- * - Click/tap anywhere on screen to smoothly skip ahead
+ * - Video plays centered with object-fit: contain, capped max-width/max-height
+ * - Intro video cuts at exactly 7 seconds
+ * - After 7 seconds, shows "Under my Genjutsu" right in the middle with FuzzyText & Poppins font
+ * - Holds for ~2 seconds, then smoothly fades out the overlay to reveal the portfolio
+ * - Click or tap anywhere to smoothly skip ahead
  */
 export default function CinematicIntro({
   onComplete,
   videoSrc = '/eyes-video.mp4',
-  text = 'Under my Genjutsu',
-  textFadeDuration = 1300,
+  text = 'UNDER MY GENJUTSU',
+  cutoffSeconds = DEFAULT_CUTOFF_SECONDS,
+  textFadeDuration = 1200,
   holdDuration = 2000,
   overlayFadeDuration = 1000,
 }) {
-  const [showCaption, setShowCaption] = useState(false);
+  const [isVideoCut, setIsVideoCut] = useState(false);
+  const [showText, setShowText] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
+
   const videoRef = useRef(null);
-  const hasEndedRef = useRef(false);
+  const hasCutRef = useRef(false);
   const isExitingRef = useRef(false);
   const timerRef = useRef(null);
 
-  // Smooth fade-to-black / opacity transition out to reveal portfolio
+  // Smooth exit transition to reveal portfolio
   const startExitTransition = useCallback(() => {
     if (isExitingRef.current) return;
     isExitingRef.current = true;
@@ -48,21 +52,26 @@ export default function CinematicIntro({
     }, overlayFadeDuration);
   }, [onComplete, overlayFadeDuration]);
 
-  // Video ended listener: trigger text fade-in, hold 2s, then fade to portfolio
-  const handleVideoEnded = useCallback(() => {
-    if (hasEndedRef.current || isExitingRef.current) return;
-    hasEndedRef.current = true;
+  // Cut video at 7 seconds & show text in the middle
+  const triggerCutoff = useCallback(() => {
+    if (hasCutRef.current || isExitingRef.current) return;
+    hasCutRef.current = true;
 
-    // Fade in "Under my Genjutsu"
-    setShowCaption(true);
+    const video = videoRef.current;
+    if (video) {
+      video.pause();
+    }
 
-    // Hold for ~2s after text transition completes, then fade out overlay
+    setIsVideoCut(true);
+    setShowText(true);
+
+    // Hold text for fade-in duration + ~2s hold, then fade overlay out to portfolio
     timerRef.current = setTimeout(() => {
       startExitTransition();
     }, textFadeDuration + holdDuration);
   }, [startExitTransition, textFadeDuration, holdDuration]);
 
-  // Handle Autoplay & PlaysInline initialization
+  // Video playback & 7-second cutoff tracking
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -73,17 +82,41 @@ export default function CinematicIntro({
     const playPromise = video.play();
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
-        // Autoplay may be restricted if browser requires direct user interaction
         console.warn('Cinematic intro autoplay notice:', err);
       });
     }
 
+    let animationFrameId;
+
+    // High-precision RAF loop checking for 7.0s cutoff
+    const checkPlaybackTime = () => {
+      if (hasCutRef.current) return;
+
+      const currentTime = video.currentTime || 0;
+      if (currentTime >= cutoffSeconds) {
+        triggerCutoff();
+        return;
+      }
+
+      animationFrameId = requestAnimationFrame(checkPlaybackTime);
+    };
+
+    animationFrameId = requestAnimationFrame(checkPlaybackTime);
+
     return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, []);
+  }, [cutoffSeconds, triggerCutoff]);
+
+  // Handle video ended event if video finishes before 7s
+  const handleVideoEnded = useCallback(() => {
+    triggerCutoff();
+  }, [triggerCutoff]);
 
   // Keyboard accessibility: Escape, Space, or Enter to skip
   useEffect(() => {
@@ -110,7 +143,7 @@ export default function CinematicIntro({
         <video
           ref={videoRef}
           src={videoSrc}
-          className="cinematic-video"
+          className={`cinematic-video ${isVideoCut ? 'video-cut' : ''}`}
           autoPlay
           muted
           playsInline
@@ -118,12 +151,27 @@ export default function CinematicIntro({
           disablePictureInPicture
           onEnded={handleVideoEnded}
         />
-        <p
-          className={`cinematic-caption ${showCaption ? 'visible' : ''}`}
-          aria-hidden={!showCaption}
+
+        <div
+          className={`cinematic-center-text ${showText ? 'visible' : ''}`}
+          aria-hidden={!showText}
         >
-          {text}
-        </p>
+          <FuzzyText
+            baseIntensity={0.2}
+            hoverIntensity={0.55}
+            enableHover={true}
+            color="#c41e3a"
+            fontFamily="'Poppins', sans-serif"
+            fontSize="clamp(2rem, 5.2vw, 4rem)"
+            fontWeight={700}
+            letterSpacing={4}
+            fuzzRange={24}
+            direction="horizontal"
+            className="genjutsu-fuzzy-canvas"
+          >
+            {typeof text === 'string' ? text.toUpperCase() : text}
+          </FuzzyText>
+        </div>
       </div>
     </div>
   );
