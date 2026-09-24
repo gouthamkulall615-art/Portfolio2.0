@@ -36,11 +36,13 @@ export default function App() {
           {/* 3D Lanyard Card with user picture */}
           <div className="portfolio-lanyard-col">
             <Lanyard
-              position={[0, 0, 20]}
+              position={[0, 0, 13]}
               gravity={[0, -40, 0]}
               frontImage="/mypic.jpeg"
               backImage="/mypic.jpeg"
               imageFit="cover"
+              cardScale={3.2}
+              lanyardWidth={1.4}
             />
           </div>
         </div>

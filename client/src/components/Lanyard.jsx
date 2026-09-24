@@ -28,7 +28,7 @@ const FRONT_UV_RECT = { x: 0, y: 0, w: 0.5, h: 0.755 };
 const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
 
 export default function Lanyard({
-  position = [0, 0, 30],
+  position = [0, 0, 13],
   gravity = [0, -40, 0],
   fov = 20,
   transparent = true,
@@ -36,7 +36,8 @@ export default function Lanyard({
   backImage = null,
   imageFit = 'cover',
   lanyardImage = null,
-  lanyardWidth = 1
+  lanyardWidth = 1.3,
+  cardScale = 3.0
 }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
@@ -63,6 +64,7 @@ export default function Lanyard({
             imageFit={imageFit}
             lanyardImage={lanyardImage}
             lanyardWidth={lanyardWidth}
+            cardScale={cardScale}
           />
         </Physics>
         <Environment blur={0.75}>
@@ -108,7 +110,8 @@ function Band({
   backImage = null,
   imageFit = 'cover',
   lanyardImage = null,
-  lanyardWidth = 1
+  lanyardWidth = 1.3,
+  cardScale = 3.0
 }) {
   const band = useRef(),
     fixed = useRef(),
@@ -174,6 +177,7 @@ function Band({
     composite.needsUpdate = true;
     return composite;
   }, [frontImage, backImage, imageFit, frontTex, backTex, materials.base.map]);
+
   const [curve] = useState(
     () =>
       new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])
@@ -181,12 +185,14 @@ function Band({
   const [dragged, drag] = useState(false);
   const [hovered, hover] = useState(false);
 
+  const scaleRatio = cardScale / 2.25;
+
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
   useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
   useSphericalJoint(j3, card, [
     [0, 0, 0],
-    [0, 1.5, 0]
+    [0, 1.5 * scaleRatio, 0]
   ]);
 
   useEffect(() => {
@@ -241,10 +247,10 @@ function Band({
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
-          <CuboidCollider args={[0.8, 1.125, 0.01]} />
+          <CuboidCollider args={[0.8 * scaleRatio, 1.125 * scaleRatio, 0.01]} />
           <group
-            scale={2.25}
-            position={[0, -1.2, -0.05]}
+            scale={cardScale}
+            position={[0, -1.2 * scaleRatio, -0.05]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
             onPointerUp={e => (e.target.releasePointerCapture(e.pointerId), drag(false))}
