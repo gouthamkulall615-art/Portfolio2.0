@@ -34,14 +34,14 @@ export default function ProjectsSection() {
       <h2 className="projects-heading">Projects</h2>
 
       <ScrollStack
-        itemDistance={80}
-        itemScale={0.04}
-        itemStackDistance={28}
-        stackPosition="25%"
-        scaleEndPosition="12%"
-        baseScale={0.88}
+        itemDistance={30}
+        itemScale={0.03}
+        itemStackDistance={35}
+        stackPosition="20%"
+        scaleEndPosition="10%"
+        baseScale={0.92}
         scaleDuration={0.5}
-        blurAmount={2}
+        blurAmount={3}
         useWindowScroll
       >
         {projects.map((project) => (

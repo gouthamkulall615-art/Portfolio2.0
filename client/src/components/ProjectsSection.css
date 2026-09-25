@@ -22,14 +22,12 @@
   letter-spacing: -0.03em;
 }
 
-/* Dark theme support — override when dark mode is active */
 [data-theme="dark"] .projects-heading {
   color: #f0f0f0;
 }
 
 /* ---------- Project Card Styling ---------- */
 
-/* Override the base ScrollStack card for project cards */
 .projects-section .scroll-stack-card {
   padding: 0;
   overflow: hidden;
@@ -38,17 +36,13 @@
   height: 26rem;
   border-radius: 24px;
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s ease;
+  margin: 0;  /* Override the base 30px margin — let itemDistance handle spacing */
 }
 
 [data-theme="dark"] .projects-section .scroll-stack-card {
   background: #18181b;
   border-color: rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.35);
-}
-
-.projects-section .scroll-stack-card:hover {
-  box-shadow: 0 8px 50px rgba(0, 0, 0, 0.14);
 }
 
 /* Inner layout — image fills, overlay at bottom */
@@ -66,11 +60,6 @@
   object-fit: cover;
   object-position: top center;
   display: block;
-  transition: transform 0.5s ease;
-}
-
-.project-card-inner:hover .project-card-img {
-  transform: scale(1.03);
 }
 
 /* Gradient overlay for text readability */
@@ -109,7 +98,6 @@
 
 /* ---------- ScrollStack Overrides for window scroll mode ---------- */
 
-/* Disable the nested scroll container — we use window scroll */
 .projects-section .scroll-stack-scroller {
   overflow: visible;
   height: auto;
@@ -117,7 +105,7 @@
 }
 
 .projects-section .scroll-stack-inner {
-  padding: 4vh 3rem 20rem;
+  padding: 4vh 3rem 15rem;
   max-width: 56rem;
   margin: 0 auto;
 }
@@ -132,7 +120,7 @@
   }
 
   .projects-section .scroll-stack-inner {
-    padding: 6vh 1.25rem 30rem;
+    padding: 4vh 1.25rem 12rem;
   }
 
   .projects-section .scroll-stack-card {
