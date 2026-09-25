@@ -1,0 +1,103 @@
+/* ==========================================================================
+   HERO COMPONENT STYLES
+   ========================================================================== */
+
+.hero-section {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Text block — fills the left column, left-aligned on desktop, centered on mobile */
+.hero-text-block {
+  width: 100%;
+  max-width: 38rem; /* ~max-w-2xl — prevents collision with Lanyard on right */
+  position: relative;
+  z-index: 20; /* Above particles/canvas backgrounds */
+}
+
+.hero-text-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---------- Headline ---------- */
+
+.hero-headline {
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  text-align: left;
+  color: var(--text-primary);
+}
+
+.hero-greeting {
+  color: var(--text-primary);
+  display: block;
+}
+
+/* Carousel container — holds the animated titles */
+.hero-title-carousel {
+  position: relative;
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  overflow: hidden;
+  text-align: left;
+  padding-bottom: 0.25rem;
+  padding-top: 0.125rem;
+  min-height: 1.2em; /* Prevent layout collapse */
+}
+
+.hero-title-item {
+  position: absolute;
+  font-weight: 700;
+  color: var(--accent-crimson-bright, #e12b48);
+}
+
+/* ---------- Subtext ---------- */
+
+.hero-subtext {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+  max-width: 32rem;
+  text-align: left;
+}
+
+/* ==========================================================================
+   RESPONSIVE — MOBILE & TABLET (below 900px)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .hero-section {
+    justify-content: center;
+  }
+
+  .hero-text-block {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero-text-inner {
+    align-items: center;
+  }
+
+  .hero-headline {
+    text-align: center;
+  }
+
+  .hero-title-carousel {
+    justify-content: center;
+  }
+
+  .hero-subtext {
+    text-align: center;
+    max-width: 28rem;
+    margin: 0 auto;
+  }
+}

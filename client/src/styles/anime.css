@@ -160,17 +160,23 @@ body.anime-body {
   }
 
   .portfolio-layout {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     height: auto;
     min-height: 100vh;
   }
 
   .portfolio-details-col {
-    padding: 6rem 1.5rem 2rem 1.5rem;
+    flex: none;
+    width: 100%;
+    padding: 7rem 1.5rem 2rem 1.5rem;
+    min-height: auto;
   }
 
   .portfolio-lanyard-col {
+    flex: none;
+    width: 100%;
     height: 70vh;
     min-height: 480px;
   }
 }
+

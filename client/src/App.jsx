@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CinematicIntro from './components/CinematicIntro';
 import GooeyNav from './components/GooeyNav';
+import { Hero } from './components/Hero';
 import Lanyard from './components/Lanyard';
 import Floating3DParticles from './components/Floating3DParticles';
 import './styles/anime.css';
@@ -60,7 +61,7 @@ export default function App() {
         <div className="portfolio-layout">
           {/* Left: Reserved for details */}
           <div className="portfolio-details-col">
-            {/* Details will be added here */}
+            <Hero />
           </div>
 
           {/* Right: 3D Draggable Lanyard Card */}
