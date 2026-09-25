@@ -12,9 +12,9 @@
 /* Text block — fills the left column, left-aligned on desktop, centered on mobile */
 .hero-text-block {
   width: 100%;
-  max-width: 38rem; /* ~max-w-2xl — prevents collision with Lanyard on right */
+  max-width: 38rem;
   position: relative;
-  z-index: 20; /* Above particles/canvas backgrounds */
+  z-index: 20;
 }
 
 .hero-text-inner {
@@ -49,7 +49,7 @@
   text-align: left;
   padding-bottom: 0.25rem;
   padding-top: 0.125rem;
-  min-height: 1.2em; /* Prevent layout collapse */
+  min-height: 1.2em;
 }
 
 .hero-title-item {

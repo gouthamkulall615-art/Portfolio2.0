@@ -4,6 +4,7 @@ import GooeyNav from './components/GooeyNav';
 import { Hero } from './components/Hero';
 import Lanyard from './components/Lanyard';
 import Floating3DParticles from './components/Floating3DParticles';
+import ProjectsSection from './components/ProjectsSection';
 import './styles/anime.css';
 
 const navItems = [
@@ -56,10 +57,10 @@ export default function App() {
         />
       </header>
 
-      {/* Main Dark Canvas */}
-      <div className="portfolio-dark-canvas">
+      {/* Hero Section — full viewport */}
+      <section id="home" className="portfolio-hero-section">
         <div className="portfolio-layout">
-          {/* Left: Reserved for details */}
+          {/* Left: Hero text */}
           <div className="portfolio-details-col">
             <Hero />
           </div>
@@ -77,17 +78,20 @@ export default function App() {
             />
           </div>
         </div>
+      </section>
 
-        {/* Floating Replay Intro Pill Button */}
-        <button
-          type="button"
-          onClick={handleReplayIntro}
-          className="replay-intro-pill"
-          title="Replay Cinematic Intro"
-        >
-          REPLAY INTRO
-        </button>
-      </div>
+      {/* Projects Section — ScrollStack cards */}
+      <ProjectsSection />
+
+      {/* Floating Replay Intro Pill Button */}
+      <button
+        type="button"
+        onClick={handleReplayIntro}
+        className="replay-intro-pill"
+        title="Replay Cinematic Intro"
+      >
+        REPLAY INTRO
+      </button>
     </div>
   );
 }
