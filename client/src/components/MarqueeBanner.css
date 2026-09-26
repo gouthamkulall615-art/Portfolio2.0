@@ -1,0 +1,120 @@
+/* ==========================================================================
+   MARQUEE BANNER SECTION
+   Full-width horizontal scrolling ticker text
+   Pure CSS animation, responsive typography, zero page overflow
+   ========================================================================== */
+
+.marquee-section {
+  position: relative;
+  width: 100%;
+  max-width: 100vw;
+  overflow: hidden;
+  padding: 5rem 0;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  background: transparent;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+/* Inner scrolling track container */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  animation: marquee-scroll 26s linear infinite;
+  will-change: transform;
+}
+
+/* Pause animation on hover */
+.marquee-section:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Individual repeating text strip */
+.marquee-content {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Text Item */
+.marquee-text {
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: clamp(80px, 11vw, 200px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary, #ffffff);
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+/* Stylish outlined text variant for visual rhythm */
+.marquee-text.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--text-primary, #ffffff);
+}
+
+[data-theme="light"] .marquee-text.text-outline {
+  -webkit-text-stroke: 2px var(--text-primary, #111111);
+}
+
+/* Elegant Star / Sparkle Separator */
+.marquee-separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 clamp(1.8rem, 3.5vw, 4.2rem);
+  color: var(--text-primary, #ffffff);
+  opacity: 0.65;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+[data-theme="light"] .marquee-separator {
+  color: #111111;
+  opacity: 0.55;
+}
+
+[data-theme="dark"] .marquee-separator {
+  color: #ffffff;
+  opacity: 0.75;
+}
+
+/* Keyframes for seamless infinite 0% to -50% loop */
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .marquee-section {
+    padding: 3.5rem 0;
+  }
+
+  .marquee-text {
+    font-size: clamp(55px, 14vw, 95px);
+  }
+
+  .marquee-text.text-outline {
+    -webkit-text-stroke-width: 1.5px;
+  }
+
+  .marquee-separator {
+    margin: 0 1.25rem;
+    font-size: 1.8rem;
+  }
+}

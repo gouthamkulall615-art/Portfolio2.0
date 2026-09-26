@@ -8,14 +8,15 @@ import Floating3DParticles from './components/Floating3DParticles';
 import ProjectsSection from './components/ProjectsSection';
 import EducationSection from './components/EducationSection';
 import TechStack from './components/TechStack';
+import MarqueeBanner from './components/MarqueeBanner';
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import './styles/anime.css';
 
 const navItems = [
   { label: 'Home', href: '#home', ariaLabel: 'Go to home section' },
   { label: 'Projects', href: '#projects', ariaLabel: 'View projects' },
-  { label: 'Education', href: '#education', ariaLabel: 'View education' },
   { label: 'Skills', href: '#skills', ariaLabel: 'View skills' },
+  { label: 'Education', href: '#education', ariaLabel: 'View education' },
   { label: 'Contact', href: '#contact', ariaLabel: 'Get in touch' },
 ];
 
@@ -110,11 +111,14 @@ export default function App() {
       {/* Projects Section — ScrollStack cards */}
       <ProjectsSection />
 
+      {/* 3D Interactive Tech Stack Spheres */}
+      <TechStack />
+
       {/* Education Timeline Section */}
       <EducationSection />
 
-      {/* 3D Interactive Tech Stack Spheres */}
-      <TechStack />
+      {/* Full-width Horizontal Marquee Ticker Banner */}
+      <MarqueeBanner />
     </div>
   );
 }
