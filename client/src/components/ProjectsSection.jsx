@@ -102,39 +102,8 @@ export default function ProjectsSection() {
 
               {/* Bottom Details Overlay */}
               <div className="project-card-overlay">
-                <div className="project-card-meta">
-                  <h3 className="project-card-title">{project.title}</h3>
-                  <p className="project-card-desc">{project.description}</p>
-                </div>
-
-                <div className="project-card-overlay-actions">
-                  {project.githubUrl && (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="project-card-link-pill github-pill"
-                      title="View GitHub Repository"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <GithubIcon size={15} />
-                      <span>Code</span>
-                    </a>
-                  )}
-                  {project.liveUrl && (
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="project-card-link-pill live-pill"
-                      title="Visit Live Application"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <ExternalLink size={14} />
-                      <span>Live Site</span>
-                    </a>
-                  )}
-                </div>
+                <h3 className="project-card-title">{project.title}</h3>
+                <p className="project-card-desc">{project.description}</p>
               </div>
             </div>
           </ScrollStackItem>
