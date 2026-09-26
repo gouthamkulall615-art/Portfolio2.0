@@ -1,0 +1,42 @@
+.techstack {
+  position: relative;
+  width: 100%;
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1rem 3rem;
+  overflow: hidden;
+  background: transparent;
+  z-index: 10;
+}
+
+.techstack h2 {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #e12b48 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.techstack-subtitle {
+  color: #9ca3af;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.tech-canvas {
+  width: 100% !important;
+  height: 650px !important;
+  max-width: 1200px;
+  touch-action: none;
+}
