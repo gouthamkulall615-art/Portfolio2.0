@@ -196,17 +196,17 @@ const TechStack = () => {
       (texture) =>
         new THREE.MeshPhysicalMaterial({
           map: texture,
-          color: isDarkTheme ? "#ffffff" : "#f1f5f9",
+          color: "#e8e8e8",
           emissive: "#ffffff",
           emissiveMap: texture,
-          emissiveIntensity: isDarkTheme ? 0.75 : 0.25,
-          metalness: isDarkTheme ? 0.1 : 0.4,
-          roughness: isDarkTheme ? 0.15 : 0.8,
-          clearcoat: isDarkTheme ? 0.5 : 0.1,
-          clearcoatRoughness: 0.1,
+          emissiveIntensity: 0.1,
+          metalness: 0.15,
+          roughness: 0.8,
+          clearcoat: 0.2,
+          clearcoatRoughness: 0.2,
         })
     );
-  }, [isDarkTheme]);
+  }, []);
 
   return (
     <div className="techstack" id={TRIGGER_SECTION_ID}>
@@ -216,19 +216,20 @@ const TechStack = () => {
         shadows
         gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-        onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
+        onCreated={(state) => (state.gl.toneMappingExposure = 1.0)}
         className="tech-canvas"
       >
-        <ambientLight intensity={1} />
+        <ambientLight intensity={0.65} />
         <spotLight
           position={[20, 20, 25]}
+          intensity={0.8}
           penumbra={1}
           angle={0.2}
           color="white"
           castShadow
           shadow-mapSize={[512, 512]}
         />
-        <directionalLight position={[0, 5, -4]} intensity={2} />
+        <directionalLight position={[0, 5, -4]} intensity={1.3} />
         <Physics gravity={[0, 0, 0]}>
           <Pointer isActive={isActive} />
           {spheres.map((props, i) => (
