@@ -54,6 +54,24 @@ export default function ContactSection() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // Character speech bubble state with auto-hide for touch / mobile
+  const [showQuote, setShowQuote] = useState(false);
+  const quoteTimeoutRef = useRef(null);
+
+  const handleCharacterTap = () => {
+    setShowQuote(true);
+    if (quoteTimeoutRef.current) clearTimeout(quoteTimeoutRef.current);
+    quoteTimeoutRef.current = setTimeout(() => {
+      setShowQuote(false);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (quoteTimeoutRef.current) clearTimeout(quoteTimeoutRef.current);
+    };
+  }, []);
+
   // Measure stage and calculate responsive hand dimensions
   useEffect(() => {
     const handleResize = () => {
@@ -278,6 +296,38 @@ export default function ContactSection() {
         variants={containerVariants}
       >
         <div className="contact-card">
+          {/* Original Anime Character illustration sitting on top edge */}
+          <div
+            className="character-wrapper"
+            onClick={handleCharacterTap}
+            onMouseEnter={() => setShowQuote(true)}
+            onMouseLeave={() => setShowQuote(false)}
+            role="button"
+            tabIndex={0}
+            aria-label="Character quote interaction"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleCharacterTap();
+              }
+            }}
+          >
+            <img
+              src="/images/character-sitting.png"
+              alt="Character sitting illustration"
+              className="sitting-character"
+              draggable={false}
+            />
+            <motion.span
+              className="character-quote"
+              initial={{ opacity: 0, y: 10, x: '-50%', scale: 0.9 }}
+              animate={showQuote ? { opacity: 1, y: 0, x: '-50%', scale: 1 } : { opacity: 0, y: 10, x: '-50%', scale: 0.9 }}
+              whileHover={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              Wake up to reality.
+            </motion.span>
+          </div>
+
           <motion.div className="contact-header" variants={itemVariants}>
             <span className="contact-tag">
               <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
