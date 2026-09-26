@@ -9,6 +9,7 @@ import ProjectsSection from './components/ProjectsSection';
 import EducationSection from './components/EducationSection';
 import TechStack from './components/TechStack';
 import MarqueeBanner from './components/MarqueeBanner';
+import ContactSection from './components/ContactSection';
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import './styles/anime.css';
 
@@ -119,6 +120,9 @@ export default function App() {
 
       {/* Full-width Horizontal Marquee Ticker Banner */}
       <MarqueeBanner />
+
+      {/* Scroll-triggered Hands Touching Contact Section */}
+      <ContactSection />
     </div>
   );
 }

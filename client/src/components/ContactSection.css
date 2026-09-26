@@ -1,0 +1,375 @@
+/* ==========================================================================
+   CONTACT SECTION — SCROLL-TRIGGERED "HANDS TOUCHING" REVEAL
+   Visual Language: Modern Dark Theme / Theme-Proof / Violet Energy
+   ========================================================================== */
+
+.contact-section-root {
+  position: relative;
+  width: 100%;
+  min-height: 140vh;
+  background: var(--bg-black);
+  color: var(--text-primary);
+  padding: 6rem 1.5rem 10rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  z-index: 15;
+}
+
+/* Hands Interactive Stage */
+.hands-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1300px;
+  height: 520px;
+  margin: 2rem auto 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* Individual Hand Wrappers */
+.hand-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: clamp(280px, 36vw, 540px);
+  z-index: 5;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.hand-wrapper.human-hand-wrapper {
+  z-index: 5;
+}
+
+.hand-wrapper.robot-hand-wrapper {
+  z-index: 6;
+}
+
+/* Hand Image with Theme-Proof Dynamic Filter */
+.hand-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
+  transition: filter 0.3s ease;
+}
+
+[data-theme="dark"] .hand-image {
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 0 24px rgba(139, 92, 246, 0.18));
+}
+
+/* Touch Spark Emitter at Fingertip Meeting Point */
+.spark-emitter-point {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 1px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.touch-spark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192, 132, 252, 1) 0%, rgba(168, 85, 247, 0.8) 35%, rgba(139, 92, 246, 0.35) 60%, transparent 75%);
+  filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.95)) drop-shadow(0 0 50px rgba(139, 92, 246, 0.7));
+  pointer-events: none;
+}
+
+/* Ambient Persistent Glow Once Touched */
+.touch-ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192, 132, 252, 0.7) 0%, rgba(139, 92, 246, 0.3) 50%, transparent 80%);
+  filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.8));
+  animation: spark-pulse 2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes spark-pulse {
+  from {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.6;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 0.95;
+  }
+}
+
+/* ==========================================================================
+   REVEAL CONTAINER & CONTACT FORM
+   ========================================================================== */
+
+.contact-reveal-container {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  z-index: 12;
+}
+
+/* Card Container */
+.contact-card {
+  background: #111115;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="light"] .contact-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Header Text */
+.contact-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.contact-tag {
+  display: inline-block;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  margin-bottom: 0.75rem;
+}
+
+.contact-title {
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+  line-height: 1.15;
+}
+
+.contact-subtitle {
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.98rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Form Styles */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.form-group-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: left;
+}
+
+.form-label {
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 0.85rem 1.15rem;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .form-input,
+[data-theme="light"] .form-textarea {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.05);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Submit Button */
+.contact-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 1rem 2rem;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #c41e3a 100%);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 6px 25px rgba(124, 58, 237, 0.35);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  margin-top: 0.5rem;
+}
+
+.contact-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5), 0 0 20px rgba(196, 30, 58, 0.35);
+}
+
+.contact-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Success Alert */
+.contact-success-msg {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Direct Social Links row */
+.contact-social-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .contact-social-row {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.contact-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.contact-social-link:hover {
+  color: #8b5cf6;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (BELOW 768px: VERTICAL STACK)
+   Human hand from bottom, robot hand from top, meeting in center
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .contact-section-root {
+    min-height: 160vh;
+    padding: 4rem 1rem 6rem;
+  }
+
+  .hands-stage {
+    height: 440px;
+    flex-direction: column;
+    margin: 1rem auto 2.5rem;
+  }
+
+  .hand-wrapper {
+    width: clamp(220px, 70vw, 320px);
+  }
+
+  /* Vertical Stacking on Mobile */
+  .hand-wrapper.human-hand-wrapper {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+  }
+
+  .hand-wrapper.robot-hand-wrapper {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    top: 0;
+    bottom: auto;
+  }
+
+  .spark-emitter-point {
+    top: 50%;
+  }
+
+  .form-group-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .contact-card {
+    padding: 2rem 1.35rem;
+  }
+}
