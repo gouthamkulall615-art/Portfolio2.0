@@ -37,12 +37,24 @@
   border-radius: 24px;
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
   margin: 0;  /* Override the base 30px margin — let itemDistance handle spacing */
+  cursor: pointer;
+  transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
 }
 
 [data-theme="dark"] .projects-section .scroll-stack-card {
   background: #18181b;
   border-color: rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.35);
+}
+
+.projects-section .scroll-stack-card:hover {
+  border-color: rgba(196, 30, 58, 0.45);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.16), 0 0 28px rgba(196, 30, 58, 0.2);
+}
+
+[data-theme="dark"] .projects-section .scroll-stack-card:hover {
+  border-color: rgba(225, 43, 72, 0.5);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.55), 0 0 32px rgba(196, 30, 58, 0.3);
 }
 
 /* Inner layout — image fills, overlay at bottom */
@@ -60,6 +72,11 @@
   object-fit: cover;
   object-position: top center;
   display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+.projects-section .scroll-stack-card:hover .project-card-img {
+  transform: scale(1.04);
 }
 
 /* Gradient overlay for text readability */
@@ -71,13 +88,23 @@
   padding: 2.5rem 2rem 1.75rem;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.82) 0%,
-    rgba(0, 0, 0, 0.45) 60%,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.5) 60%,
     transparent 100%
   );
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  transition: background 0.4s ease;
+}
+
+.projects-section .scroll-stack-card:hover .project-card-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.94) 0%,
+    rgba(0, 0, 0, 0.62) 65%,
+    transparent 100%
+  );
 }
 
 .project-card-title {
@@ -86,6 +113,12 @@
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.02em;
+  transition: color 0.3s ease;
+}
+
+.projects-section .scroll-stack-card:hover .project-card-title {
+  color: #ffffff;
+  text-shadow: 0 0 16px rgba(225, 43, 72, 0.4);
 }
 
 .project-card-desc {

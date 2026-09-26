@@ -89,7 +89,9 @@ const ScrollStack = ({
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
 
-      const cardTop = getElementOffset(card);
+      const lastTransform = lastTransformsRef.current.get(i);
+      const currentTranslateY = useWindowScroll && lastTransform ? lastTransform.translateY : 0;
+      const cardTop = getElementOffset(card) - currentTranslateY;
       const triggerStart = cardTop - stackPositionPx - itemStackDistance * i;
       const triggerEnd = cardTop - scaleEndPositionPx;
       const pinStart = cardTop - stackPositionPx - itemStackDistance * i;
@@ -104,7 +106,9 @@ const ScrollStack = ({
       if (blurAmount) {
         let topCardIndex = 0;
         for (let j = 0; j < cardsRef.current.length; j++) {
-          const jCardTop = getElementOffset(cardsRef.current[j]);
+          const jLastTransform = lastTransformsRef.current.get(j);
+          const jTranslateY = useWindowScroll && jLastTransform ? jLastTransform.translateY : 0;
+          const jCardTop = getElementOffset(cardsRef.current[j]) - jTranslateY;
           const jTriggerStart = jCardTop - stackPositionPx - itemStackDistance * j;
           if (scrollTop >= jTriggerStart) {
             topCardIndex = j;
@@ -133,7 +137,6 @@ const ScrollStack = ({
         blur: Math.round(blur * 100) / 100
       };
 
-      const lastTransform = lastTransformsRef.current.get(i);
       const hasChanged =
         !lastTransform ||
         Math.abs(lastTransform.translateY - newTransform.translateY) > 0.1 ||
@@ -186,15 +189,15 @@ const ScrollStack = ({
   const setupLenis = useCallback(() => {
     if (useWindowScroll) {
       const lenis = new Lenis({
-        duration: 0.8,
+        duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         touchMultiplier: 2,
         infinite: false,
-        wheelMultiplier: 1.2,
-        lerp: 0.15,
+        wheelMultiplier: 1,
+        lerp: 0.1,
         syncTouch: true,
-        syncTouchLerp: 0.1
+        syncTouchLerp: 0.075
       });
 
       lenis.on('scroll', handleScroll);

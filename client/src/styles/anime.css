@@ -64,11 +64,9 @@ body.anime-body {
 
 .portfolio-app-root {
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   background-color: var(--bg-black);
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 /* Hero section — exactly one viewport tall */

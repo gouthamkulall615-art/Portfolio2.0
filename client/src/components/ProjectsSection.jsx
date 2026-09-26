@@ -33,17 +33,7 @@ export default function ProjectsSection() {
     <section id="projects" className="projects-section">
       <h2 className="projects-heading">Projects</h2>
 
-      <ScrollStack
-        itemDistance={30}
-        itemScale={0.03}
-        itemStackDistance={35}
-        stackPosition="20%"
-        scaleEndPosition="10%"
-        baseScale={0.92}
-        scaleDuration={0.5}
-        blurAmount={3}
-        useWindowScroll
-      >
+      <ScrollStack useWindowScroll>
         {projects.map((project) => (
           <ScrollStackItem key={project.title}>
             <div className="project-card-inner">
