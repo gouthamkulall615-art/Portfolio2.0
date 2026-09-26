@@ -57,7 +57,10 @@ const projects = [
 export default function ProjectsSection() {
   return (
     <section id="projects" className="projects-section">
-      <h2 className="projects-heading">Projects</h2>
+      <div className="section-watermark-heading">
+        <span className="watermark-bg" aria-hidden="true">PROJECTS</span>
+        <h2 className="watermark-fg">PROJECTS</h2>
+      </div>
 
       <ScrollStack useWindowScroll>
         {projects.map((project) => (

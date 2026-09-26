@@ -192,3 +192,67 @@ body {
   }
 }
 
+/* ==========================================================================
+   WATERMARK LAYERED SECTION HEADINGS (MATCHING DESIGN SPEC)
+   ========================================================================== */
+
+.section-watermark-heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 3.5rem 0 2rem;
+  padding: 1.5rem 0;
+  text-align: center;
+  user-select: none;
+  overflow: hidden;
+}
+
+.watermark-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: clamp(4.5rem, 13vw, 9.5rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.07);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+  line-height: 1;
+}
+
+[data-theme="light"] .watermark-bg {
+  color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .watermark-bg {
+  color: rgba(255, 255, 255, 0.08);
+}
+
+.watermark-fg {
+  position: relative;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text-primary, #ffffff);
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
+}
+
+[data-theme="dark"] .watermark-fg {
+  color: #ffffff;
+}
+
+[data-theme="light"] .watermark-fg {
+  color: #111111;
+}
+

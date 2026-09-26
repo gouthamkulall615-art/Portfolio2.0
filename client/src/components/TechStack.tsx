@@ -210,7 +210,10 @@ const TechStack = () => {
 
   return (
     <div className="techstack" id={TRIGGER_SECTION_ID}>
-      <h2>My Techstack</h2>
+      <div className="section-watermark-heading">
+        <span className="watermark-bg" aria-hidden="true">SKILLS</span>
+        <h2 className="watermark-fg">SKILLS</h2>
+      </div>
 
       <Canvas
         shadows
