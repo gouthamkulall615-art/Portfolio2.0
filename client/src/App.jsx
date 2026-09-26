@@ -29,10 +29,6 @@ export default function App() {
     setShowIntro(false);
   };
 
-  const handleReplayIntro = () => {
-    setShowIntro(true);
-  };
-
   return (
     <div className="portfolio-app-root">
       {/* 3D Floating Particle Background — sits below everything */}
@@ -110,16 +106,6 @@ export default function App() {
 
       {/* 3D Interactive Tech Stack Spheres */}
       <TechStack />
-
-      {/* Floating Replay Intro Pill Button */}
-      <button
-        type="button"
-        onClick={handleReplayIntro}
-        className="replay-intro-pill"
-        title="Replay Cinematic Intro"
-      >
-        REPLAY INTRO
-      </button>
     </div>
   );
 }
