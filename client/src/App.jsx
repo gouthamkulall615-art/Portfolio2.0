@@ -6,6 +6,7 @@ import { Hero } from './components/Hero';
 import Lanyard from './components/Lanyard';
 import Floating3DParticles from './components/Floating3DParticles';
 import ProjectsSection from './components/ProjectsSection';
+import EducationSection from './components/EducationSection';
 import TechStack from './components/TechStack';
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import './styles/anime.css';
@@ -108,6 +109,9 @@ export default function App() {
 
       {/* Projects Section — ScrollStack cards */}
       <ProjectsSection />
+
+      {/* Education Timeline Section */}
+      <EducationSection />
 
       {/* 3D Interactive Tech Stack Spheres */}
       <TechStack />
