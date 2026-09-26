@@ -168,6 +168,23 @@ const GooeyNav = ({
           ))}
         </ul>
       </nav>
+      <svg
+        style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }}
+        aria-hidden="true"
+      >
+        <defs>
+          <filter id="gooey-nav-filter">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
+              result="goo"
+            />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
       <span className="effect filter" ref={filterRef} />
       <span className="effect text" ref={textRef} />
     </div>
