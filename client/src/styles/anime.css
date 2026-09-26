@@ -152,10 +152,19 @@ body.anime-body {
    RESPONSIVENESS (MOBILE & TABLET)
    ========================================================================== */
 
+/* By default (desktop), mobile staggered menu is hidden */
+.mobile-staggered-menu {
+  display: none;
+}
+
 @media (max-width: 900px) {
+  /* On mobile, hide desktop GooeyNav and show StaggeredMenu */
   .portfolio-header {
-    top: 1rem;
-    max-width: 96vw;
+    display: none !important;
+  }
+
+  .mobile-staggered-menu {
+    display: block !important;
   }
 
   .portfolio-layout {
