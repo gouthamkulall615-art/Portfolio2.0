@@ -133,6 +133,37 @@ const TRIGGER_SECTION_ID = "skills";
 
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    if (typeof document !== 'undefined') {
+      return (
+        document.documentElement.getAttribute("data-theme") === "dark" ||
+        document.documentElement.classList.contains("dark")
+      );
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const updateTheme = () => {
+      const isDark =
+        document.documentElement.getAttribute("data-theme") === "dark" ||
+        document.documentElement.classList.contains("dark");
+      setIsDarkTheme(isDark);
+    };
+
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "class"],
+    });
+
+    window.addEventListener("themechange", updateTheme);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("themechange", updateTheme);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -165,15 +196,17 @@ const TechStack = () => {
       (texture) =>
         new THREE.MeshPhysicalMaterial({
           map: texture,
+          color: isDarkTheme ? "#ffffff" : "#f1f5f9",
           emissive: "#ffffff",
           emissiveMap: texture,
-          emissiveIntensity: 0.3,
-          metalness: 0.5,
-          roughness: 1,
-          clearcoat: 0.1,
+          emissiveIntensity: isDarkTheme ? 0.75 : 0.25,
+          metalness: isDarkTheme ? 0.1 : 0.4,
+          roughness: isDarkTheme ? 0.15 : 0.8,
+          clearcoat: isDarkTheme ? 0.5 : 0.1,
+          clearcoatRoughness: 0.1,
         })
     );
-  }, []);
+  }, [isDarkTheme]);
 
   return (
     <div className="techstack" id={TRIGGER_SECTION_ID}>

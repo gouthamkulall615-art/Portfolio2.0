@@ -7,6 +7,7 @@ import Lanyard from './components/Lanyard';
 import Floating3DParticles from './components/Floating3DParticles';
 import ProjectsSection from './components/ProjectsSection';
 import TechStack from './components/TechStack';
+import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import './styles/anime.css';
 
 const navItems = [
@@ -46,7 +47,7 @@ export default function App() {
         <CinematicIntro onComplete={handleIntroComplete} />
       )}
 
-      {/* Floating Top GooeyNav for Desktop */}
+      {/* Floating Top GooeyNav for Desktop with AnimatedThemeToggler on right */}
       <header className="portfolio-header">
         <GooeyNav
           items={navItems}
@@ -58,6 +59,7 @@ export default function App() {
           timeVariance={250}
           colors={[1, 2, 3, 1, 2, 3, 1, 4]}
         />
+        <AnimatedThemeToggler />
       </header>
 
       {/* Mobile Responsive Staggered Sidebar Menu (Opens from Left to Right) */}
@@ -76,6 +78,9 @@ export default function App() {
           isFixed={true}
           logoText="GOUTHAM M"
         />
+        <div className="mobile-theme-toggler-wrapper">
+          <AnimatedThemeToggler />
+        </div>
       </div>
 
       {/* Hero Section — full viewport */}
