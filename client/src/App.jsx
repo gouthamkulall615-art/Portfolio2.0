@@ -10,6 +10,7 @@ import EducationSection from './components/EducationSection';
 import TechStack from './components/TechStack';
 import MarqueeBanner from './components/MarqueeBanner';
 import ContactSection from './components/ContactSection';
+import { CinematicFooter } from './components/CinematicFooter';
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import './styles/anime.css';
 
@@ -123,6 +124,9 @@ export default function App() {
 
       {/* Scroll-triggered Hands Touching Contact Section */}
       <ContactSection />
+
+      {/* Full-screen Cinematic Curtain Reveal Footer */}
+      <CinematicFooter />
     </div>
   );
 }
