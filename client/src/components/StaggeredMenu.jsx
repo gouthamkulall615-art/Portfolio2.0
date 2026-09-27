@@ -19,7 +19,8 @@ export const StaggeredMenu = ({
   isFixed = false,
   closeOnClickAway = true,
   onMenuOpen,
-  onMenuClose
+  onMenuClose,
+  toggleAddon = null,
 }) => {
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -384,29 +385,36 @@ export const StaggeredMenu = ({
             <span className="sm-logo-text">{logoText || 'PORTFOLIO'}</span>
           )}
         </div>
-        <button
-          ref={toggleBtnRef}
-          className="sm-toggle"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          aria-expanded={open}
-          aria-controls="staggered-menu-panel"
-          onClick={toggleMenu}
-          type="button"
-        >
-          <span ref={textWrapRef} className="sm-toggle-textWrap" aria-hidden="true">
-            <span ref={textInnerRef} className="sm-toggle-textInner">
-              {textLines.map((l, i) => (
-                <span className="sm-toggle-line" key={i}>
-                  {l}
-                </span>
-              ))}
+        <div className="sm-toggle-group">
+          <button
+            ref={toggleBtnRef}
+            className="sm-toggle"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="staggered-menu-panel"
+            onClick={toggleMenu}
+            type="button"
+          >
+            <span ref={textWrapRef} className="sm-toggle-textWrap" aria-hidden="true">
+              <span ref={textInnerRef} className="sm-toggle-textInner">
+                {textLines.map((l, i) => (
+                  <span className="sm-toggle-line" key={i}>
+                    {l}
+                  </span>
+                ))}
+              </span>
             </span>
-          </span>
-          <span ref={iconRef} className="sm-icon" aria-hidden="true">
-            <span ref={plusHRef} className="sm-icon-line" />
-            <span ref={plusVRef} className="sm-icon-line sm-icon-line-v" />
-          </span>
-        </button>
+            <span ref={iconRef} className="sm-icon" aria-hidden="true">
+              <span ref={plusHRef} className="sm-icon-line" />
+              <span ref={plusVRef} className="sm-icon-line sm-icon-line-v" />
+            </span>
+          </button>
+          {toggleAddon && (
+            <div className="sm-toggle-addon">
+              {toggleAddon}
+            </div>
+          )}
+        </div>
       </header>
 
       <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>

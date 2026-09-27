@@ -88,11 +88,11 @@ export default function ContactSection() {
 
       if (stageRef.current) {
         const rect = stageRef.current.getBoundingClientRect();
-        const stageW = rect.width || 1200;
-        const stageH = rect.height || 520;
-        // Responsive hand image width matching clamp(280px, 36vw, 540px)
+        const stageW = rect.width || (typeof window !== 'undefined' ? window.innerWidth : 1200);
+        const stageH = mobile ? 380 : 520;
+        // Responsive hand image width
         const handW = mobile
-          ? Math.min(Math.max(220, window.innerWidth * 0.7), 320)
+          ? Math.min(Math.max(220, window.innerWidth * 0.65), 300)
           : Math.min(Math.max(280, window.innerWidth * 0.36), 540);
         const handH = handW * (1696 / 2528);
 
@@ -116,55 +116,33 @@ export default function ContactSection() {
     offset: ['start end', 'center center'],
   });
 
-  // Shared Target Meeting Point in Contact Section stage (exact center X, 46% Y)
+  // Shared Target Meeting Point in Contact Section stage (exact center X, 48% Y on mobile, 46% Y on desktop)
   const targetPointX = stageMetrics.width * 0.5;
-  const targetPointY = stageMetrics.height * 0.46;
+  const targetPointY = stageMetrics.height * (isMobile ? 0.48 : 0.46);
 
   // Exact resting translate values:
   // finalX = targetPointX - (handImageWidth * fingertipXPercent) +/- OVERLAP
   // finalY = targetPointY - (handImageHeight * fingertipYPercent) -/+ OVERLAP
   const finalHumanX = targetPointX - (stageMetrics.handWidth * HUMAN_TIP_X_PCT) + OVERLAP_X;
   const finalHumanY = targetPointY - (stageMetrics.handHeight * HUMAN_TIP_Y_PCT) - OVERLAP_Y;
-  const startHumanX = finalHumanX - Math.max(stageMetrics.width * 0.32, 280);
-  const startHumanY = finalHumanY + 130;
+  const startHumanX = finalHumanX - (isMobile ? Math.max(stageMetrics.width * 0.38, 140) : Math.max(stageMetrics.width * 0.32, 280));
+  const startHumanY = finalHumanY + (isMobile ? 90 : 130);
 
   const finalRobotX = targetPointX - (stageMetrics.handWidth * ROBOT_TIP_X_PCT) - OVERLAP_X;
   const finalRobotY = targetPointY - (stageMetrics.handHeight * ROBOT_TIP_Y_PCT) + OVERLAP_Y;
-  const startRobotX = finalRobotX + Math.max(stageMetrics.width * 0.32, 280);
-  const startRobotY = finalRobotY + 130;
+  const startRobotX = finalRobotX + (isMobile ? Math.max(stageMetrics.width * 0.38, 140) : Math.max(stageMetrics.width * 0.32, 280));
+  const startRobotY = finalRobotY + (isMobile ? 90 : 130);
 
-  // Mobile vertical stack targets
-  const mobileTargetX = stageMetrics.width * 0.5;
-  const mobileTargetY = stageMetrics.height * 0.5;
-  const finalHumanXMobile = mobileTargetX - (stageMetrics.handWidth * HUMAN_TIP_X_PCT);
-  const finalHumanYMobile = mobileTargetY - (stageMetrics.handHeight * HUMAN_TIP_Y_PCT) - OVERLAP_Y;
-  const startHumanYMobile = finalHumanYMobile + 180;
+  // useTransform calls with exact calculated values for both desktop and mobile
+  const humanX = useTransform(scrollYProgress, (p) => startHumanX + (finalHumanX - startHumanX) * p);
+  const humanY = useTransform(scrollYProgress, (p) => startHumanY + (finalHumanY - startHumanY) * p);
+  const robotX = useTransform(scrollYProgress, (p) => startRobotX + (finalRobotX - startRobotX) * p);
+  const robotY = useTransform(scrollYProgress, (p) => startRobotY + (finalRobotY - startRobotY) * p);
 
-  const finalRobotXMobile = mobileTargetX - (stageMetrics.handWidth * ROBOT_TIP_X_PCT);
-  const finalRobotYMobile = mobileTargetY - (stageMetrics.handHeight * ROBOT_TIP_Y_PCT) + OVERLAP_Y;
-  const startRobotYMobile = finalRobotYMobile - 180;
-
-  // Desktop useTransform calls with exact calculated values
-  const humanXDesktop = useTransform(scrollYProgress, (p) => startHumanX + (finalHumanX - startHumanX) * p);
-  const humanYDesktop = useTransform(scrollYProgress, (p) => startHumanY + (finalHumanY - startHumanY) * p);
-  const robotXDesktop = useTransform(scrollYProgress, (p) => startRobotX + (finalRobotX - startRobotX) * p);
-  const robotYDesktop = useTransform(scrollYProgress, (p) => startRobotY + (finalRobotY - startRobotY) * p);
-
-  // Mobile useTransform calls
-  const humanXMob = useTransform(scrollYProgress, (p) => finalHumanXMobile);
-  const humanYMob = useTransform(scrollYProgress, (p) => startHumanYMobile + (finalHumanYMobile - startHumanYMobile) * p);
-  const robotXMob = useTransform(scrollYProgress, (p) => finalRobotXMobile);
-  const robotYMob = useTransform(scrollYProgress, (p) => startRobotYMobile + (finalRobotYMobile - startRobotYMobile) * p);
-
-  // Assign active transforms based on screen size
-  const humanX = isMobile ? humanXMob : humanXDesktop;
-  const humanY = isMobile ? humanYMob : humanYDesktop;
-  const robotX = isMobile ? robotXMob : robotXDesktop;
-  const robotY = isMobile ? robotYMob : robotYDesktop;
-
-  // Trigger spark at actual contact (progress >= 0.98), not an arbitrary early guess
+  // Trigger spark at contact — responsive threshold so mobile never gets stuck
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    if (latest >= 0.98 && !hasTouched) {
+    const triggerThreshold = isMobile ? 0.72 : 0.92;
+    if (latest >= triggerThreshold && !hasTouched) {
       setHasTouched(true);
     }
   });
@@ -209,26 +187,13 @@ export default function ContactSection() {
         <h2 className="watermark-fg">CONTACT</h2>
       </div>
 
-      {/* Hands Interactive Touching Stage */}
-      <div ref={stageRef} className="hands-stage">
-        {/* Step 4: Temporary Visual Debug Aid (4px Red Dot at Target Meeting Point) */}
-        <div
-          className="debug-meeting-point-dot"
-          style={{
-            position: 'absolute',
-            left: `${targetPointX}px`,
-            top: `${targetPointY}px`,
-            width: '4px',
-            height: '4px',
-            borderRadius: '50%',
-            backgroundColor: '#ff0000',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 999,
-            boxShadow: '0 0 8px 3px rgba(255, 0, 0, 0.95)',
-            pointerEvents: 'none',
-          }}
-          title="Target Meeting Point Calibration Aid"
-        />
+      {/* Hands Interactive Touching Stage — tap to touch on mobile */}
+      <div
+        ref={stageRef}
+        className="hands-stage cursor-pointer"
+        onClick={() => setHasTouched(true)}
+        onTouchStart={() => setHasTouched(true)}
+      >
 
         {/* Human Hand (reaches from bottom-left) */}
         <motion.div

@@ -224,7 +224,8 @@
   transition: transform 0.25s ease;
 }
 
-.contact-info-item:hover {
+.contact-info-item:hover,
+.contact-info-item:active {
   transform: translateX(5px);
 }
 
@@ -248,7 +249,8 @@
   height: 20px;
 }
 
-.contact-info-item:hover .contact-info-icon-box {
+.contact-info-item:hover .contact-info-icon-box,
+.contact-info-item:active .contact-info-icon-box {
   background: rgba(132, 0, 255, 0.16);
   border-color: rgba(132, 0, 255, 0.45);
   color: #ffffff;
@@ -280,7 +282,8 @@
   transition: color 0.2s ease;
 }
 
-.contact-info-item:hover .contact-info-value {
+.contact-info-item:hover .contact-info-value,
+.contact-info-item:active .contact-info-value {
   color: #c084fc;
 }
 
@@ -508,37 +511,32 @@
 
 @media (max-width: 768px) {
   .contact-section-root {
-    min-height: 160vh;
-    padding: 4rem 1rem 6rem;
+    min-height: 140vh;
+    padding: 3.5rem 0.85rem 5rem;
   }
 
   .hands-stage {
-    height: 440px;
-    flex-direction: column;
-    margin: 1rem auto 2.5rem;
+    height: 380px;
+    margin: 1rem auto 2rem;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
   }
 
   .hand-wrapper {
-    width: clamp(220px, 70vw, 320px);
-  }
-
-  /* Vertical Stacking on Mobile */
-  .hand-wrapper.human-hand-wrapper {
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 0;
-  }
-
-  .hand-wrapper.robot-hand-wrapper {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%) rotate(180deg);
+    position: absolute;
     top: 0;
-    bottom: auto;
+    left: 0;
+    width: clamp(200px, 68vw, 300px);
   }
 
-  .spark-emitter-point {
-    top: 50%;
+  .hand-wrapper.human-hand-wrapper,
+  .hand-wrapper.robot-hand-wrapper {
+    left: 0;
+    top: 0;
+    right: auto;
+    bottom: auto;
+    transform: none;
   }
 
   .form-group-row {
@@ -547,6 +545,42 @@
   }
 
   .contact-card-content {
-    padding: 2rem 1.35rem;
+    padding: 2rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-card-content {
+    padding: 1.75rem 0.95rem;
+  }
+
+  .contact-form-card {
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+
+  .contact-left-col .contact-title {
+    font-size: 2rem;
+  }
+
+  .contact-left-col .contact-subtitle {
+    font-size: 0.88rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .contact-info-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+  }
+
+  .contact-info-value {
+    font-size: 0.82rem;
+  }
+
+  .send-message-btn,
+  .contact-submit-btn {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.88rem;
   }
 }

@@ -151,7 +151,8 @@
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
 }
 
-.timeline-card:hover {
+.timeline-card:hover,
+.timeline-card:active {
   transform: translateY(-4px);
   border-color: rgba(225, 43, 72, 0.45);
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45), 0 0 25px rgba(225, 43, 72, 0.15);
@@ -261,8 +262,8 @@
   }
 
   .timeline-marker-wrapper {
-    left: 20px;
-    transform: none;
+    left: 21.5px;
+    transform: translateX(-50%);
   }
 
   /* Both items align to the right of the spine */
@@ -292,5 +293,49 @@
 
   .timeline-image-wrapper {
     height: 175px;
+  }
+}
+
+@media (max-width: 480px) {
+  .education-section {
+    padding: 3rem 0.75rem 4.5rem;
+  }
+
+  .timeline-container {
+    margin-top: 2rem;
+    padding: 1rem 0;
+  }
+
+  .timeline-spine-track,
+  .timeline-spine-progress {
+    left: 14px;
+  }
+
+  .timeline-marker-wrapper {
+    left: 15.5px;
+  }
+
+  .timeline-card {
+    width: calc(100% - 36px);
+    padding: 1.15rem;
+    border-radius: 16px;
+  }
+
+  .timeline-item.item-left .timeline-branch-line,
+  .timeline-item.item-right .timeline-branch-line {
+    left: 14px;
+    width: 22px;
+  }
+
+  .timeline-institution {
+    font-size: 1.05rem;
+  }
+
+  .timeline-degree {
+    font-size: 0.85rem;
+  }
+
+  .timeline-image-wrapper {
+    height: 150px;
   }
 }

@@ -72,7 +72,10 @@ const ContactCardEffects = ({
   const rafIdRef = useRef(null);
 
   const isMobile = useMobileDetection();
-  const shouldDisableAnimations = disableAnimations || isMobile;
+  // Do not disable animations on mobile; spotlight, border glow, particles and ripple are touch-interactive
+  const shouldDisableAnimations = disableAnimations;
+  const shouldEnableTilt = enableTilt && !isMobile;
+  const shouldEnableMagnetism = enableMagnetism && !isMobile;
 
   const initializeParticles = useCallback(() => {
     if (particlesInitialized.current || !cardRef.current) return;
@@ -138,7 +141,7 @@ const ContactCardEffects = ({
     });
   }, [enableStars, initializeParticles]);
 
-  // Card-level effects: smooth tilt, magnetism, particles, click ripple
+  // Card-level effects: smooth tilt, magnetism, particles, click ripple, touch interaction
   useEffect(() => {
     if (shouldDisableAnimations || !cardRef.current) return;
     const element = cardRef.current;
@@ -148,11 +151,11 @@ const ContactCardEffects = ({
     let xTo = null;
     let yTo = null;
 
-    if (enableTilt) {
+    if (shouldEnableTilt) {
       rotateXTo = gsap.quickTo(element, 'rotateX', { duration: 0.25, ease: 'power2.out' });
       rotateYTo = gsap.quickTo(element, 'rotateY', { duration: 0.25, ease: 'power2.out' });
     }
-    if (enableMagnetism) {
+    if (shouldEnableMagnetism) {
       xTo = gsap.quickTo(element, 'x', { duration: 0.3, ease: 'power2.out' });
       yTo = gsap.quickTo(element, 'y', { duration: 0.3, ease: 'power2.out' });
     }
@@ -176,21 +179,21 @@ const ContactCardEffects = ({
     };
 
     const handleMouseMove = (e) => {
-      if (!enableTilt && !enableMagnetism) return;
+      if (!shouldEnableTilt && !shouldEnableMagnetism) return;
       const rect = element.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      if (enableTilt && rotateXTo && rotateYTo) {
+      if (shouldEnableTilt && rotateXTo && rotateYTo) {
         const rotX = ((y - centerY) / centerY) * -5;
         const rotY = ((x - centerX) / centerX) * 5;
         rotateXTo(rotX);
         rotateYTo(rotY);
       }
 
-      if (enableMagnetism && xTo && yTo) {
+      if (shouldEnableMagnetism && xTo && yTo) {
         const magnetX = (x - centerX) * 0.025;
         const magnetY = (y - centerY) * 0.025;
         xTo(magnetX);
@@ -198,11 +201,11 @@ const ContactCardEffects = ({
       }
     };
 
-    const handleClick = (e) => {
+    const triggerRippleAt = (clientX, clientY) => {
       if (!clickEffect) return;
       const rect = element.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
       const maxDistance = Math.max(
         Math.hypot(x, y),
         Math.hypot(x - rect.width, y),
@@ -232,22 +235,52 @@ const ContactCardEffects = ({
       );
     };
 
+    const handleClick = (e) => {
+      triggerRippleAt(e.clientX, e.clientY);
+    };
+
+    let touchTimeout = null;
+
+    const handleTouchStart = (e) => {
+      if (touchTimeout) clearTimeout(touchTimeout);
+      isHoveredRef.current = true;
+      element.classList.add('is-touched');
+      animateParticles();
+      if (e.touches && e.touches[0]) {
+        triggerRippleAt(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      touchTimeout = setTimeout(() => {
+        isHoveredRef.current = false;
+        element.classList.remove('is-touched');
+        clearAllParticles();
+      }, 1600);
+    };
+
     element.addEventListener('mouseenter', handleMouseEnter);
     element.addEventListener('mouseleave', handleMouseLeave);
     element.addEventListener('mousemove', handleMouseMove);
     element.addEventListener('click', handleClick);
+    element.addEventListener('touchstart', handleTouchStart, { passive: true });
+    element.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       isHoveredRef.current = false;
+      if (touchTimeout) clearTimeout(touchTimeout);
+      element.classList.remove('is-touched');
       element.removeEventListener('mouseenter', handleMouseEnter);
       element.removeEventListener('mouseleave', handleMouseLeave);
       element.removeEventListener('mousemove', handleMouseMove);
       element.removeEventListener('click', handleClick);
+      element.removeEventListener('touchstart', handleTouchStart);
+      element.removeEventListener('touchend', handleTouchEnd);
       clearAllParticles();
     };
-  }, [shouldDisableAnimations, enableTilt, enableMagnetism, clickEffect, animateParticles, clearAllParticles]);
+  }, [shouldDisableAnimations, shouldEnableTilt, shouldEnableMagnetism, clickEffect, animateParticles, clearAllParticles]);
 
-  // High-performance cursor spotlight scoped to card
+  // High-performance cursor & touch spotlight scoped to card
   useEffect(() => {
     if (shouldDisableAnimations || !enableSpotlight || !wrapperRef.current) return;
 
@@ -369,10 +402,37 @@ const ContactCardEffects = ({
       }
     };
 
+    const handleTouch = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        latestEvent = {
+          clientX: e.touches[0].clientX,
+          clientY: e.touches[0].clientY,
+        };
+        if (!rafIdRef.current) {
+          rafIdRef.current = requestAnimationFrame(onFrame);
+        }
+      }
+    };
+
+    const handleTouchEnd = () => {
+      setTimeout(() => {
+        if (!isHoveredRef.current) {
+          gsap.to(spotlight, { opacity: 0, duration: 0.8, overwrite: 'auto' });
+          if (cardRef.current) cardRef.current.style.setProperty('--glow-intensity', '0');
+        }
+      }, 1200);
+    };
+
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('touchstart', handleTouch, { passive: true });
+    window.addEventListener('touchmove', handleTouch, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouch);
+      window.removeEventListener('touchmove', handleTouch);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('resize', updateRects);
       window.removeEventListener('scroll', updateRects);
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);

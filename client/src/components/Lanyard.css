@@ -13,4 +13,5 @@
 
 .lanyard-wrapper canvas {
   pointer-events: auto;
+  touch-action: pan-y;
 }

@@ -81,10 +81,8 @@ export default function App() {
           accentColor="#e12b48"
           isFixed={true}
           logoText="GOUTHAM M"
+          toggleAddon={<AnimatedThemeToggler />}
         />
-        <div className="mobile-theme-toggler-wrapper">
-          <AnimatedThemeToggler />
-        </div>
       </div>
 
       {/* Hero Section — full viewport */}

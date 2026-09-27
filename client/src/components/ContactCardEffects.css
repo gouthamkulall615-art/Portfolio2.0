@@ -43,7 +43,8 @@
   z-index: 10;
 }
 
-.contact-card-magic:hover {
+.contact-card-magic:hover,
+.contact-card-magic.is-touched {
   box-shadow:
     0 4px 20px rgba(46, 24, 78, 0.4),
     0 0 30px rgba(132, 0, 255, 0.2);

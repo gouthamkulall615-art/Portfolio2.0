@@ -55,6 +55,27 @@
   color: #ffffff;
 }
 
+.sm-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  pointer-events: auto;
+}
+
+.sm-toggle-addon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.sm-toggle-addon .animated-theme-toggler-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+}
+
 .sm-toggle {
   position: relative;
   display: inline-flex;

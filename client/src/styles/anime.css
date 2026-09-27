@@ -83,13 +83,6 @@ body {
   box-shadow: none;
 }
 
-.mobile-theme-toggler-wrapper {
-  position: fixed;
-  top: 1.25rem;
-  right: 1.25rem;
-  z-index: 120;
-}
-
 
 /* ==========================================================================
    APP ROOT & DARK CANVAS CONTAINER
@@ -171,8 +164,15 @@ body {
     display: block !important;
   }
 
+  .portfolio-hero-section {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+
   .portfolio-layout {
     flex-direction: column;
+    width: 100%;
     height: auto;
     min-height: 100vh;
   }
@@ -180,15 +180,28 @@ body {
   .portfolio-details-col {
     flex: none;
     width: 100%;
-    padding: 7rem 1.5rem 2rem 1.5rem;
+    padding: 6.5rem 1.5rem 1.5rem 1.5rem;
     min-height: auto;
+    box-sizing: border-box;
   }
 
   .portfolio-lanyard-col {
     flex: none;
     width: 100%;
-    height: 70vh;
-    min-height: 480px;
+    height: 55vh;
+    min-height: 380px;
+    max-height: 520px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-details-col {
+    padding: 5.5rem 1rem 1rem 1rem;
+  }
+
+  .portfolio-lanyard-col {
+    height: 48vh;
+    min-height: 340px;
   }
 }
 

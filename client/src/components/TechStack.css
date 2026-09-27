@@ -34,5 +34,16 @@
   width: 100% !important;
   height: 650px !important;
   max-width: 1200px;
-  touch-action: none;
+  touch-action: pan-y;
+}
+
+@media (max-width: 768px) {
+  .techstack {
+    min-height: auto;
+    padding: 3.5rem 0.75rem 2rem;
+  }
+
+  .tech-canvas {
+    height: 420px !important;
+  }
 }
