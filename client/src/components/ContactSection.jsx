@@ -9,6 +9,11 @@ import {
 import { Send, Mail, Sparkles } from 'lucide-react';
 import humanHandImg from '../assets/human-hand.png';
 import robotHandImg from '../assets/robot-hand.png';
+import { ContactCard } from './ui/contact-card';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Button } from './ui/button';
+import { Label } from './ui/label';
 import './ContactSection.css';
 
 const GithubIcon = ({ size = 16, className = '' }) => (
@@ -53,24 +58,6 @@ export default function ContactSection() {
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // Character speech bubble state with auto-hide for touch / mobile
-  const [showQuote, setShowQuote] = useState(false);
-  const quoteTimeoutRef = useRef(null);
-
-  const handleCharacterTap = () => {
-    setShowQuote(true);
-    if (quoteTimeoutRef.current) clearTimeout(quoteTimeoutRef.current);
-    quoteTimeoutRef.current = setTimeout(() => {
-      setShowQuote(false);
-    }, 2000);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (quoteTimeoutRef.current) clearTimeout(quoteTimeoutRef.current);
-    };
-  }, []);
 
   // Measure stage and calculate responsive hand dimensions
   useEffect(() => {
@@ -295,105 +282,65 @@ export default function ContactSection() {
         animate={hasTouched ? 'visible' : 'hidden'}
         variants={containerVariants}
       >
-        <div className="contact-card">
-          {/* Original Anime Character illustration sitting on top edge */}
-          <div
-            className="character-wrapper"
-            onClick={handleCharacterTap}
-            onMouseEnter={() => setShowQuote(true)}
-            onMouseLeave={() => setShowQuote(false)}
-            role="button"
-            tabIndex={0}
-            aria-label="Character quote interaction"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                handleCharacterTap();
-              }
-            }}
-          >
-            <img
-              src="/images/character-sitting.png"
-              alt="Character sitting illustration"
-              className="sitting-character"
-              draggable={false}
-            />
-            <motion.span
-              className="character-quote"
-              initial={{ opacity: 0, y: 10, x: '-50%', scale: 0.9 }}
-              animate={showQuote ? { opacity: 1, y: 0, x: '-50%', scale: 1 } : { opacity: 0, y: 10, x: '-50%', scale: 0.9 }}
-              whileHover={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
-              Wake up to reality.
-            </motion.span>
-          </div>
 
-          <motion.div className="contact-header" variants={itemVariants}>
-            <span className="contact-tag">
-              <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
-              TRANSMISSION
-            </span>
-            <h3 className="contact-title">Let's Connect</h3>
-            <p className="contact-subtitle">
-              Have an idea, project, or opportunity? Drop a message below.
-            </p>
-          </motion.div>
-
+        <ContactCard
+          title="Let's Connect"
+          description="Have an idea, project, or opportunity? Drop a message below or reach out directly."
+          className="rounded-2xl border-border bg-card text-foreground shadow-2xl backdrop-blur-md"
+        >
           {isSubmitted ? (
             <motion.div
-              className="contact-success-msg"
+              className="w-full rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center text-emerald-400"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
             >
-              Message received! I will get back to you shortly.
+              <Sparkles className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
+              <p className="font-semibold">Transmission Received!</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                I will get back to you within 1 business day.
+              </p>
             </motion.div>
           ) : (
-            <motion.form
-              onSubmit={handleSubmit}
-              className="contact-form"
-              variants={itemVariants}
-            >
-              <div className="form-group-row">
-                <div className="form-group">
-                  <label htmlFor="contact-name" className="form-label">
-                    Name
-                  </label>
-                  <input
-                    id="contact-name"
-                    type="text"
-                    required
-                    placeholder="Your Name"
-                    value={formState.name}
-                    onChange={(e) =>
-                      setFormState((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="contact-email" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    id="contact-email"
-                    type="email"
-                    required
-                    placeholder="your.email@example.com"
-                    value={formState.email}
-                    onChange={(e) =>
-                      setFormState((prev) => ({ ...prev, email: e.target.value }))
-                    }
-                    className="form-input"
-                  />
-                </div>
+            <form onSubmit={handleSubmit} className="w-full space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Name
+                </Label>
+                <Input
+                  id="contact-name"
+                  type="text"
+                  required
+                  placeholder="Your Name"
+                  value={formState.name}
+                  onChange={(e) =>
+                    setFormState((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  className="bg-background/80"
+                />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="contact-subject" className="form-label">
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Email
+                </Label>
+                <Input
+                  id="contact-email"
+                  type="email"
+                  required
+                  placeholder="your.email@example.com"
+                  value={formState.email}
+                  onChange={(e) =>
+                    setFormState((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                  className="bg-background/80"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-subject" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Subject
-                </label>
-                <input
+                </Label>
+                <Input
                   id="contact-subject"
                   type="text"
                   required
@@ -402,15 +349,15 @@ export default function ContactSection() {
                   onChange={(e) =>
                     setFormState((prev) => ({ ...prev, subject: e.target.value }))
                   }
-                  className="form-input"
+                  className="bg-background/80"
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="contact-message" className="form-label">
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-message" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Message
-                </label>
-                <textarea
+                </Label>
+                <Textarea
                   id="contact-message"
                   required
                   rows={4}
@@ -419,54 +366,20 @@ export default function ContactSection() {
                   onChange={(e) =>
                     setFormState((prev) => ({ ...prev, message: e.target.value }))
                   }
-                  className="form-textarea"
+                  className="bg-background/80 resize-none"
                 />
               </div>
 
-              <motion.button
+              <Button
                 type="submit"
-                className="contact-submit-btn"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="w-full gap-2 bg-[#7a1f2b] text-white hover:bg-[#9b2d3a] transition-all shadow-md active:scale-95"
               >
                 <span>Send Message</span>
-                <Send size={16} />
-              </motion.button>
-            </motion.form>
+                <Send className="h-4 w-4" />
+              </Button>
+            </form>
           )}
-
-          {/* Direct Social Links */}
-          <motion.div className="contact-social-row" variants={itemVariants}>
-            <a
-              href="mailto:gouthamkulal@gmail.com"
-              className="contact-social-link"
-              title="Direct Email"
-            >
-              <Mail size={16} />
-              <span>Email</span>
-            </a>
-            <a
-              href="https://github.com/gouthamkulall615-art"
-              target="_blank"
-              rel="noreferrer"
-              className="contact-social-link"
-              title="GitHub Profile"
-            >
-              <GithubIcon size={16} />
-              <span>GitHub</span>
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              className="contact-social-link"
-              title="LinkedIn Profile"
-            >
-              <LinkedinIcon size={16} />
-              <span>LinkedIn</span>
-            </a>
-          </motion.div>
-        </div>
+        </ContactCard>
       </motion.div>
     </section>
   );

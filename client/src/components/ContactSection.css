@@ -131,10 +131,10 @@
 /* Card Container */
 .contact-card {
   position: relative;
+  overflow: hidden;
   background: #111115;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
-  padding: 3rem 2.5rem;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -142,104 +142,26 @@
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.contact-card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.contact-card-content {
+  position: relative;
+  z-index: 1;
+  padding: 3rem 2.5rem;
+}
+
 [data-theme="light"] .contact-card {
   background: #ffffff;
   border-color: rgba(0, 0, 0, 0.08);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-}
-
-/* ==========================================================================
-   ORIGINAL ANIME CHARACTER SITTING ON TOP EDGE
-   ========================================================================== */
-
-.character-wrapper {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, -75%);
-  z-index: 5;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Idle Breathing Motion: translateY oscillating +-2px on a slow 4s loop */
-@keyframes character-breathe {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-2px);
-  }
-}
-
-.sitting-character {
-  width: 180px;
-  height: auto;
-  display: block;
-  pointer-events: auto;
-  animation: character-breathe 4s ease-in-out infinite;
-  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
-}
-
-/* Speech Bubble Quote Reveal */
-.character-quote {
-  position: absolute;
-  top: -44px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(20, 20, 24, 0.95);
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  pointer-events: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  z-index: 10;
-}
-
-.character-quote::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  width: 8px;
-  height: 8px;
-  background: rgba(20, 20, 24, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-[data-theme="light"] .character-quote {
-  background: rgba(255, 255, 255, 0.96);
-  color: #111115;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="light"] .character-quote::after {
-  background: rgba(255, 255, 255, 0.96);
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 480px) {
-  .sitting-character {
-    width: 150px;
-  }
-  .character-quote {
-    font-size: 0.78rem;
-    padding: 5px 12px;
-    top: -40px;
-  }
 }
 
 /* Header Text */
@@ -343,6 +265,7 @@
 }
 
 /* Submit Button */
+.send-message-btn,
 .contact-submit-btn {
   display: inline-flex;
   align-items: center;
@@ -356,20 +279,23 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #ffffff;
-  background: linear-gradient(135deg, #7c3aed 0%, #c41e3a 100%);
+  background: #7a1f2b; /* solid garnet, matches nav accent */
   border: none;
   border-radius: 14px;
   cursor: pointer;
-  box-shadow: 0 6px 25px rgba(124, 58, 237, 0.35);
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(122, 31, 43, 0.35);
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
   margin-top: 0.5rem;
 }
 
+.send-message-btn:hover,
 .contact-submit-btn:hover {
+  background: #9b2d3a; /* slightly lighter on hover */
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5), 0 0 20px rgba(196, 30, 58, 0.35);
+  box-shadow: 0 10px 28px rgba(122, 31, 43, 0.45);
 }
 
+.send-message-btn:active,
 .contact-submit-btn:active {
   transform: translateY(0);
 }
@@ -389,34 +315,66 @@
 }
 
 /* Direct Social Links row */
+.social-links,
 .contact-social-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+[data-theme="light"] .social-links,
 [data-theme="light"] .contact-social-row {
   border-color: rgba(0, 0, 0, 0.08);
 }
 
+.social-link,
 .contact-social-link {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e0e0e0;
   font-family: var(--font-main, 'Poppins', sans-serif);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
   text-decoration: none;
-  transition: color 0.25s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
+.social-link:hover,
 .contact-social-link:hover {
-  color: #8b5cf6;
+  background: rgba(122, 31, 43, 0.15);
+  border-color: rgba(122, 31, 43, 0.4);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.social-link svg,
+.contact-social-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+[data-theme="light"] .social-link,
+[data-theme="light"] .contact-social-link {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #333333;
+}
+
+[data-theme="light"] .social-link:hover,
+[data-theme="light"] .contact-social-link:hover {
+  background: rgba(122, 31, 43, 0.1);
+  border-color: rgba(122, 31, 43, 0.35);
+  color: #7a1f2b;
 }
 
 /* ==========================================================================
@@ -464,7 +422,7 @@
     gap: 1.25rem;
   }
 
-  .contact-card {
+  .contact-card-content {
     padding: 2rem 1.35rem;
   }
 }
