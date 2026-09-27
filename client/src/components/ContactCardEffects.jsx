@@ -2,9 +2,9 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
 import './ContactCardEffects.css';
 
-const DEFAULT_PARTICLE_COUNT = 12;
+const DEFAULT_PARTICLE_COUNT = 10;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
-const GLOW_COLOR = '132, 0, 255'; // purple only, not configurable
+const GLOW_COLOR = '132, 0, 255'; // purple only
 const MOBILE_BREAKPOINT = 768;
 
 const createParticleElement = (x, y) => {
@@ -21,25 +21,15 @@ const createParticleElement = (x, y) => {
     z-index: 100;
     left: ${x}px;
     top: ${y}px;
+    will-change: transform, opacity;
   `;
   return el;
 };
 
-const calculateSpotlightValues = radius => ({
+const calculateSpotlightValues = (radius) => ({
   proximity: radius * 0.5,
-  fadeDistance: radius * 0.75
+  fadeDistance: radius * 0.75,
 });
-
-const updateCardGlowProperties = (card, mouseX, mouseY, glow, radius) => {
-  const rect = card.getBoundingClientRect();
-  const relativeX = ((mouseX - rect.left) / rect.width) * 100;
-  const relativeY = ((mouseY - rect.top) / rect.height) * 100;
-
-  card.style.setProperty('--glow-x', `${relativeX}%`);
-  card.style.setProperty('--glow-y', `${relativeY}%`);
-  card.style.setProperty('--glow-intensity', glow.toString());
-  card.style.setProperty('--glow-radius', `${radius}px`);
-};
 
 const useMobileDetection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -55,14 +45,8 @@ const useMobileDetection = () => {
 };
 
 /**
- * Wraps any single card (e.g. your Contact form card) with MagicBento's
- * particle-burst, border-glow, tilt, magnetism, and click-ripple effects,
- * plus a global cursor spotlight — all locked to purple.
- *
- * Usage:
- * <ContactCardEffects>
- *   <YourExistingContactFormMarkup />
- * </ContactCardEffects>
+ * High-performance MagicBento card effects wrapper.
+ * Uses requestAnimationFrame and GPU transform properties to ensure 60-120 FPS.
  */
 const ContactCardEffects = ({
   children,
@@ -70,12 +54,12 @@ const ContactCardEffects = ({
   enableStars = true,
   enableSpotlight = true,
   enableBorderGlow = true,
-  enableTilt = true,
-  enableMagnetism = true,
+  enableTilt = false,
+  enableMagnetism = false,
   clickEffect = true,
   spotlightRadius = DEFAULT_SPOTLIGHT_RADIUS,
   particleCount = DEFAULT_PARTICLE_COUNT,
-  disableAnimations = false
+  disableAnimations = false,
 }) => {
   const cardRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -84,8 +68,8 @@ const ContactCardEffects = ({
   const isHoveredRef = useRef(false);
   const memoizedParticles = useRef([]);
   const particlesInitialized = useRef(false);
-  const magnetismAnimationRef = useRef(null);
   const spotlightRef = useRef(null);
+  const rafIdRef = useRef(null);
 
   const isMobile = useMobileDetection();
   const shouldDisableAnimations = disableAnimations || isMobile;
@@ -102,15 +86,14 @@ const ContactCardEffects = ({
   const clearAllParticles = useCallback(() => {
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
-    magnetismAnimationRef.current?.kill();
 
-    particlesRef.current.forEach(particle => {
+    particlesRef.current.forEach((particle) => {
       gsap.to(particle, {
         scale: 0,
         opacity: 0,
-        duration: 0.3,
-        ease: 'back.in(1.7)',
-        onComplete: () => particle.parentNode?.removeChild(particle)
+        duration: 0.25,
+        ease: 'power2.in',
+        onComplete: () => particle.parentNode?.removeChild(particle),
       });
     });
     particlesRef.current = [];
@@ -128,44 +111,71 @@ const ContactCardEffects = ({
         cardRef.current.appendChild(clone);
         particlesRef.current.push(clone);
 
-        gsap.fromTo(clone, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.7)' });
+        gsap.fromTo(
+          clone,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.7)' }
+        );
         gsap.to(clone, {
-          x: (Math.random() - 0.5) * 100,
-          y: (Math.random() - 0.5) * 100,
+          x: (Math.random() - 0.5) * 80,
+          y: (Math.random() - 0.5) * 80,
           rotation: Math.random() * 360,
-          duration: 2 + Math.random() * 2,
+          duration: 2.5 + Math.random() * 2,
           ease: 'none',
           repeat: -1,
-          yoyo: true
+          yoyo: true,
         });
-        gsap.to(clone, { opacity: 0.3, duration: 1.5, ease: 'power2.inOut', repeat: -1, yoyo: true });
-      }, index * 100);
+        gsap.to(clone, {
+          opacity: 0.25,
+          duration: 1.8,
+          ease: 'power1.inOut',
+          repeat: -1,
+          yoyo: true,
+        });
+      }, index * 120);
 
       timeoutsRef.current.push(timeoutId);
     });
   }, [enableStars, initializeParticles]);
 
-  // Card-level effects: tilt, magnetism, particles, click ripple
+  // Card-level effects: smooth tilt, magnetism, particles, click ripple
   useEffect(() => {
     if (shouldDisableAnimations || !cardRef.current) return;
     const element = cardRef.current;
 
+    let rotateXTo = null;
+    let rotateYTo = null;
+    let xTo = null;
+    let yTo = null;
+
+    if (enableTilt) {
+      rotateXTo = gsap.quickTo(element, 'rotateX', { duration: 0.25, ease: 'power2.out' });
+      rotateYTo = gsap.quickTo(element, 'rotateY', { duration: 0.25, ease: 'power2.out' });
+    }
+    if (enableMagnetism) {
+      xTo = gsap.quickTo(element, 'x', { duration: 0.3, ease: 'power2.out' });
+      yTo = gsap.quickTo(element, 'y', { duration: 0.3, ease: 'power2.out' });
+    }
+
     const handleMouseEnter = () => {
       isHoveredRef.current = true;
       animateParticles();
-      if (enableTilt) {
-        gsap.to(element, { rotateX: 5, rotateY: 5, duration: 0.3, ease: 'power2.out', transformPerspective: 1000 });
-      }
     };
 
     const handleMouseLeave = () => {
       isHoveredRef.current = false;
       clearAllParticles();
-      if (enableTilt) gsap.to(element, { rotateX: 0, rotateY: 0, duration: 0.3, ease: 'power2.out' });
-      if (enableMagnetism) gsap.to(element, { x: 0, y: 0, duration: 0.3, ease: 'power2.out' });
+      if (rotateXTo && rotateYTo) {
+        rotateXTo(0);
+        rotateYTo(0);
+      }
+      if (xTo && yTo) {
+        xTo(0);
+        yTo(0);
+      }
     };
 
-    const handleMouseMove = e => {
+    const handleMouseMove = (e) => {
       if (!enableTilt && !enableMagnetism) return;
       const rect = element.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -173,20 +183,22 @@ const ContactCardEffects = ({
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      if (enableTilt) {
-        const rotateX = ((y - centerY) / centerY) * -6;
-        const rotateY = ((x - centerX) / centerX) * 6;
-        gsap.to(element, { rotateX, rotateY, duration: 0.1, ease: 'power2.out', transformPerspective: 1000 });
+      if (enableTilt && rotateXTo && rotateYTo) {
+        const rotX = ((y - centerY) / centerY) * -5;
+        const rotY = ((x - centerX) / centerX) * 5;
+        rotateXTo(rotX);
+        rotateYTo(rotY);
       }
 
-      if (enableMagnetism) {
-        const magnetX = (x - centerX) * 0.03;
-        const magnetY = (y - centerY) * 0.03;
-        magnetismAnimationRef.current = gsap.to(element, { x: magnetX, y: magnetY, duration: 0.3, ease: 'power2.out' });
+      if (enableMagnetism && xTo && yTo) {
+        const magnetX = (x - centerX) * 0.025;
+        const magnetY = (y - centerY) * 0.025;
+        xTo(magnetX);
+        yTo(magnetY);
       }
     };
 
-    const handleClick = e => {
+    const handleClick = (e) => {
       if (!clickEffect) return;
       const rect = element.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -204,18 +216,19 @@ const ContactCardEffects = ({
         width: ${maxDistance * 2}px;
         height: ${maxDistance * 2}px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(${GLOW_COLOR}, 0.4) 0%, rgba(${GLOW_COLOR}, 0.2) 30%, transparent 70%);
+        background: radial-gradient(circle, rgba(${GLOW_COLOR}, 0.35) 0%, rgba(${GLOW_COLOR}, 0.15) 35%, transparent 70%);
         left: ${x - maxDistance}px;
         top: ${y - maxDistance}px;
         pointer-events: none;
         z-index: 1000;
+        will-change: transform, opacity;
       `;
       element.appendChild(ripple);
 
       gsap.fromTo(
         ripple,
         { scale: 0, opacity: 1 },
-        { scale: 1, opacity: 0, duration: 0.8, ease: 'power2.out', onComplete: () => ripple.remove() }
+        { scale: 1, opacity: 0, duration: 0.75, ease: 'power2.out', onComplete: () => ripple.remove() }
       );
     };
 
@@ -234,7 +247,7 @@ const ContactCardEffects = ({
     };
   }, [shouldDisableAnimations, enableTilt, enableMagnetism, clickEffect, animateParticles, clearAllParticles]);
 
-  // Global cursor spotlight, scoped to this single card only
+  // High-performance cursor spotlight scoped to card
   useEffect(() => {
     if (shouldDisableAnimations || !enableSpotlight || !wrapperRef.current) return;
 
@@ -242,69 +255,127 @@ const ContactCardEffects = ({
     spotlight.className = 'global-spotlight';
     spotlight.style.cssText = `
       position: fixed;
-      width: 800px;
-      height: 800px;
+      top: 0;
+      left: 0;
+      width: 700px;
+      height: 700px;
+      margin-left: -350px;
+      margin-top: -350px;
       border-radius: 50%;
       pointer-events: none;
       background: radial-gradient(circle,
-        rgba(${GLOW_COLOR}, 0.15) 0%,
-        rgba(${GLOW_COLOR}, 0.08) 15%,
-        rgba(${GLOW_COLOR}, 0.04) 25%,
-        rgba(${GLOW_COLOR}, 0.02) 40%,
-        rgba(${GLOW_COLOR}, 0.01) 65%,
+        rgba(${GLOW_COLOR}, 0.14) 0%,
+        rgba(${GLOW_COLOR}, 0.07) 18%,
+        rgba(${GLOW_COLOR}, 0.03) 30%,
+        rgba(${GLOW_COLOR}, 0.015) 45%,
         transparent 70%
       );
       z-index: 200;
       opacity: 0;
-      transform: translate(-50%, -50%);
       mix-blend-mode: screen;
+      will-change: transform, opacity;
     `;
     document.body.appendChild(spotlight);
     spotlightRef.current = spotlight;
 
-    const handleMouseMove = e => {
-      if (!wrapperRef.current || !cardRef.current) return;
-      const rect = wrapperRef.current.getBoundingClientRect();
-      const mouseInside =
-        e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+    const xTo = gsap.quickTo(spotlight, 'x', { duration: 0.15, ease: 'power2.out' });
+    const yTo = gsap.quickTo(spotlight, 'y', { duration: 0.15, ease: 'power2.out' });
 
-      if (!mouseInside) {
-        gsap.to(spotlight, { opacity: 0, duration: 0.3, ease: 'power2.out' });
-        cardRef.current.style.setProperty('--glow-intensity', '0');
+    let latestEvent = null;
+    let cardRect = null;
+    let wrapperRect = null;
+
+    const updateRects = () => {
+      if (wrapperRef.current) wrapperRect = wrapperRef.current.getBoundingClientRect();
+      if (cardRef.current) cardRect = cardRef.current.getBoundingClientRect();
+    };
+
+    updateRects();
+    window.addEventListener('resize', updateRects, { passive: true });
+    window.addEventListener('scroll', updateRects, { passive: true });
+
+    const onFrame = () => {
+      if (!latestEvent || !cardRef.current || !wrapperRef.current) {
+        rafIdRef.current = null;
         return;
       }
 
-      const { proximity, fadeDistance } = calculateSpotlightValues(spotlightRadius);
-      const cardRect = cardRef.current.getBoundingClientRect();
-      const centerX = cardRect.left + cardRect.width / 2;
-      const centerY = cardRect.top + cardRect.height / 2;
-      const distance =
-        Math.hypot(e.clientX - centerX, e.clientY - centerY) - Math.max(cardRect.width, cardRect.height) / 2;
-      const effectiveDistance = Math.max(0, distance);
+      const e = latestEvent;
+      latestEvent = null;
 
-      let glowIntensity = 0;
-      if (effectiveDistance <= proximity) glowIntensity = 1;
-      else if (effectiveDistance <= fadeDistance) {
-        glowIntensity = (fadeDistance - effectiveDistance) / (fadeDistance - proximity);
+      if (!wrapperRect) updateRects();
+
+      const mouseInside =
+        wrapperRect &&
+        e.clientX >= wrapperRect.left - 80 &&
+        e.clientX <= wrapperRect.right + 80 &&
+        e.clientY >= wrapperRect.top - 80 &&
+        e.clientY <= wrapperRect.bottom + 80;
+
+      if (!mouseInside) {
+        gsap.to(spotlight, { opacity: 0, duration: 0.25, overwrite: 'auto' });
+        cardRef.current.style.setProperty('--glow-intensity', '0');
+        rafIdRef.current = null;
+        return;
       }
 
-      updateCardGlowProperties(cardRef.current, e.clientX, e.clientY, glowIntensity, spotlightRadius);
+      xTo(e.clientX);
+      yTo(e.clientY);
 
-      gsap.to(spotlight, { left: e.clientX, top: e.clientY, duration: 0.1, ease: 'power2.out' });
+      if (cardRect) {
+        const relativeX = ((e.clientX - cardRect.left) / cardRect.width) * 100;
+        const relativeY = ((e.clientY - cardRect.top) / cardRect.height) * 100;
 
-      const targetOpacity =
-        effectiveDistance <= proximity
-          ? 0.8
-          : effectiveDistance <= fadeDistance
-            ? ((fadeDistance - effectiveDistance) / (fadeDistance - proximity)) * 0.8
+        const { proximity, fadeDistance } = calculateSpotlightValues(spotlightRadius);
+        const centerX = cardRect.left + cardRect.width / 2;
+        const centerY = cardRect.top + cardRect.height / 2;
+        const distance = Math.max(
+          0,
+          Math.hypot(e.clientX - centerX, e.clientY - centerY) - Math.max(cardRect.width, cardRect.height) / 2
+        );
+
+        let glowIntensity = 0;
+        if (distance <= proximity) glowIntensity = 1;
+        else if (distance <= fadeDistance) {
+          glowIntensity = (fadeDistance - distance) / (fadeDistance - proximity);
+        }
+
+        cardRef.current.style.setProperty('--glow-x', `${relativeX}%`);
+        cardRef.current.style.setProperty('--glow-y', `${relativeY}%`);
+        cardRef.current.style.setProperty('--glow-intensity', glowIntensity.toFixed(2));
+        cardRef.current.style.setProperty('--glow-radius', `${spotlightRadius}px`);
+
+        const targetOpacity =
+          distance <= proximity
+            ? 0.8
+            : distance <= fadeDistance
+            ? ((fadeDistance - distance) / (fadeDistance - proximity)) * 0.8
             : 0;
-      gsap.to(spotlight, { opacity: targetOpacity, duration: targetOpacity > 0 ? 0.2 : 0.5, ease: 'power2.out' });
+
+        gsap.to(spotlight, {
+          opacity: targetOpacity,
+          duration: targetOpacity > 0 ? 0.15 : 0.4,
+          overwrite: 'auto',
+        });
+      }
+
+      rafIdRef.current = null;
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
+    const handleMouseMove = (e) => {
+      latestEvent = e;
+      if (!rafIdRef.current) {
+        rafIdRef.current = requestAnimationFrame(onFrame);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', updateRects);
+      window.removeEventListener('scroll', updateRects);
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
       spotlight.parentNode?.removeChild(spotlight);
     };
   }, [shouldDisableAnimations, enableSpotlight, spotlightRadius]);
@@ -313,7 +384,9 @@ const ContactCardEffects = ({
     <div ref={wrapperRef} className="contact-card-effects-wrapper">
       <div
         ref={cardRef}
-        className={`${className} contact-card-magic ${enableBorderGlow ? 'contact-card-magic--border-glow' : ''}`.trim()}
+        className={`${className} contact-card-magic ${
+          enableBorderGlow ? 'contact-card-magic--border-glow' : ''
+        }`.trim()}
       >
         {children}
       </div>

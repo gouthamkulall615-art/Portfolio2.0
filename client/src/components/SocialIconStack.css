@@ -1,0 +1,61 @@
+.social-icon-stack {
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 5;
+}
+
+.social-icon-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.social-icon-pill:hover {
+  background: rgba(132, 0, 255, 0.15);
+  border-color: rgba(132, 0, 255, 0.4);
+  color: #ffffff;
+  box-shadow:
+    0 8px 24px rgba(132, 0, 255, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+}
+
+.social-icon-glyph {
+  width: 20px;
+  height: 20px;
+  display: flex;
+}
+
+.social-icon-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive: move to a horizontal row below the heading on narrow screens
+   instead of overlapping form content */
+@media (max-width: 640px) {
+  .social-icon-stack {
+    position: static;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    margin: 16px 0 8px;
+  }
+}

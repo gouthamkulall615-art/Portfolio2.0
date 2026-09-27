@@ -9,25 +9,45 @@ import {
 import { Send, Mail, Sparkles } from 'lucide-react';
 import humanHandImg from '../assets/human-hand.png';
 import robotHandImg from '../assets/robot-hand.png';
-import { ContactCard } from './ui/contact-card';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Button } from './ui/button';
-import { Label } from './ui/label';
 import ContactCardEffects from './ContactCardEffects';
 import './ContactSection.css';
 
-const GithubIcon = ({ size = 16, className = '' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-  </svg>
-);
-
-const LinkedinIcon = ({ size = 16, className = '' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.64 1.64 0 1 0 0-3.28 1.64 1.64 0 0 0 0 3.28M5.07 18.5h2.78v-8.37H5.07v8.37Z" />
-  </svg>
-);
+const contactMethods = [
+  {
+    label: 'EMAIL',
+    value: 'gouthamkulall615@gmail.com',
+    href: 'mailto:gouthamkulall615@gmail.com',
+    isExternal: false,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="contact-icon-svg">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="M22 6l-10 7L2 6" />
+      </svg>
+    ),
+  },
+  {
+    label: 'GITHUB',
+    value: 'github.com/gouthamkulall615-art',
+    href: 'https://github.com/gouthamkulall615-art',
+    isExternal: true,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="contact-icon-svg">
+        <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.1-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 015.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.07.78 2.15 0 1.55-.01 2.8-.01 3.18 0 .3.2.66.79.55A10.51 10.51 0 0023.5 12c0-6.27-5.23-11.5-11.5-11.5z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'LINKEDIN',
+    value: 'linkedin.com/in/goutham-m-ba2224385',
+    href: 'https://www.linkedin.com/in/goutham-m-ba2224385/',
+    isExternal: true,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="contact-icon-svg">
+        <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
+      </svg>
+    ),
+  },
+];
 
 // Exact glowing fingertip coordinates from raw image analysis (2528 x 1696 px)
 // Human Hand: glowing fingertip core at pixel (2019, 446) => 79.87% width, 26.30% height
@@ -288,109 +308,136 @@ export default function ContactSection() {
           enableStars={true}
           enableSpotlight={true}
           enableBorderGlow={true}
-          enableTilt={true}
-          enableMagnetism={true}
+          enableTilt={false}
+          enableMagnetism={false}
           clickEffect={true}
           spotlightRadius={300}
-          particleCount={12}
+          particleCount={10}
         >
-          <ContactCard
-            title="Let's Connect"
-            description="Have an idea, project, or opportunity? Drop a message below or reach out directly."
-            className="rounded-2xl border-border bg-card text-foreground shadow-2xl backdrop-blur-md"
-          >
-            {isSubmitted ? (
-              <motion.div
-                className="w-full rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center text-emerald-400"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                <Sparkles className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
-                <p className="font-semibold">Transmission Received!</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  I will get back to you within 1 business day.
+          <div className="contact-card">
+            <div className="contact-card-content contact-two-column-layout">
+              {/* Left Column: Heading, Subtext, Contact Methods List */}
+              <div className="contact-left-col">
+                <h2 className="contact-title">Let's Connect</h2>
+                <p className="contact-subtitle">
+                  Have an idea, project, or opportunity? Drop a message below.
                 </p>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="w-full space-y-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="contact-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Name
-                  </Label>
-                  <Input
-                    id="contact-name"
-                    type="text"
-                    required
-                    placeholder="Your Name"
-                    value={formState.name}
-                    onChange={(e) =>
-                      setFormState((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                    className="bg-background/80"
-                  />
-                </div>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="contact-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Email
-                  </Label>
-                  <Input
-                    id="contact-email"
-                    type="email"
-                    required
-                    placeholder="your.email@example.com"
-                    value={formState.email}
-                    onChange={(e) =>
-                      setFormState((prev) => ({ ...prev, email: e.target.value }))
-                    }
-                    className="bg-background/80"
-                  />
+                <div className="contact-info-list">
+                  {contactMethods.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target={item.isExternal ? '_blank' : undefined}
+                      rel={item.isExternal ? 'noopener noreferrer' : undefined}
+                      className="contact-info-item"
+                    >
+                      <div className="contact-info-icon-box">
+                        {item.icon}
+                      </div>
+                      <div className="contact-info-text">
+                        <span className="contact-info-label">{item.label}</span>
+                        <span className="contact-info-value">{item.value}</span>
+                      </div>
+                    </a>
+                  ))}
                 </div>
+              </div>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="contact-subject" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Subject
-                  </Label>
-                  <Input
-                    id="contact-subject"
-                    type="text"
-                    required
-                    placeholder="Project Inquiry / Collaboration"
-                    value={formState.subject}
-                    onChange={(e) =>
-                      setFormState((prev) => ({ ...prev, subject: e.target.value }))
-                    }
-                    className="bg-background/80"
-                  />
+              {/* Right Column: Contact Form Card */}
+              <div className="contact-right-col">
+                <div className="contact-form-card">
+                  {isSubmitted ? (
+                    <div className="contact-success-msg">
+                      <Sparkles className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
+                      <p className="font-semibold text-emerald-400">Transmission Received!</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        I will get back to you within 1 business day.
+                      </p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="contact-form">
+                      <div className="form-group">
+                        <label htmlFor="contact-name" className="form-label">
+                          NAME *
+                        </label>
+                        <input
+                          id="contact-name"
+                          type="text"
+                          required
+                          placeholder="Your name"
+                          value={formState.name}
+                          onChange={(e) =>
+                            setFormState((prev) => ({ ...prev, name: e.target.value }))
+                          }
+                          className="form-input"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="contact-email" className="form-label">
+                          EMAIL *
+                        </label>
+                        <input
+                          id="contact-email"
+                          type="email"
+                          required
+                          placeholder="your.email@example.com"
+                          value={formState.email}
+                          onChange={(e) =>
+                            setFormState((prev) => ({ ...prev, email: e.target.value }))
+                          }
+                          className="form-input"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="contact-subject" className="form-label">
+                          SUBJECT
+                        </label>
+                        <input
+                          id="contact-subject"
+                          type="text"
+                          required
+                          placeholder="What's this about?"
+                          value={formState.subject}
+                          onChange={(e) =>
+                            setFormState((prev) => ({ ...prev, subject: e.target.value }))
+                          }
+                          className="form-input"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="contact-message" className="form-label">
+                          MESSAGE *
+                        </label>
+                        <textarea
+                          id="contact-message"
+                          required
+                          rows={4}
+                          placeholder="Your message here..."
+                          value={formState.message}
+                          onChange={(e) =>
+                            setFormState((prev) => ({ ...prev, message: e.target.value }))
+                          }
+                          className="form-textarea"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="contact-submit-btn"
+                      >
+                        <span>SEND MESSAGE</span>
+                        <Send size={16} />
+                      </button>
+                    </form>
+                  )}
                 </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="contact-message" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Message
-                  </Label>
-                  <Textarea
-                    id="contact-message"
-                    required
-                    rows={4}
-                    placeholder="Tell me about your project..."
-                    value={formState.message}
-                    onChange={(e) =>
-                      setFormState((prev) => ({ ...prev, message: e.target.value }))
-                    }
-                    className="bg-background/80 resize-none"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full gap-2 bg-[#7a1f2b] text-white hover:bg-[#9b2d3a] transition-all shadow-md active:scale-95"
-                >
-                  <span>Send Message</span>
-                  <Send className="h-4 w-4" />
-                </Button>
-              </form>
-            )}
-          </ContactCard>
+              </div>
+            </div>
+          </div>
         </ContactCardEffects>
       </motion.div>
     </section>
