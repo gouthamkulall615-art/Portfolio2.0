@@ -14,6 +14,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
+import ContactCardEffects from './ContactCardEffects';
 import './ContactSection.css';
 
 const GithubIcon = ({ size = 16, className = '' }) => (
@@ -283,103 +284,114 @@ export default function ContactSection() {
         variants={containerVariants}
       >
 
-        <ContactCard
-          title="Let's Connect"
-          description="Have an idea, project, or opportunity? Drop a message below or reach out directly."
-          className="rounded-2xl border-border bg-card text-foreground shadow-2xl backdrop-blur-md"
+        <ContactCardEffects
+          enableStars={true}
+          enableSpotlight={true}
+          enableBorderGlow={true}
+          enableTilt={true}
+          enableMagnetism={true}
+          clickEffect={true}
+          spotlightRadius={300}
+          particleCount={12}
         >
-          {isSubmitted ? (
-            <motion.div
-              className="w-full rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center text-emerald-400"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <Sparkles className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
-              <p className="font-semibold">Transmission Received!</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                I will get back to you within 1 business day.
-              </p>
-            </motion.div>
-          ) : (
-            <form onSubmit={handleSubmit} className="w-full space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Name
-                </Label>
-                <Input
-                  id="contact-name"
-                  type="text"
-                  required
-                  placeholder="Your Name"
-                  value={formState.name}
-                  onChange={(e) =>
-                    setFormState((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  className="bg-background/80"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Email
-                </Label>
-                <Input
-                  id="contact-email"
-                  type="email"
-                  required
-                  placeholder="your.email@example.com"
-                  value={formState.email}
-                  onChange={(e) =>
-                    setFormState((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  className="bg-background/80"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-subject" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Subject
-                </Label>
-                <Input
-                  id="contact-subject"
-                  type="text"
-                  required
-                  placeholder="Project Inquiry / Collaboration"
-                  value={formState.subject}
-                  onChange={(e) =>
-                    setFormState((prev) => ({ ...prev, subject: e.target.value }))
-                  }
-                  className="bg-background/80"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-message" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Message
-                </Label>
-                <Textarea
-                  id="contact-message"
-                  required
-                  rows={4}
-                  placeholder="Tell me about your project..."
-                  value={formState.message}
-                  onChange={(e) =>
-                    setFormState((prev) => ({ ...prev, message: e.target.value }))
-                  }
-                  className="bg-background/80 resize-none"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full gap-2 bg-[#7a1f2b] text-white hover:bg-[#9b2d3a] transition-all shadow-md active:scale-95"
+          <ContactCard
+            title="Let's Connect"
+            description="Have an idea, project, or opportunity? Drop a message below or reach out directly."
+            className="rounded-2xl border-border bg-card text-foreground shadow-2xl backdrop-blur-md"
+          >
+            {isSubmitted ? (
+              <motion.div
+                className="w-full rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center text-emerald-400"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
               >
-                <span>Send Message</span>
-                <Send className="h-4 w-4" />
-              </Button>
-            </form>
-          )}
-        </ContactCard>
+                <Sparkles className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
+                <p className="font-semibold">Transmission Received!</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  I will get back to you within 1 business day.
+                </p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="w-full space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Name
+                  </Label>
+                  <Input
+                    id="contact-name"
+                    type="text"
+                    required
+                    placeholder="Your Name"
+                    value={formState.name}
+                    onChange={(e) =>
+                      setFormState((prev) => ({ ...prev, name: e.target.value }))
+                    }
+                    className="bg-background/80"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Email
+                  </Label>
+                  <Input
+                    id="contact-email"
+                    type="email"
+                    required
+                    placeholder="your.email@example.com"
+                    value={formState.email}
+                    onChange={(e) =>
+                      setFormState((prev) => ({ ...prev, email: e.target.value }))
+                    }
+                    className="bg-background/80"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-subject" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Subject
+                  </Label>
+                  <Input
+                    id="contact-subject"
+                    type="text"
+                    required
+                    placeholder="Project Inquiry / Collaboration"
+                    value={formState.subject}
+                    onChange={(e) =>
+                      setFormState((prev) => ({ ...prev, subject: e.target.value }))
+                    }
+                    className="bg-background/80"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-message" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Message
+                  </Label>
+                  <Textarea
+                    id="contact-message"
+                    required
+                    rows={4}
+                    placeholder="Tell me about your project..."
+                    value={formState.message}
+                    onChange={(e) =>
+                      setFormState((prev) => ({ ...prev, message: e.target.value }))
+                    }
+                    className="bg-background/80 resize-none"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full gap-2 bg-[#7a1f2b] text-white hover:bg-[#9b2d3a] transition-all shadow-md active:scale-95"
+                >
+                  <span>Send Message</span>
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
+            )}
+          </ContactCard>
+        </ContactCardEffects>
       </motion.div>
     </section>
   );
