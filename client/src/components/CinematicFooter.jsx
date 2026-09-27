@@ -100,13 +100,13 @@ const STYLES = `
 }
 
 .footer-giant-bg-text {
-  font-size: 26vw;
-  line-height: 0.75;
+  font-size: clamp(1.75rem, 13.5vw, 13rem);
+  line-height: 0.9;
   font-weight: 900;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
   color: transparent;
-  -webkit-text-stroke: 1px color-mix(in oklch, var(--c-fg) 5%, transparent);
-  background: linear-gradient(180deg, color-mix(in oklch, var(--c-fg) 10%, transparent) 0%, transparent 60%);
+  -webkit-text-stroke: 1px color-mix(in oklch, var(--c-fg) 6%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklch, var(--c-fg) 8%, transparent) 0%, transparent 80%);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -117,19 +117,6 @@ const STYLES = `
   -webkit-text-fill-color: transparent;
   background-clip: text;
   filter: drop-shadow(0px 0px 20px color-mix(in oklch, var(--c-fg) 15%, transparent));
-}
-
-@media (max-width: 768px) {
-  .cinematic-footer-wrapper {
-    position: relative !important;
-    height: auto !important;
-    min-height: 100vh !important;
-    bottom: auto !important;
-    left: auto !important;
-    display: flex !important;
-    opacity: 1 !important;
-    padding: 3rem 0;
-  }
 }
 `;
 
@@ -236,17 +223,10 @@ MagneticButton.displayName = "MagneticButton";
 // -------------------------------------------------------------------------
 export function CinematicFooter() {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 768);
   const wrapperRef = useRef(null);
   const giantTextRef = useRef(null);
   const headingRef = useRef(null);
   const linksRef = useRef(null);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -262,52 +242,43 @@ export function CinematicFooter() {
     if (typeof window === "undefined") return;
     if (!wrapperRef.current) return;
 
-    // On mobile, ensure elements are immediately visible and not hidden by desktop scrub animation
-    if (window.innerWidth <= 768) {
-      if (giantTextRef.current) gsap.set(giantTextRef.current, { y: "0vh", scale: 1, opacity: 0.85 });
-      if (headingRef.current) gsap.set(headingRef.current, { y: 0, opacity: 1 });
-      if (linksRef.current) gsap.set(linksRef.current, { y: 0, opacity: 1 });
-      return;
-    }
-
     const ctx = gsap.context(() => {
       gsap.fromTo(
         giantTextRef.current,
-        { y: "10vh", scale: 0.8, opacity: 0 },
+        { scale: 0.9, opacity: 0 },
         {
-          y: "0vh",
           scale: 1,
-          opacity: 1,
-          ease: "power1.out",
+          opacity: 0.85,
+          duration: 0.8,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: wrapperRef.current,
-            start: "top 80%",
-            end: "bottom bottom",
-            scrub: 1,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
           },
         }
       );
 
       gsap.fromTo(
         [headingRef.current, linksRef.current],
-        { y: 50, opacity: 0 },
+        { y: 35, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          stagger: 0.15,
-          ease: "power3.out",
+          stagger: 0.12,
+          duration: 0.7,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: wrapperRef.current,
-            start: "top 40%",
-            end: "bottom bottom",
-            scrub: 1,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
           },
         }
       );
     }, wrapperRef);
 
     return () => ctx.revert();
-  }, [isMobile]);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -319,23 +290,19 @@ export function CinematicFooter() {
 
       <div
         ref={wrapperRef}
-        className={cn("w-full z-10", isMobile ? "relative min-h-screen" : "relative h-screen")}
-        style={isMobile ? {} : { clipPath: "polygon(0% 0, 100% 0%, 100% 100%, 0 100%)" }}
+        className="relative w-full z-10"
       >
         <footer
-          className={cn(
-            "flex w-full flex-col justify-between overflow-hidden bg-background text-foreground cinematic-footer-wrapper",
-            isMobile ? "relative min-h-screen py-10" : "fixed bottom-0 left-0 h-screen"
-          )}
+          className="relative flex min-h-screen w-full flex-col justify-between overflow-hidden bg-background text-foreground cinematic-footer-wrapper py-10 md:py-16"
         >
           {/* Ambient Light & Grid Background */}
           <div className="footer-aurora absolute left-1/2 top-1/2 h-[60vh] w-[80vw] -translate-x-1/2 -translate-y-1/2 animate-footer-breathe rounded-[50%] blur-[80px] pointer-events-none z-0" />
           <div className="footer-bg-grid absolute inset-0 z-0 pointer-events-none" />
 
-          {/* Giant background text — swap to your name or a short signature word */}
+          {/* Giant background text — watermark name that fully fits without horizontal or vertical truncation */}
           <div
             ref={giantTextRef}
-            className="footer-giant-bg-text absolute -bottom-[5vh] left-1/2 -translate-x-1/2 whitespace-nowrap z-0 pointer-events-none select-none"
+            className="footer-giant-bg-text absolute bottom-6 sm:bottom-10 md:bottom-16 left-1/2 -translate-x-1/2 whitespace-nowrap z-0 pointer-events-none select-none max-w-full text-center"
           >
             GOUTHAM
           </div>
