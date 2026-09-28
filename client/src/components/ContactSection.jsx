@@ -10,6 +10,7 @@ import { Send, Mail, Sparkles } from 'lucide-react';
 import humanHandImg from '../assets/human-hand.png';
 import robotHandImg from '../assets/robot-hand.png';
 import ContactCardEffects from './ContactCardEffects';
+import ContactParticles from './ContactParticles';
 import './ContactSection.css';
 
 const contactMethods = [
@@ -181,6 +182,9 @@ export default function ContactSection() {
 
   return (
     <section ref={sectionRef} id="contact" className="contact-section-root">
+      {/* Floating 3D Particles Effect with smooth Footer transition */}
+      <ContactParticles containerRef={sectionRef} />
+
       {/* Section Watermark Heading matching site design */}
       <div className="section-watermark-heading">
         <span className="watermark-bg" aria-hidden="true">CONTACT</span>
