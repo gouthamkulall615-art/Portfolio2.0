@@ -196,6 +196,24 @@ function Band({
   ]);
 
   useEffect(() => {
+    if (!dragged) return;
+
+    const preventScroll = (e) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('touchmove', preventScroll, { passive: false });
+    window.addEventListener('wheel', preventScroll, { passive: false });
+
+    return () => {
+      window.removeEventListener('touchmove', preventScroll);
+      window.removeEventListener('wheel', preventScroll);
+    };
+  }, [dragged]);
+
+  useEffect(() => {
     if (hovered) {
       document.body.style.cursor = dragged ? 'grabbing' : 'grab';
       return () => void (document.body.style.cursor = 'auto');
@@ -253,11 +271,25 @@ function Band({
             position={[0, -1.2 * scaleRatio, -0.05]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
-            onPointerUp={e => (e.target.releasePointerCapture(e.pointerId), drag(false))}
-            onPointerDown={e => (
-              e.target.setPointerCapture(e.pointerId),
-              drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())))
-            )}
+            onPointerUp={e => {
+              e.stopPropagation();
+              try {
+                e.target.releasePointerCapture(e.pointerId);
+              } catch (_) {}
+              drag(false);
+            }}
+            onPointerCancel={e => {
+              e.stopPropagation();
+              try {
+                e.target.releasePointerCapture(e.pointerId);
+              } catch (_) {}
+              drag(false);
+            }}
+            onPointerDown={e => {
+              e.stopPropagation();
+              e.target.setPointerCapture(e.pointerId);
+              drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
+            }}
           >
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial

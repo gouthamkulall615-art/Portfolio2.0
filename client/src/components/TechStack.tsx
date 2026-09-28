@@ -191,6 +191,28 @@ const TechStack = () => {
     };
   }, []);
 
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = canvasContainerRef.current;
+    if (!el) return;
+
+    const preventScroll = (e: TouchEvent) => {
+      // Prioritize sphere interaction over page scrolling while touching/scribbling
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    el.addEventListener("touchstart", preventScroll, { passive: false });
+    el.addEventListener("touchmove", preventScroll, { passive: false });
+
+    return () => {
+      el.removeEventListener("touchstart", preventScroll);
+      el.removeEventListener("touchmove", preventScroll);
+    };
+  }, []);
+
   const materials = useMemo(() => {
     return textures.map(
       (texture) =>
@@ -215,13 +237,23 @@ const TechStack = () => {
         <h2 className="watermark-fg">SKILLS</h2>
       </div>
 
-      <Canvas
-        shadows
-        gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
-        camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-        onCreated={(state) => (state.gl.toneMappingExposure = 1.0)}
-        className="tech-canvas"
+      <div
+        ref={canvasContainerRef}
+        style={{
+          width: "100%",
+          maxWidth: "1200px",
+          display: "flex",
+          justifyContent: "center",
+          touchAction: "none",
+        }}
       >
+        <Canvas
+          shadows
+          gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
+          camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
+          onCreated={(state) => (state.gl.toneMappingExposure = 1.0)}
+          className="tech-canvas"
+        >
         <ambientLight intensity={0.65} />
         <spotLight
           position={[20, 20, 25]}
@@ -253,6 +285,7 @@ const TechStack = () => {
           <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
         </EffectComposer>
       </Canvas>
+      </div>
     </div>
   );
 };
