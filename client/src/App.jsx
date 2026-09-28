@@ -96,13 +96,14 @@ export default function App() {
           {/* Right: 3D Draggable Lanyard Card */}
           <div className="portfolio-lanyard-col">
             <Lanyard
-              position={[0, 0, 13]}
+              position={[0, -0.6, 14.5]}
+              fov={34}
               gravity={[0, -40, 0]}
               frontImage="/mypic.jpeg"
               backImage="/mypic.jpeg"
               imageFit="cover"
-              cardScale={3.2}
-              lanyardWidth={1.4}
+              cardScale={4.0}
+              lanyardWidth={0.7}
             />
           </div>
         </div>

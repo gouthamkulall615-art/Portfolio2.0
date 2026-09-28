@@ -28,16 +28,16 @@ const FRONT_UV_RECT = { x: 0, y: 0, w: 0.5, h: 0.755 };
 const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
 
 export default function Lanyard({
-  position = [0, 0, 13],
+  position = [0, -0.6, 14.5],
   gravity = [0, -40, 0],
-  fov = 28,
+  fov = 34,
   transparent = true,
   frontImage = null,
   backImage = null,
   imageFit = 'cover',
   lanyardImage = null,
-  lanyardWidth = 1.3,
-  cardScale = 1.8
+  lanyardWidth = 0.7,
+  cardScale = 4.0
 }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
@@ -235,7 +235,7 @@ function Band({
 
   return (
     <>
-      <group position={[0, 4, 0]}>
+      <group position={[0, 3.5, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
@@ -283,7 +283,7 @@ function Band({
           useMap
           map={texture}
           repeat={[-4, 1]}
-          lineWidth={lanyardWidth}
+          lineWidth={isMobile ? lanyardWidth * 0.75 : lanyardWidth}
         />
       </mesh>
     </>

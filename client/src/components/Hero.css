@@ -98,20 +98,24 @@
 
   .hero-text-inner {
     align-items: center;
+    gap: 1.25rem;
   }
 
   .hero-headline {
-    font-size: clamp(1.85rem, 5.5vw, 2.75rem);
+    font-size: clamp(2.2rem, 5.5vw, 3rem);
     text-align: center;
   }
 
   .hero-title-carousel {
     justify-content: center;
+    min-height: 1.35em;
+    height: 1.35em;
   }
 
   .hero-title-item {
     justify-content: center;
     text-align: center;
+    font-size: clamp(1.6rem, 4.8vw, 2.3rem);
   }
 
   .hero-subtext {
@@ -122,32 +126,36 @@
 }
 
 @media (max-width: 480px) {
+  .hero-text-inner {
+    gap: 1rem;
+  }
+
   .hero-headline {
-    font-size: clamp(1.4rem, 6.2vw, 1.85rem);
-    line-height: 1.2;
+    font-size: clamp(2rem, 8.2vw, 2.55rem);
+    line-height: 1.15;
   }
 
   .hero-title-carousel {
-    min-height: 1.4em;
-    height: 1.4em;
+    min-height: 1.35em;
+    height: 1.35em;
   }
 
   .hero-title-item {
-    font-size: 0.94em;
+    font-size: clamp(1.4rem, 5.6vw, 1.75rem);
   }
 
   .hero-subtext {
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     padding: 0 0.5rem;
   }
 }
 
 @media (max-width: 360px) {
   .hero-headline {
-    font-size: clamp(1.2rem, 5.5vw, 1.45rem);
+    font-size: clamp(1.75rem, 7.5vw, 2.1rem);
   }
 
   .hero-title-item {
-    font-size: 0.92em;
+    font-size: clamp(1.25rem, 5.2vw, 1.45rem);
   }
 }
