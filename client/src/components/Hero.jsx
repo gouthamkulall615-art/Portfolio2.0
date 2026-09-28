@@ -27,7 +27,6 @@ function Hero() {
           <h1 className="hero-headline">
             <span className="hero-greeting">Hi, I'm Goutham</span>
             <span className="hero-title-carousel">
-              &nbsp;
               {titles.map((title, index) => (
                 <motion.span
                   key={index}
