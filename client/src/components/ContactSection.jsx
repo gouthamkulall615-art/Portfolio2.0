@@ -390,13 +390,7 @@ export default function ContactSection() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <div className="success-status-pill">
-                        <span className="status-beacon" aria-hidden="true">
-                          <span className="status-beacon-ping" />
-                          <span className="status-beacon-dot" />
-                        </span>
-                        <span className="status-label">STATUS // DISPATCHED</span>
-                      </div>
+
 
                       <h3 className="success-heading">Message sent.</h3>
 
