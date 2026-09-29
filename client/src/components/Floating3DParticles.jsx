@@ -8,15 +8,15 @@ const MOBILE_BREAKPOINT = 768;
 const SPREAD_FACTOR = 1.2;
 const MAX_DPR = 2;
 
-function hexToRgba(hex, alpha) {
+function parseColor(hex) {
   const clean = hex.replace('#', '').trim();
   const full =
     clean.length === 3
       ? clean.split('').map((c) => c + c).join('')
       : clean;
-  if (!/^[0-9a-f]{6}$/i.test(full)) return `rgba(139,92,246,${alpha})`;
+  if (!/^[0-9a-f]{6}$/i.test(full)) return [139, 92, 246];
   const n = parseInt(full, 16);
-  return `rgba(${(n >> 16) & 0xff},${(n >> 8) & 0xff},${n & 0xff},${alpha})`;
+  return [(n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff];
 }
 
 function deriveProjection(depth) {
@@ -77,6 +77,8 @@ export default function Floating3DParticles({
     const { fov, perspectiveDistance, depthRange } = deriveProjection(depth);
 
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const [cr, cg, cb] = parseColor(colorRef.current);
+
     const syncReducedMotion = () => { state.reducedMotion = mq.matches; };
     syncReducedMotion();
 
@@ -84,7 +86,7 @@ export default function Floating3DParticles({
       const r = Math.max(0, p.size * p.projectedScale);
       if (r <= 0) return;
       ctx.beginPath();
-      ctx.fillStyle = hexToRgba(colorRef.current, p.opacity);
+      ctx.fillStyle = p.colorStr;
       ctx.arc(p.screenX, p.screenY, r, 0, Math.PI * 2);
       ctx.fill();
     };
@@ -102,9 +104,17 @@ export default function Floating3DParticles({
       }
     };
 
+    const resumeIfNeeded = () => {
+      if (!state.mounted || state.paused || state.rafId !== null) return;
+      state.rafId = requestAnimationFrame(tick);
+    };
+
     const tick = () => {
       if (!state.mounted) return;
-      if (state.paused) { state.rafId = requestAnimationFrame(tick); return; }
+      if (state.paused) {
+        state.rafId = null;
+        return;
+      }
       if (state.reducedMotion) {
         if (staticDirty) { staticDirty = false; staticFrame(); }
         state.rafId = requestAnimationFrame(tick);
@@ -113,7 +123,8 @@ export default function Floating3DParticles({
       staticDirty = true;
       ctx.clearRect(0, 0, width, height);
       const cx = width / 2, cy = height / 2;
-      for (const p of particles) {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.angle += p.angularSpeed;
         p.y -= drift;
         if (p.y < -height) { p.y = height; p.radius = Math.random() * Math.max(width, height) * SPREAD_FACTOR; }
@@ -123,9 +134,8 @@ export default function Floating3DParticles({
         p.screenX = cx + Math.cos(p.angle) * p.radius * scale;
         p.screenY = cy + p.y * scale;
         p.projectedScale = scale;
+        draw(p);
       }
-      particles.sort((a, b) => a.projectedScale - b.projectedScale);
-      for (const p of particles) draw(p);
       state.rafId = requestAnimationFrame(tick);
     };
 
@@ -139,11 +149,18 @@ export default function Floating3DParticles({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
       const count = isMobile ? Math.round(quantity * 0.2) : quantity;
-      particles = Array.from({ length: Math.max(0, count) }, () => spawnParticle(width, height, size, opacity));
+      particles = Array.from({ length: Math.max(0, count) }, () => {
+        const p = spawnParticle(width, height, size, opacity);
+        p.colorStr = `rgba(${cr},${cg},${cb},${p.opacity.toFixed(2)})`;
+        return p;
+      });
       staticDirty = true;
     };
 
-    const onVisibilityChange = () => { state.paused = document.hidden; };
+    const onVisibilityChange = () => {
+      state.paused = document.hidden;
+      if (!state.paused) resumeIfNeeded();
+    };
 
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(resize) : null;
     if (ro) ro.observe(canvas);
@@ -151,7 +168,10 @@ export default function Floating3DParticles({
 
     if (typeof IntersectionObserver !== 'undefined') {
       ioRef.current = new IntersectionObserver(([entry]) => {
-        if (entry) state.paused = document.hidden || !entry.isIntersecting;
+        if (entry) {
+          state.paused = document.hidden || !entry.isIntersecting;
+          if (!state.paused) resumeIfNeeded();
+        }
       }, { threshold: 0 });
       ioRef.current.observe(canvas);
     }

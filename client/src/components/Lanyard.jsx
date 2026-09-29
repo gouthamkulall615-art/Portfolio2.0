@@ -39,6 +39,8 @@ export default function Lanyard({
   lanyardWidth = 0.7,
   cardScale = 4.0
 }) {
+  const containerRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
   useEffect(() => {
@@ -47,17 +49,34 @@ export default function Lanyard({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(Boolean(entry?.isIntersecting));
+      },
+      { rootMargin: '100px 0px 100px 0px', threshold: 0.01 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="lanyard-wrapper">
+    <div className="lanyard-wrapper" ref={containerRef}>
       <Canvas
+        frameloop={isVisible ? 'always' : 'never'}
         camera={{ position: position, fov: fov }}
         dpr={[1, isMobile ? 1.5 : 2]}
         gl={{ alpha: transparent }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
       >
         <ambientLight intensity={Math.PI} />
-        <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
+        <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60} paused={!isVisible}>
           <Band
+            isVisible={isVisible}
             isMobile={isMobile}
             frontImage={frontImage}
             backImage={backImage}
@@ -105,6 +124,7 @@ export default function Lanyard({
 function Band({
   maxSpeed = 50,
   minSpeed = 0,
+  isVisible = true,
   isMobile = false,
   frontImage = null,
   backImage = null,
@@ -221,6 +241,7 @@ function Band({
   }, [hovered, dragged]);
 
   useFrame((state, delta) => {
+    if (!isVisible) return;
     if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
@@ -295,7 +316,7 @@ function Band({
               <meshPhysicalMaterial
                 map={cardMap}
                 map-anisotropy={16}
-                clearcoat={isMobile ? 0 : 1}
+                clearcoat={1}
                 clearcoatRoughness={0.15}
                 roughness={0.9}
                 metalness={0.8}

@@ -7,8 +7,8 @@ import {
   AnimatePresence,
 } from 'framer-motion';
 import { Send, Mail, Loader2, AlertCircle } from 'lucide-react';
-import humanHandImg from '../assets/human-hand.png';
-import robotHandImg from '../assets/robot-hand.png';
+import humanHandImg from '../assets/human-hand.webp';
+import robotHandImg from '../assets/robot-hand.webp';
 import ContactCardEffects from './ContactCardEffects';
 import ContactParticles from './ContactParticles';
 import './ContactSection.css';

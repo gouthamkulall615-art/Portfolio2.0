@@ -317,18 +317,35 @@ const ContactCardEffects = ({
     let latestEvent = null;
     let cardRect = null;
     let wrapperRect = null;
+    let rectsDirty = true;
+    let isNearViewport = true;
 
     const updateRects = () => {
       if (wrapperRef.current) wrapperRect = wrapperRef.current.getBoundingClientRect();
       if (cardRef.current) cardRect = cardRef.current.getBoundingClientRect();
     };
 
-    updateRects();
-    window.addEventListener('resize', updateRects, { passive: true });
-    window.addEventListener('scroll', updateRects, { passive: true });
+    const handleLayoutShift = () => {
+      rectsDirty = true;
+    };
+
+    window.addEventListener('resize', handleLayoutShift, { passive: true });
+    window.addEventListener('scroll', handleLayoutShift, { passive: true });
+
+    let observer = null;
+    if (typeof IntersectionObserver !== 'undefined' && wrapperRef.current) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          isNearViewport = Boolean(entry?.isIntersecting);
+          if (isNearViewport) rectsDirty = true;
+        },
+        { rootMargin: '200px 0px 200px 0px' }
+      );
+      observer.observe(wrapperRef.current);
+    }
 
     const onFrame = () => {
-      if (!latestEvent || !cardRef.current || !wrapperRef.current) {
+      if (!latestEvent || !cardRef.current || !wrapperRef.current || !isNearViewport) {
         rafIdRef.current = null;
         return;
       }
@@ -336,7 +353,10 @@ const ContactCardEffects = ({
       const e = latestEvent;
       latestEvent = null;
 
-      if (!wrapperRect) updateRects();
+      if (rectsDirty || !wrapperRect || !cardRect) {
+        updateRects();
+        rectsDirty = false;
+      }
 
       const mouseInside =
         wrapperRect &&
@@ -396,6 +416,7 @@ const ContactCardEffects = ({
     };
 
     const handleMouseMove = (e) => {
+      if (!isNearViewport) return;
       latestEvent = e;
       if (!rafIdRef.current) {
         rafIdRef.current = requestAnimationFrame(onFrame);
@@ -403,6 +424,7 @@ const ContactCardEffects = ({
     };
 
     const handleTouch = (e) => {
+      if (!isNearViewport) return;
       if (e.touches && e.touches.length > 0) {
         latestEvent = {
           clientX: e.touches[0].clientX,
@@ -433,8 +455,9 @@ const ContactCardEffects = ({
       window.removeEventListener('touchstart', handleTouch);
       window.removeEventListener('touchmove', handleTouch);
       window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('resize', updateRects);
-      window.removeEventListener('scroll', updateRects);
+      window.removeEventListener('resize', handleLayoutShift);
+      window.removeEventListener('scroll', handleLayoutShift);
+      observer?.disconnect();
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
       spotlight.parentNode?.removeChild(spotlight);
     };

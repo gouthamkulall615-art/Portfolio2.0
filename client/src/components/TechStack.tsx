@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useRef, useMemo, useState, useEffect } from "react";
+import { useRef, useMemo, useState, useEffect, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { EffectComposer, N8AO } from "@react-three/postprocessing";
@@ -165,52 +165,25 @@ const TechStack = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const triggerEl = document.getElementById(TRIGGER_SECTION_ID);
-      if (!triggerEl) return;
-      const threshold = triggerEl.getBoundingClientRect().top + scrollY - window.innerHeight;
-      setIsActive(scrollY > threshold);
-    };
-    document.querySelectorAll(".header a").forEach((elem) => {
-      const element = elem as HTMLAnchorElement;
-      element.addEventListener("click", () => {
-        const interval = setInterval(() => {
-          handleScroll();
-        }, 10);
-        setTimeout(() => {
-          clearInterval(interval);
-        }, 1000);
-      });
-    });
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+  const sectionRef = useRef<HTMLDivElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    const el = canvasContainerRef.current;
+    const el = sectionRef.current;
     if (!el) return;
 
-    const preventScroll = (e: TouchEvent) => {
-      // Prioritize sphere interaction over page scrolling while touching/scribbling
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible = Boolean(entry?.isIntersecting);
+        setIsVisible(visible);
+        setIsActive(visible);
+      },
+      { rootMargin: "400px 0px 400px 0px", threshold: 0 }
+    );
 
-    el.addEventListener("touchstart", preventScroll, { passive: false });
-    el.addEventListener("touchmove", preventScroll, { passive: false });
-
-    return () => {
-      el.removeEventListener("touchstart", preventScroll);
-      el.removeEventListener("touchmove", preventScroll);
-    };
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   const materials = useMemo(() => {
@@ -231,7 +204,7 @@ const TechStack = () => {
   }, []);
 
   return (
-    <div className="techstack" id={TRIGGER_SECTION_ID}>
+    <div className="techstack" id={TRIGGER_SECTION_ID} ref={sectionRef}>
       <div className="section-watermark-heading">
         <span className="watermark-bg" aria-hidden="true">SKILLS</span>
         <h2 className="watermark-fg">SKILLS</h2>
@@ -244,47 +217,50 @@ const TechStack = () => {
           maxWidth: "1200px",
           display: "flex",
           justifyContent: "center",
-          touchAction: "none",
+          touchAction: "pan-y",
         }}
       >
         <Canvas
           shadows
+          frameloop={isVisible ? "always" : "demand"}
           gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
           camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
           onCreated={(state) => (state.gl.toneMappingExposure = 1.0)}
           className="tech-canvas"
         >
-        <ambientLight intensity={0.65} />
-        <spotLight
-          position={[20, 20, 25]}
-          intensity={0.8}
-          penumbra={1}
-          angle={0.2}
-          color="white"
-          castShadow
-          shadow-mapSize={[512, 512]}
-        />
-        <directionalLight position={[0, 5, -4]} intensity={1.3} />
-        <Physics gravity={[0, 0, 0]}>
-          <Pointer isActive={isActive} />
-          {spheres.map((props, i) => (
-            <SphereGeo
-              key={i}
-              {...props}
-              material={materials[i % materials.length]}
-              isActive={isActive}
+          <ambientLight intensity={0.65} />
+          <spotLight
+            position={[20, 20, 25]}
+            intensity={0.8}
+            penumbra={1}
+            angle={0.2}
+            color="white"
+            castShadow
+            shadow-mapSize={[512, 512]}
+          />
+          <directionalLight position={[0, 5, -4]} intensity={1.3} />
+          <Suspense fallback={null}>
+            <Physics gravity={[0, 0, 0]} paused={!isVisible}>
+              <Pointer isActive={isActive && isVisible} />
+              {spheres.map((props, i) => (
+                <SphereGeo
+                  key={i}
+                  {...props}
+                  material={materials[i % materials.length]}
+                  isActive={isActive && isVisible}
+                />
+              ))}
+            </Physics>
+            <Environment
+              files="/models/char_enviorment.hdr"
+              environmentIntensity={0.5}
+              environmentRotation={[0, 4, 2]}
             />
-          ))}
-        </Physics>
-        <Environment
-          files="/models/char_enviorment.hdr"
-          environmentIntensity={0.5}
-          environmentRotation={[0, 4, 2]}
-        />
-        <EffectComposer enableNormalPass={false}>
-          <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
-        </EffectComposer>
-      </Canvas>
+            <EffectComposer enableNormalPass={false}>
+              <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
+            </EffectComposer>
+          </Suspense>
+        </Canvas>
       </div>
     </div>
   );

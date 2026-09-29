@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import CinematicIntro from './components/CinematicIntro';
 import GooeyNav from './components/GooeyNav';
 import StaggeredMenu from './components/StaggeredMenu';
 import { Hero } from './components/Hero';
 import Lanyard from './components/Lanyard';
 import Floating3DParticles from './components/Floating3DParticles';
-import ProjectsSection from './components/ProjectsSection';
 import EducationSection from './components/EducationSection';
-import TechStack from './components/TechStack';
 import MarqueeBanner from './components/MarqueeBanner';
-import ContactSection from './components/ContactSection';
-import { CinematicFooter } from './components/CinematicFooter';
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import './styles/anime.css';
+
+import TechStack from './components/TechStack';
+
+// Code-split heavy 3D and media-rich sections for fast initial load
+const ProjectsSection = lazy(() => import('./components/ProjectsSection'));
+const ContactSection = lazy(() => import('./components/ContactSection'));
+const CinematicFooter = lazy(() => import('./components/CinematicFooter'));
 
 const navItems = [
   { label: 'Home', href: '#home', ariaLabel: 'Go to home section' },
@@ -93,24 +96,28 @@ export default function App() {
             <Hero />
           </div>
 
-          {/* Right: 3D Draggable Lanyard Card */}
+          {/* Right: 3D Draggable Lanyard Card (deferred until intro sequence completes) */}
           <div className="portfolio-lanyard-col">
-            <Lanyard
-              position={[0, -0.6, 14.5]}
-              fov={34}
-              gravity={[0, -40, 0]}
-              frontImage="/mypic.jpeg"
-              backImage="/mypic.jpeg"
-              imageFit="cover"
-              cardScale={4.0}
-              lanyardWidth={0.7}
-            />
+            {!showIntro && (
+              <Lanyard
+                position={[0, -0.6, 14.5]}
+                fov={34}
+                gravity={[0, -40, 0]}
+                frontImage="/mypic.jpeg"
+                backImage="/mypic.jpeg"
+                imageFit="cover"
+                cardScale={4.0}
+                lanyardWidth={0.7}
+              />
+            )}
           </div>
         </div>
       </section>
 
-      {/* Projects Section — ScrollStack cards */}
-      <ProjectsSection />
+      {/* Heavy sections loaded smoothly via Suspense */}
+      <Suspense fallback={null}>
+        <ProjectsSection />
+      </Suspense>
 
       {/* 3D Interactive Tech Stack Spheres */}
       <TechStack />
@@ -122,10 +129,14 @@ export default function App() {
       <MarqueeBanner />
 
       {/* Scroll-triggered Hands Touching Contact Section */}
-      <ContactSection />
+      <Suspense fallback={null}>
+        <ContactSection />
+      </Suspense>
 
       {/* Full-screen Cinematic Curtain Reveal Footer */}
-      <CinematicFooter />
+      <Suspense fallback={null}>
+        <CinematicFooter />
+      </Suspense>
     </div>
   );
 }

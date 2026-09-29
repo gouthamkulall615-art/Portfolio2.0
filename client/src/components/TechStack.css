@@ -34,7 +34,7 @@
   width: 100% !important;
   height: 650px !important;
   max-width: 1200px;
-  touch-action: none !important;
+  touch-action: pan-y !important;
   user-select: none;
   -webkit-user-select: none;
 }

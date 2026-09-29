@@ -1,9 +1,9 @@
 import { ExternalLink } from 'lucide-react';
 import ScrollStack, { ScrollStackItem } from './ScrollStack';
-import synccanvasImg from '../assets/synccanvas landing page.png';
-import cryptoImg from '../assets/crypto landing page 2.png';
-import interiqImg from '../assets/interiq landing page.png';
-import taskifyImg from '../assets/taskify landing page.png';
+import synccanvasImg from '../assets/synccanvas landing page.webp';
+import cryptoImg from '../assets/crypto landing page 2.webp';
+import interiqImg from '../assets/interiq landing page.webp';
+import taskifyImg from '../assets/taskify landing page.webp';
 import './ProjectsSection.css';
 
 const GithubIcon = ({ size = 18, className = '' }) => (

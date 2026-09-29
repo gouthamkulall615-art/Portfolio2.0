@@ -24,8 +24,11 @@ const ScrollStack = ({
   const scrollerRef = useRef(null);
   const stackCompletedRef = useRef(false);
   const animationFrameRef = useRef(null);
+  const scrollRafRef = useRef(null);
   const lenisRef = useRef(null);
   const cardsRef = useRef([]);
+  const endElementRef = useRef(null);
+  const cachedLayoutRef = useRef({ endElementTop: 0, cardTops: [] });
   const lastTransformsRef = useRef(new Map());
   const isUpdatingRef = useRef(false);
 
@@ -59,17 +62,34 @@ const ScrollStack = ({
     }
   }, [useWindowScroll]);
 
-  const getElementOffset = useCallback(
-    element => {
-      if (useWindowScroll) {
-        const rect = element.getBoundingClientRect();
-        return rect.top + window.scrollY;
-      } else {
-        return element.offsetTop;
-      }
-    },
-    [useWindowScroll]
-  );
+  const measureLayout = useCallback(() => {
+    if (!cardsRef.current.length) return;
+
+    const endElement =
+      endElementRef.current ||
+      (useWindowScroll
+        ? document.querySelector('.scroll-stack-end')
+        : scrollerRef.current?.querySelector('.scroll-stack-end'));
+
+    endElementRef.current = endElement;
+
+    let endElementTop = 0;
+    if (endElement) {
+      endElementTop = useWindowScroll
+        ? endElement.getBoundingClientRect().top + window.scrollY
+        : endElement.offsetTop;
+    }
+
+    const cardTops = cardsRef.current.map((card, i) => {
+      if (!card) return 0;
+      const lastTransform = lastTransformsRef.current.get(i);
+      const currentTranslateY = useWindowScroll && lastTransform ? lastTransform.translateY : 0;
+      const rect = card.getBoundingClientRect();
+      return (useWindowScroll ? rect.top + window.scrollY : card.offsetTop) - currentTranslateY;
+    });
+
+    cachedLayoutRef.current = { endElementTop, cardTops };
+  }, [useWindowScroll]);
 
   const updateCardTransforms = useCallback(() => {
     if (!cardsRef.current.length || isUpdatingRef.current) return;
@@ -80,18 +100,17 @@ const ScrollStack = ({
     const stackPositionPx = parsePercentage(stackPosition, containerHeight);
     const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
 
-    const endElement = useWindowScroll
-      ? document.querySelector('.scroll-stack-end')
-      : scrollerRef.current?.querySelector('.scroll-stack-end');
+    if (!cachedLayoutRef.current.cardTops.length) {
+      measureLayout();
+    }
 
-    const endElementTop = endElement ? getElementOffset(endElement) : 0;
+    const { endElementTop, cardTops } = cachedLayoutRef.current;
 
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
 
       const lastTransform = lastTransformsRef.current.get(i);
-      const currentTranslateY = useWindowScroll && lastTransform ? lastTransform.translateY : 0;
-      const cardTop = getElementOffset(card) - currentTranslateY;
+      const cardTop = cardTops[i] ?? 0;
       const triggerStart = cardTop - stackPositionPx - itemStackDistance * i;
       const triggerEnd = cardTop - scaleEndPositionPx;
       const pinStart = cardTop - stackPositionPx - itemStackDistance * i;
@@ -106,9 +125,7 @@ const ScrollStack = ({
       if (blurAmount) {
         let topCardIndex = 0;
         for (let j = 0; j < cardsRef.current.length; j++) {
-          const jLastTransform = lastTransformsRef.current.get(j);
-          const jTranslateY = useWindowScroll && jLastTransform ? jLastTransform.translateY : 0;
-          const jCardTop = getElementOffset(cardsRef.current[j]) - jTranslateY;
+          const jCardTop = cardTops[j] ?? 0;
           const jTriggerStart = jCardTop - stackPositionPx - itemStackDistance * j;
           if (scrollTop >= jTriggerStart) {
             topCardIndex = j;
@@ -174,29 +191,36 @@ const ScrollStack = ({
     baseScale,
     rotationAmount,
     blurAmount,
-    useWindowScroll,
     onStackComplete,
     calculateProgress,
     parsePercentage,
     getScrollData,
-    getElementOffset
+    measureLayout
   ]);
 
   const handleScroll = useCallback(() => {
-    updateCardTransforms();
+    if (scrollRafRef.current) return;
+    scrollRafRef.current = requestAnimationFrame(() => {
+      scrollRafRef.current = null;
+      updateCardTransforms();
+    });
   }, [updateCardTransforms]);
 
   const setupLenis = useCallback(() => {
+    const isTouchDevice =
+      typeof window !== 'undefined' &&
+      ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
     if (useWindowScroll) {
       const lenis = new Lenis({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 2,
+        touchMultiplier: 1.5,
         infinite: false,
         wheelMultiplier: 1,
         lerp: 0.1,
-        syncTouch: true,
+        syncTouch: !isTouchDevice,
         syncTouchLerp: 0.075
       });
 
@@ -220,14 +244,14 @@ const ScrollStack = ({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 2,
+        touchMultiplier: 1.5,
         infinite: false,
         gestureOrientationHandler: true,
         normalizeWheel: true,
         wheelMultiplier: 1,
         touchInertiaMultiplier: 35,
         lerp: 0.1,
-        syncTouch: true,
+        syncTouch: !isTouchDevice,
         syncTouchLerp: 0.075,
         touchInertia: 0.6
       });
@@ -271,11 +295,24 @@ const ScrollStack = ({
       card.style.webkitPerspective = '1000px';
     });
 
+    measureLayout();
+
+    const handleResize = () => {
+      measureLayout();
+      updateCardTransforms();
+    };
+
+    window.addEventListener('resize', handleResize, { passive: true });
+
     setupLenis();
 
     updateCardTransforms();
 
     return () => {
+      window.removeEventListener('resize', handleResize);
+      if (scrollRafRef.current) {
+        cancelAnimationFrame(scrollRafRef.current);
+      }
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -300,6 +337,7 @@ const ScrollStack = ({
     useWindowScroll,
     onStackComplete,
     setupLenis,
+    measureLayout,
     updateCardTransforms
   ]);
 

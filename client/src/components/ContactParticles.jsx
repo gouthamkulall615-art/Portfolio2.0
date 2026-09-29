@@ -35,6 +35,82 @@ function smoothstep(min, max, value) {
   return x * x * (3 - 2 * x);
 }
 
+// ---------------------------------------------------------------------------
+// Pre-rendered offscreen sprite canvases (zero per-frame gradient allocation)
+// ---------------------------------------------------------------------------
+function createSpriteCanvas(size, drawFn) {
+  if (typeof document === 'undefined') return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (ctx) drawFn(ctx, size);
+  return canvas;
+}
+
+function createOrbSprite(color, isDark, size = 128) {
+  return createSpriteCanvas(size, (ctx, s) => {
+    const cx = s / 2;
+    const cy = s / 2;
+    const R = s * 0.218;
+
+    // A. Soft optical bokeh glow halo
+    const haloGrad = ctx.createRadialGradient(cx, cy, R * 0.4, cx, cy, R * 2.2);
+    haloGrad.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, 0.3)`);
+    haloGrad.addColorStop(0.55, `rgba(${color.r}, ${color.g}, ${color.b}, 0.08)`);
+    haloGrad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+    ctx.fillStyle = haloGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // B. 3D Sphere Body with Offset Specular Light Source
+    const lightOffset = -R * 0.32;
+    const sphereGrad = ctx.createRadialGradient(
+      cx + lightOffset,
+      cy + lightOffset,
+      R * 0.05,
+      cx,
+      cy,
+      R
+    );
+
+    if (isDark) {
+      sphereGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      sphereGrad.addColorStop(0.28, `rgba(${color.r}, ${color.g}, ${color.b}, 0.88)`);
+      sphereGrad.addColorStop(0.68, `rgba(${color.r}, ${color.g}, ${color.b}, 0.45)`);
+      sphereGrad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+    } else {
+      sphereGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      sphereGrad.addColorStop(0.3, `rgba(${color.r}, ${color.g}, ${color.b}, 0.82)`);
+      sphereGrad.addColorStop(0.72, `rgba(${color.r}, ${color.g}, ${color.b}, 0.5)`);
+      sphereGrad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+    }
+
+    ctx.fillStyle = sphereGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function createSparkSprite(color, size = 64) {
+  return createSpriteCanvas(size, (ctx, s) => {
+    const cx = s / 2;
+    const cy = s / 2;
+    const R = s * 0.46;
+    const sparkGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+    sparkGrad.addColorStop(0, 'rgba(255, 255, 255, 0.92)');
+    sparkGrad.addColorStop(0.4, `rgba(${color.r}, ${color.g}, ${color.b}, 0.72)`);
+    sparkGrad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+
+    ctx.fillStyle = sparkGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
 export default function ContactParticles({ containerRef }) {
   const canvasRef = useRef(null);
 
@@ -255,14 +331,49 @@ export default function ContactParticles({ containerRef }) {
       // Native listener handles fallback gracefully
     }
 
+    // Pre-rendered offscreen sprite maps
+    const darkOrbSprites = DARK_PALETTE.map((c) => createOrbSprite(c, true));
+    const lightOrbSprites = LIGHT_PALETTE.map((c) => createOrbSprite(c, false));
+    const darkSparkSprites = DARK_PALETTE.map((c) => createSparkSprite(c));
+    const lightSparkSprites = LIGHT_PALETTE.map((c) => createSparkSprite(c));
+
+    const startAnimation = () => {
+      if (animationFrameId === null && isVisible && !document.hidden) {
+        lastTime = performance.now();
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const stopAnimation = () => {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
     // IntersectionObserver to pause rendering when offscreen
     const intersectionObserver = new IntersectionObserver(
       ([entry]) => {
-        isVisible = entry ? entry.isIntersecting : true;
+        const wasVisible = isVisible;
+        isVisible = entry ? entry.isIntersecting : false;
+        if (isVisible && !wasVisible) {
+          startAnimation();
+        } else if (!isVisible && wasVisible) {
+          stopAnimation();
+        }
       },
       { rootMargin: '200px 0px 200px 0px' }
     );
     intersectionObserver.observe(container);
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        stopAnimation();
+      } else if (isVisible) {
+        startAnimation();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     // -------------------------------------------------------------------------
     // Animation Render Loop
@@ -274,9 +385,11 @@ export default function ContactParticles({ containerRef }) {
     let lastTime = performance.now();
 
     const render = (currentTime) => {
+      if (!isVisible || document.hidden) {
+        animationFrameId = null;
+        return;
+      }
       animationFrameId = requestAnimationFrame(render);
-
-      if (!isVisible) return;
 
       const delta = Math.min(currentTime - lastTime, 40); // Cap frame delta
       lastTime = currentTime;
@@ -339,25 +452,21 @@ export default function ContactParticles({ containerRef }) {
         const projY = cy + (p.y + mouseShiftY) * scale;
         const projRadius = p.baseRadius * scale;
 
-        // 4. Smooth Transition Into Footer (Core Requirement):
-        // Foreground particles fade earlier; background particles remain visible longest.
-        // As scroll approaches the footer, density and size smoothly reduce to 0.
-        const fadeStart = (1.0 - depthLayer) * 0.42; // foreground starts fading at 0.0, background at 0.42
-        const fadeEnd = 0.55 + (1.0 - depthLayer) * 0.45; // foreground finishes at 0.55, background at 1.0
+        // 4. Smooth Transition Into Footer:
+        const fadeStart = (1.0 - depthLayer) * 0.42;
+        const fadeEnd = 0.55 + (1.0 - depthLayer) * 0.45;
 
         let particleExitAlpha = 1.0;
         if (exitProgress > fadeStart) {
           particleExitAlpha = 1.0 - smoothstep(fadeStart, fadeEnd, exitProgress);
         }
 
-        // Particle size reduction as it fades into the background
         const sizeScale = 0.35 + 0.65 * particleExitAlpha;
         const currentRadius = projRadius * sizeScale;
 
-        // Skip rendering early if faded out or shrunk to non-visible
         if (particleExitAlpha <= 0.005 || currentRadius <= 0.2) continue;
 
-        // 5. Spatial Soft Edge Fade (Guarantees zero hard line at top & bottom borders)
+        // 5. Spatial Soft Edge Fade
         const bottomFadeZone = Math.min(240, height * 0.22);
         const distFromBottom = height - projY;
         let edgeBottomFade = 1.0;
@@ -371,9 +480,7 @@ export default function ContactParticles({ containerRef }) {
           edgeTopFade = smoothstep(0, topFadeZone, Math.max(0, projY));
         }
 
-        // Entrance fade when scrolling down from previous section
         const entranceAlpha = smoothstep(0, 1, enterProgress);
-
         const totalAlpha =
           p.baseOpacity *
           particleExitAlpha *
@@ -383,133 +490,51 @@ export default function ContactParticles({ containerRef }) {
 
         if (totalAlpha <= 0.008) continue;
 
-        // 6. Color Selection
         const color = palette[p.colorIndex % palette.length];
 
-        // 7. Render 3D Sphere Orb with Shading & Bokeh
+        // 6. Blit Pre-rendered Hardware-Accelerated Sprites
         if (p.type === 'orb') {
-          // A. Soft optical bokeh glow halo for large foreground orbs
-          if (currentRadius > 8) {
-            const haloGrad = ctx.createRadialGradient(
-              projX,
-              projY,
-              currentRadius * 0.4,
-              projX,
-              projY,
-              currentRadius * 2.2
-            );
-            haloGrad.addColorStop(
-              0,
-              `rgba(${color.r}, ${color.g}, ${color.b}, ${totalAlpha * 0.3})`
-            );
-            haloGrad.addColorStop(
-              0.55,
-              `rgba(${color.r}, ${color.g}, ${color.b}, ${totalAlpha * 0.08})`
-            );
-            haloGrad.addColorStop(
-              1,
-              `rgba(${color.r}, ${color.g}, ${color.b}, 0)`
-            );
-
-            ctx.fillStyle = haloGrad;
-            ctx.beginPath();
-            ctx.arc(projX, projY, currentRadius * 2.2, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
-          // B. 3D Sphere Body with Offset Specular Light Source
-          const lightOffsetX = -currentRadius * 0.32;
-          const lightOffsetY = -currentRadius * 0.32;
-
-          const sphereGrad = ctx.createRadialGradient(
-            projX + lightOffsetX,
-            projY + lightOffsetY,
-            currentRadius * 0.05,
-            projX,
-            projY,
-            currentRadius
-          );
-
-          if (isDark) {
-            sphereGrad.addColorStop(
-              0,
-              `rgba(255, 255, 255, ${totalAlpha * 0.95})`
-            );
-            sphereGrad.addColorStop(
-              0.28,
-              `rgba(${color.r}, ${color.g}, ${color.b}, ${totalAlpha * 0.88})`
-            );
-            sphereGrad.addColorStop(
-              0.68,
-              `rgba(${color.r}, ${color.g}, ${color.b}, ${totalAlpha * 0.45})`
-            );
-            sphereGrad.addColorStop(
-              1,
-              `rgba(${color.r}, ${color.g}, ${color.b}, 0)`
-            );
-          } else {
-            sphereGrad.addColorStop(
-              0,
-              `rgba(255, 255, 255, ${totalAlpha * 0.9})`
-            );
-            sphereGrad.addColorStop(
-              0.3,
-              `rgba(${color.r}, ${color.g}, ${color.b}, ${totalAlpha * 0.82})`
-            );
-            sphereGrad.addColorStop(
-              0.72,
-              `rgba(${color.r}, ${color.g}, ${color.b}, ${totalAlpha * 0.5})`
-            );
-            sphereGrad.addColorStop(
-              1,
-              `rgba(${color.r}, ${color.g}, ${color.b}, 0)`
+          const sprite = isDark
+            ? darkOrbSprites[p.colorIndex % darkOrbSprites.length]
+            : lightOrbSprites[p.colorIndex % lightOrbSprites.length];
+          if (sprite) {
+            ctx.globalAlpha = totalAlpha;
+            const spriteSize = currentRadius / 0.218;
+            ctx.drawImage(
+              sprite,
+              projX - spriteSize * 0.5,
+              projY - spriteSize * 0.5,
+              spriteSize,
+              spriteSize
             );
           }
-
-          ctx.fillStyle = sphereGrad;
-          ctx.beginPath();
-          ctx.arc(projX, projY, currentRadius, 0, Math.PI * 2);
-          ctx.fill();
         } else if (p.type === 'spark') {
-          // Midground luminous embers
-          const sparkGrad = ctx.createRadialGradient(
-            projX,
-            projY,
-            0,
-            projX,
-            projY,
-            currentRadius
-          );
-          sparkGrad.addColorStop(
-            0,
-            `rgba(255, 255, 255, ${totalAlpha * 0.92})`
-          );
-          sparkGrad.addColorStop(
-            0.4,
-            `rgba(${color.r}, ${color.g}, ${color.b}, ${totalAlpha * 0.72})`
-          );
-          sparkGrad.addColorStop(
-            1,
-            `rgba(${color.r}, ${color.g}, ${color.b}, 0)`
-          );
-
-          ctx.fillStyle = sparkGrad;
-          ctx.beginPath();
-          ctx.arc(projX, projY, currentRadius, 0, Math.PI * 2);
-          ctx.fill();
+          const sprite = isDark
+            ? darkSparkSprites[p.colorIndex % darkSparkSprites.length]
+            : lightSparkSprites[p.colorIndex % lightSparkSprites.length];
+          if (sprite) {
+            ctx.globalAlpha = totalAlpha;
+            const spriteSize = currentRadius / 0.46;
+            ctx.drawImage(
+              sprite,
+              projX - spriteSize * 0.5,
+              projY - spriteSize * 0.5,
+              spriteSize,
+              spriteSize
+            );
+          }
         } else {
-          // Deep background delicate starlight with twinkling
           const twinkle =
             0.7 +
             0.3 * Math.sin(currentTime * p.twinkleSpeed + p.twinklePhase);
-          const starAlpha = totalAlpha * twinkle;
-
-          ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${starAlpha})`;
+          ctx.globalAlpha = totalAlpha * twinkle;
+          ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
           ctx.beginPath();
           ctx.arc(projX, projY, Math.max(1, currentRadius * 0.8), 0, Math.PI * 2);
           ctx.fill();
         }
       }
+      ctx.globalAlpha = 1.0;
     };
 
     animationFrameId = requestAnimationFrame(render);
@@ -522,6 +547,7 @@ export default function ContactParticles({ containerRef }) {
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       themeObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('scroll', updateScrollProgress);
       if (scrollTriggerInstance) scrollTriggerInstance.kill();
