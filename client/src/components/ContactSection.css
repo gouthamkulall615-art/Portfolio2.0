@@ -479,38 +479,193 @@ html.light .contact-submit-btn:hover,
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-/* Success Alert */
-.contact-success-msg {
-  padding: 1.5rem 1.25rem;
-  border-radius: 14px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  color: #10b981;
-  font-family: var(--font-main, 'Poppins', sans-serif);
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 1rem;
+/* ==========================================================================
+   SUCCESS STATE — MINIMAL, REFINED DEVELOPER PORTFOLIO AESTHETIC
+   ========================================================================== */
+
+.contact-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 1.5rem 0.5rem 1rem;
+  min-height: 340px;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
-.contact-reset-btn {
-  margin-top: 1rem;
-  background: transparent;
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #10b981;
-  padding: 0.45rem 1.2rem;
-  border-radius: 999px;
-  font-family: var(--font-main, 'Poppins', sans-serif);
-  font-size: 0.8rem;
+/* Status Pill with restrained pulsing signal */
+.success-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  margin-bottom: 1.75rem;
+}
+
+[data-theme="light"] .success-status-pill,
+html.light .success-status-pill,
+.light .success-status-pill {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.09);
+}
+
+.status-beacon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px;
+}
+
+.status-beacon-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-crimson-bright, #e12b48);
+  box-shadow: 0 0 10px var(--accent-crimson-glow, rgba(196, 30, 58, 0.45));
+}
+
+.status-beacon-ping {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-crimson-bright, #e12b48);
+  opacity: 0.6;
+  animation: beacon-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes beacon-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  75%, 100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.status-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Heading: Strong typography hierarchy */
+.success-heading {
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: clamp(2rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin: 0 0 0.85rem;
+}
+
+/* Description text */
+.success-description {
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0 0 2.5rem;
+  max-width: 440px;
+}
+
+/* Button: consistent with portfolio action buttons */
+.success-action-row {
+  display: flex;
+  align-items: center;
+}
+
+.success-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.45rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  user-select: none;
 }
 
-.contact-reset-btn:hover {
-  background: rgba(16, 185, 129, 0.18);
-  border-color: #10b981;
-  transform: translateY(-1px);
+.success-reset-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.success-reset-btn:active {
+  transform: translateY(0);
+}
+
+.reset-arrow-icon {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s ease;
+}
+
+.success-reset-btn:hover .reset-arrow-icon {
+  transform: translateX(3px);
+}
+
+/* Light Mode Overrides */
+[data-theme="light"] .success-reset-btn,
+html.light .success-reset-btn,
+.light .success-reset-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .success-reset-btn:hover,
+html.light .success-reset-btn:hover,
+.light .success-reset-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.22);
+  color: #000000;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 640px) {
+  .contact-success-state {
+    padding: 1rem 0;
+    min-height: 280px;
+  }
+
+  .success-heading {
+    font-size: 1.85rem;
+  }
+
+  .success-description {
+    font-size: 0.92rem;
+    margin-bottom: 2rem;
+  }
+
+  .success-reset-btn {
+    padding: 0.7rem 1.25rem;
+    font-size: 0.85rem;
+  }
 }
 
 /* Error Alert */

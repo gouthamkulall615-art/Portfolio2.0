@@ -6,7 +6,7 @@ import {
   useMotionValueEvent,
   AnimatePresence,
 } from 'framer-motion';
-import { Send, Mail, Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import { Send, Mail, Loader2, AlertCircle } from 'lucide-react';
 import humanHandImg from '../assets/human-hand.png';
 import robotHandImg from '../assets/robot-hand.png';
 import ContactCardEffects from './ContactCardEffects';
@@ -383,20 +383,47 @@ export default function ContactSection() {
               <div className="contact-right-col">
                 <div className="contact-form-card">
                   {isSubmitted ? (
-                    <div className="contact-success-msg" role="status">
-                      <Sparkles className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
-                      <p className="font-semibold text-emerald-400">Transmission Received!</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Thank you for reaching out. I will get back to you within 1 business day.
+                    <motion.div
+                      className="contact-success-state"
+                      role="status"
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <div className="success-status-pill">
+                        <span className="status-beacon" aria-hidden="true">
+                          <span className="status-beacon-ping" />
+                          <span className="status-beacon-dot" />
+                        </span>
+                        <span className="status-label">STATUS // DISPATCHED</span>
+                      </div>
+
+                      <h3 className="success-heading">Message sent.</h3>
+
+                      <p className="success-description">
+                        Thanks for reaching out. I'll get back to you within one business day.
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => setIsSubmitted(false)}
-                        className="contact-reset-btn"
-                      >
-                        Send Another Message
-                      </button>
-                    </div>
+
+                      <div className="success-action-row">
+                        <button
+                          type="button"
+                          onClick={() => setIsSubmitted(false)}
+                          className="success-reset-btn"
+                        >
+                          <span>Send another message</span>
+                          <svg
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.75"
+                            className="reset-arrow-icon"
+                            aria-hidden="true"
+                          >
+                            <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </div>
+                    </motion.div>
                   ) : (
                     <form onSubmit={handleSubmit} noValidate className="contact-form">
                       {errorMessage && (
