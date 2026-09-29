@@ -6,7 +6,7 @@ import {
   useMotionValueEvent,
   AnimatePresence,
 } from 'framer-motion';
-import { Send, Mail, Sparkles } from 'lucide-react';
+import { Send, Mail, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import humanHandImg from '../assets/human-hand.png';
 import robotHandImg from '../assets/robot-hand.png';
 import ContactCardEffects from './ContactCardEffects';
@@ -80,6 +80,9 @@ export default function ContactSection() {
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errors, setErrors] = useState({});
 
   // Measure stage and calculate responsive hand dimensions
   useEffect(() => {
@@ -148,13 +151,76 @@ export default function ContactSection() {
     }
   });
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const errs = {};
+    if (!formState.name.trim()) {
+      errs.name = 'Please enter your name.';
+    }
+    if (!formState.email.trim()) {
+      errs.email = 'Please enter your email address.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
+      errs.email = 'Please enter a valid email address.';
+    }
+    if (!formState.message.trim()) {
+      errs.message = 'Please enter your message.';
+    }
+    return errs;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormState({ name: '', email: '', subject: '', message: '' });
-    }, 4000);
+    setErrorMessage('');
+
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      setErrorMessage(
+        'Web3Forms access key is missing. Please configure VITE_WEB3FORMS_ACCESS_KEY in your environment.'
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formState.name.trim(),
+          email: formState.email.trim(),
+          replyto: formState.email.trim(),
+          from_name: formState.name.trim(),
+          subject: formState.subject?.trim() || `New Portfolio Message from ${formState.name.trim()}`,
+          message: formState.message.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setIsSubmitted(true);
+        setFormState({ name: '', email: '', subject: '', message: '' });
+      } else {
+        throw new Error(data.message || 'Submission failed. Please check your details and try again.');
+      }
+    } catch (err) {
+      setErrorMessage(
+        err.message || 'Something went wrong while sending your message. Please check your network and try again.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const containerVariants = {
@@ -317,15 +383,29 @@ export default function ContactSection() {
               <div className="contact-right-col">
                 <div className="contact-form-card">
                   {isSubmitted ? (
-                    <div className="contact-success-msg">
+                    <div className="contact-success-msg" role="status">
                       <Sparkles className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
                       <p className="font-semibold text-emerald-400">Transmission Received!</p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        I will get back to you within 1 business day.
+                        Thank you for reaching out. I will get back to you within 1 business day.
                       </p>
+                      <button
+                        type="button"
+                        onClick={() => setIsSubmitted(false)}
+                        className="contact-reset-btn"
+                      >
+                        Send Another Message
+                      </button>
                     </div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="contact-form">
+                    <form onSubmit={handleSubmit} noValidate className="contact-form">
+                      {errorMessage && (
+                        <div className="contact-error-msg" role="alert">
+                          <AlertCircle size={18} className="flex-shrink-0" />
+                          <span>{errorMessage}</span>
+                        </div>
+                      )}
+
                       <div className="form-group">
                         <label htmlFor="contact-name" className="form-label">
                           NAME *
@@ -334,13 +414,16 @@ export default function ContactSection() {
                           id="contact-name"
                           type="text"
                           required
+                          disabled={isLoading}
                           placeholder="Your name"
                           value={formState.name}
-                          onChange={(e) =>
-                            setFormState((prev) => ({ ...prev, name: e.target.value }))
-                          }
-                          className="form-input"
+                          onChange={(e) => {
+                            setFormState((prev) => ({ ...prev, name: e.target.value }));
+                            if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+                          }}
+                          className={`form-input ${errors.name ? 'form-input-error' : ''}`}
                         />
+                        {errors.name && <span className="form-error-text">{errors.name}</span>}
                       </div>
 
                       <div className="form-group">
@@ -351,13 +434,16 @@ export default function ContactSection() {
                           id="contact-email"
                           type="email"
                           required
+                          disabled={isLoading}
                           placeholder="your.email@example.com"
                           value={formState.email}
-                          onChange={(e) =>
-                            setFormState((prev) => ({ ...prev, email: e.target.value }))
-                          }
-                          className="form-input"
+                          onChange={(e) => {
+                            setFormState((prev) => ({ ...prev, email: e.target.value }));
+                            if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                          }}
+                          className={`form-input ${errors.email ? 'form-input-error' : ''}`}
                         />
+                        {errors.email && <span className="form-error-text">{errors.email}</span>}
                       </div>
 
                       <div className="form-group">
@@ -367,7 +453,7 @@ export default function ContactSection() {
                         <input
                           id="contact-subject"
                           type="text"
-                          required
+                          disabled={isLoading}
                           placeholder="What's this about?"
                           value={formState.subject}
                           onChange={(e) =>
@@ -385,21 +471,34 @@ export default function ContactSection() {
                           id="contact-message"
                           required
                           rows={4}
+                          disabled={isLoading}
                           placeholder="Your message here..."
                           value={formState.message}
-                          onChange={(e) =>
-                            setFormState((prev) => ({ ...prev, message: e.target.value }))
-                          }
-                          className="form-textarea"
+                          onChange={(e) => {
+                            setFormState((prev) => ({ ...prev, message: e.target.value }));
+                            if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }));
+                          }}
+                          className={`form-textarea ${errors.message ? 'form-input-error' : ''}`}
                         />
+                        {errors.message && <span className="form-error-text">{errors.message}</span>}
                       </div>
 
                       <button
                         type="submit"
+                        disabled={isLoading}
                         className="contact-submit-btn"
                       >
-                        <span>SEND MESSAGE</span>
-                        <Send size={16} />
+                        {isLoading ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin-slow" />
+                            <span>TRANSMITTING...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>SEND MESSAGE</span>
+                            <Send size={16} />
+                          </>
+                        )}
                       </button>
                     </form>
                   )}

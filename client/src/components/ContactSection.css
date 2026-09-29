@@ -481,16 +481,85 @@ html.light .contact-submit-btn:hover,
 
 /* Success Alert */
 .contact-success-msg {
-  padding: 1rem;
-  border-radius: 12px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 1.5rem 1.25rem;
+  border-radius: 14px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
   color: #10b981;
   font-family: var(--font-main, 'Poppins', sans-serif);
   font-size: 0.9rem;
   font-weight: 600;
   text-align: center;
   margin-bottom: 1rem;
+}
+
+.contact-reset-btn {
+  margin-top: 1rem;
+  background: transparent;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #10b981;
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.contact-reset-btn:hover {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: #10b981;
+  transform: translateY(-1px);
+}
+
+/* Error Alert */
+.contact-error-msg {
+  padding: 0.85rem 1.15rem;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  line-height: 1.4;
+}
+
+.form-input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important;
+}
+
+.form-error-text {
+  font-size: 0.78rem;
+  color: #f87171;
+  font-family: var(--font-main, 'Poppins', sans-serif);
+  margin-top: 0.1rem;
+}
+
+.contact-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+@keyframes spin-loader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-loader 0.9s linear infinite;
 }
 
 /* Direct Social Links row */
