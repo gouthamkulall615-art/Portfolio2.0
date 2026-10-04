@@ -19,35 +19,24 @@ const ANIME: Anime[] = [
   { id: "demonslayer",title: "Demon Slayer",      tag: "Action",               hue: 145, note: "Breathing styles, family and stunning fights.",                            image: "/anime/demonslayer.jpg" },
 ];
 
-type Mode = "fan" | "ring" | "grid";
+type Mode = "ring" | "grid";
 type Pose = { x: number; y: number; z: number; ry: number; rz: number };
 
 const N = ANIME.length;
 const MODES: { id: Mode; label: string; hint: string }[] = [
-  { id: "fan",  label: "Fan",    hint: "Hover a card to lift it. Tap a card to flip it." },
-  { id: "ring", label: "3D Ring",hint: "Drag to spin the ring. Tap a card to flip it." },
-  { id: "grid", label: "Grid",   hint: "Tap a card to read why I love it." },
+  { id: "ring", label: "3D Ring", hint: "Drag to spin the ring. Tap a card to flip it." },
+  { id: "grid", label: "Grid",    hint: "Tap a card to read why I love it." },
 ];
 
 const rad = (d: number) => (d * Math.PI) / 180;
 const wrap = (d: number) => ((((d + 180) % 360) + 360) % 360) - 180;
 
 function poses(mode: Mode, W: number, cardW: number, cardH: number, spin: number) {
-  const list: Pose[] = [];
-
-  if (mode === "ring") {
-    const radius = cardW / 2 / Math.tan(Math.PI / N) + 36;
-    for (let i = 0; i < N; i++) {
-      const a = (i * 360) / N + spin;
-      list.push({ x: radius * Math.sin(rad(a)), y: 24, z: radius * Math.cos(rad(a)) - radius, ry: a, rz: 0 });
-    }
-    return { list, height: cardH + 48 };
-  }
-
   if (mode === "grid") {
     const gap = 20;
     const cols = Math.max(1, Math.floor((W + gap) / (cardW + gap)));
     const rows = Math.ceil(N / cols);
+    const list: Pose[] = [];
     for (let i = 0; i < N; i++) {
       const row = Math.floor(i / cols);
       const col = i % cols;
@@ -57,25 +46,20 @@ function poses(mode: Mode, W: number, cardW: number, cardH: number, spin: number
     return { list, height: rows * cardH + (rows - 1) * gap };
   }
 
-  // fan
-  const half = Math.min(300, Math.max(0, (W - cardW) / 2));
+  // 3D ring (default)
+  const list: Pose[] = [];
+  const radius = cardW / 2 / Math.tan(Math.PI / N) + 36;
   for (let i = 0; i < N; i++) {
-    const r = (i - (N - 1) / 2) / ((N - 1) / 2);
-    list.push({
-      x: r * half,
-      y: 34 + r * r * 38,
-      z: (N - Math.abs(i - (N - 1) / 2)) * 3,
-      ry: 0,
-      rz: r * 20,
-    });
+    const a = (i * 360) / N + spin;
+    list.push({ x: radius * Math.sin(rad(a)), y: 24, z: radius * Math.cos(rad(a)) - radius, ry: a, rz: 0 });
   }
-  return { list, height: cardH + 110 };
+  return { list, height: cardH + 48 };
 }
 
 const stackPose = (i: number): Pose => ({ x: 0, y: 40, z: i * 3, ry: 0, rz: (i % 2 ? 1 : -1) * (5 + i * 2) });
 
 export default function AnimeDeck() {
-  const [mode, setMode] = useState<Mode>("fan");
+  const [mode, setMode] = useState<Mode>("ring");
   const [flipped, setFlipped] = useState<boolean[]>(() => Array(N).fill(false));
   const [size, setSize] = useState({ W: 1000, cardW: 240, cardH: 336 });
 
@@ -83,7 +67,7 @@ export default function AnimeDeck() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const S = useRef({
-    mode: "fan" as Mode,
+    mode: "ring" as Mode,
     size,
     spin: 0,
     paused: false,
