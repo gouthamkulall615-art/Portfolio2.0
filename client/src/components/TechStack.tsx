@@ -25,9 +25,11 @@ const SKILLS: Skill[] = [
   { name: "CSS", group: "Frontend", image: "/images/css.webp" },
   { name: "Node.js", group: "Backend", image: "/images/nodejs.webp" },
   { name: "JavaScript", group: "Languages", image: "/images/javascript.webp" },
+  { name: "C++", group: "Languages", image: "/images/cpp.webp" },
   { name: "MongoDB", group: "Databases", image: "/images/mongodb.webp" },
   { name: "Git", group: "Tools", image: "/images/git.webp" },
   { name: "Vercel", group: "Tools", image: "/images/vercel.webp" },
+  { name: "Postman", group: "Tools", image: "/images/postman.webp" },
 ];
 
 const GROUP_ORDER = ["Frontend", "Backend", "Languages", "Databases", "Tools"];
