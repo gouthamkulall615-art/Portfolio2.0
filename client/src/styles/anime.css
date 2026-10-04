@@ -60,6 +60,18 @@ body {
   box-sizing: border-box;
 }
 
+/* ---- off-screen rendering skip (huge win on long pages) ---- */
+/* Apply to every major section that is NOT the hero */
+#projects,
+#skills,
+#education,
+#beyond-code,
+.contact-section,
+.marquee-banner-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px; /* rough height — prevents layout shift */
+}
+
 /* ==========================================================================
    FLOATING TOP HEADER WITH GOOEYNAV & THEME TOGGLER
    ========================================================================== */
@@ -280,5 +292,62 @@ body {
 
 [data-theme="light"] .watermark-fg {
   color: #111111;
+}
+
+/* ==========================================================================
+   PERFORMANCE
+   ========================================================================== */
+
+/* Promote animated/3D elements to their own GPU compositor layer.
+   Only add will-change to things that actually animate; too many hurts. */
+.acard,
+.ad__card,
+.ad__lift,
+.ad__flip {
+  will-change: transform;
+}
+
+/* Animate only cheap compositor properties site-wide.
+   Sections that use background-color transitions are fine — they're short. */
+.tech-label,
+.anime__item {
+  will-change: opacity, transform;
+}
+
+/* On very small phones hide the background particle canvas completely —
+   the page still looks great and this saves ~3-4ms per frame on low-end devices. */
+@media (max-width: 480px) {
+  .particles-bg {
+    display: none;
+  }
+}
+
+/* Give the scroll container a stacking context so the fixed header
+   and fixed particle canvas don't participate in every section repaint. */
+.portfolio-app-root {
+  isolation: isolate;
+}
+
+/* Prevent the fixed particle canvas from consuming touch events —
+   this is already set inline but belt-and-suspenders via CSS too. */
+.particles-bg {
+  pointer-events: none !important;
+  touch-action: none !important;
+}
+
+/* Reduce CSS transition cost on low-power devices.
+   Note: this is in addition to the existing prefers-reduced-motion blocks
+   in each component's own CSS file. */
+@media (max-width: 768px) {
+  .acard {
+    /* Disable 3D perspective tilt on mobile — it's never triggered (mouse-only)
+       and having the property at all adds a stacking context cost. */
+    transform: none !important;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Cut the flip/lift transition durations in half on mobile for snappier feel */
+  .ad__lift { transition-duration: 0.2s; }
+  .ad__flip { transition-duration: 0.45s; }
 }
 

@@ -57,6 +57,10 @@
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -65,7 +69,10 @@ html, body {
   overflow-x: hidden;
   min-height: 100%;
   background-color: #000000;
+  /* Prevent iOS rubber-band scroll lag */
+  -webkit-overflow-scrolling: touch;
 }
+
 
 #root {
   width: 100%;

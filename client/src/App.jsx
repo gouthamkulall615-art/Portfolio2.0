@@ -41,13 +41,15 @@ export default function App() {
   return (
     <div className="portfolio-app-root">
       {/* 3D Floating Particle Background — sits below everything */}
+      {/* quantity=120 → 24 on mobile (component scales to 20% internally) */}
       <Floating3DParticles
-        quantity={350}
+        quantity={120}
         color="#374151"
-        size={7}
-        opacity={0.55}
-        drift={0.6}
+        size={6}
+        opacity={0.45}
+        drift={0.5}
         depth={0.65}
+        className="particles-bg"
       />
 
       {/* Minimal Cinematic Intro Sequence */}
