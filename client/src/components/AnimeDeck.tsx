@@ -167,6 +167,26 @@ export default function AnimeDeck() {
           cur.rz += wrap(target.rz - cur.rz) * k;
         }
         el.style.transform = `translate3d(${cur.x}px, ${cur.y}px, ${cur.z}px) rotateY(${cur.ry}deg) rotateZ(${cur.rz}deg)`;
+
+        if (s.mode === "ring" && !shuffling) {
+          const cos = Math.cos(rad(cur.ry));
+          if (cos <= 0) {
+            el.style.opacity = "0";
+            el.style.pointerEvents = "none";
+            el.style.visibility = "hidden";
+          } else {
+            const alpha = Math.min(1, cos / 0.25);
+            el.style.opacity = alpha < 0.99 ? alpha.toFixed(3) : "1";
+            el.style.pointerEvents = alpha > 0.5 ? "auto" : "none";
+            el.style.visibility = "visible";
+          }
+          el.style.zIndex = String(Math.round(cur.z + 1000));
+        } else {
+          el.style.opacity = "";
+          el.style.pointerEvents = "";
+          el.style.visibility = "";
+          el.style.zIndex = "";
+        }
       }
     };
 
@@ -180,6 +200,16 @@ export default function AnimeDeck() {
     S.current.mode = m;
     S.current.switchAt = performance.now();
     setMode(m);
+    if (m !== "ring") {
+      cardRefs.current.forEach((el) => {
+        if (el) {
+          el.style.opacity = "";
+          el.style.pointerEvents = "";
+          el.style.visibility = "";
+          el.style.zIndex = "";
+        }
+      });
+    }
   };
 
   const shuffle = () => {
@@ -187,6 +217,14 @@ export default function AnimeDeck() {
     S.current.shuffleUntil = now + 600;
     S.current.switchAt = now;
     setFlipped(Array(N).fill(false));
+    cardRefs.current.forEach((el) => {
+      if (el) {
+        el.style.opacity = "";
+        el.style.pointerEvents = "";
+        el.style.visibility = "";
+        el.style.zIndex = "";
+      }
+    });
   };
 
   const toggleFlip = (i: number) => setFlipped((f) => f.map((v, j) => (j === i ? !v : v)));

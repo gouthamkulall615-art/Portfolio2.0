@@ -54,7 +54,7 @@
 .ad__card {
   position: absolute; left: 50%; top: 0;
   transform-style: preserve-3d;
-  will-change: transform;
+  will-change: transform, opacity;
   cursor: pointer;
   outline: none;
 }
