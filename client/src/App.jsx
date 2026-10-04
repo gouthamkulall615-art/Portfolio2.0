@@ -16,6 +16,7 @@ import TechStack from './components/TechStack';
 const ProjectsSection = lazy(() => import('./components/ProjectsSection'));
 const ContactSection = lazy(() => import('./components/ContactSection'));
 const CinematicFooter = lazy(() => import('./components/CinematicFooter'));
+const AnimeCards = lazy(() => import('./components/AnimeDeck'));
 
 const navItems = [
   { label: 'Home', href: '#home', ariaLabel: 'Go to home section' },
@@ -124,6 +125,11 @@ export default function App() {
 
       {/* Education Timeline Section */}
       <EducationSection />
+
+      {/* Beyond Code — animated anime cards */}
+      <Suspense fallback={null}>
+        <AnimeCards />
+      </Suspense>
 
       {/* Full-width Horizontal Marquee Ticker Banner */}
       <MarqueeBanner />

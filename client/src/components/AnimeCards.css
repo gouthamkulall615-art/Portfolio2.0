@@ -1,0 +1,318 @@
+/* ===== Beyond code: animated anime cards ===== */
+.anime {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(3rem, 7vw, 5rem) 1rem;
+}
+.anime__head {
+  text-align: center;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+.anime__head p {
+  margin: 0.75rem 0 0;
+  line-height: 1.7;
+  color: var(--text-secondary, #666);
+}
+
+.anime__grid {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.25rem;
+}
+
+/* ---------- scroll-in ---------- */
+.anime__item {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(var(--i) * 90ms);
+}
+.anime__item.is-in { opacity: 1; transform: none; }
+
+/* effects only run while the card is on screen */
+.anime__item:not(.is-in) .fx,
+.anime__item:not(.is-in) .fx::before,
+.anime__item:not(.is-in) .fx::after,
+.anime__item:not(.is-in) .fx i,
+.anime__item:not(.is-in) .fx i::before,
+.anime__item:not(.is-in) .fx i::after { animation-play-state: paused !important; }
+
+/* ---------- card shell ---------- */
+.acard {
+  --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 50%;
+  --c1: #fff; --bg: #111;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  min-height: 360px;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg);
+  color: #fff;
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.6);
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.25s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.acard:hover {
+  box-shadow: 0 26px 50px -20px var(--c1);
+  border-color: var(--c1);
+}
+
+.acard__img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.65;
+  transition: transform 0.7s ease;
+}
+.acard:hover .acard__img { transform: scale(1.07); }
+.has-img .fx { mix-blend-mode: screen; }
+
+.acard__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.2), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.acard:hover .acard__glare { opacity: 1; }
+
+.acard__body {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding: 3rem 1.4rem 1.4rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 25%, transparent);
+}
+.acard__tag {
+  display: inline-block;
+  margin-bottom: 0.55rem;
+  padding: 0.18rem 0.65rem;
+  border: 1px solid var(--c1);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c1);
+}
+.acard h3 {
+  position: relative;
+  display: inline-block;
+  margin: 0 0 0.4rem;
+  font-size: 1.4rem;
+  color: #fff;
+}
+.acard h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background: var(--c1);
+  transition: width 0.4s ease;
+}
+.acard:hover h3::after { width: 100%; }
+.acard__body p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ---------- effects layer ---------- */
+.fx {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.fx::before, .fx::after, .fx i { content: ""; position: absolute; display: block; }
+
+@keyframes slideTile48 { to { background-position: 48px 0; } }
+@keyframes slideTile44 { to { background-position: 44px 44px; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spinBack { to { transform: rotate(-360deg); } }
+
+/* ===== Attack on Titan ===== */
+.acard--aot { --c1: #9fb3c2; --bg: linear-gradient(160deg, #1b252d, #0b1014); }
+.fx--aot::before {
+  inset: 0;
+  background: linear-gradient(135deg, transparent 48%, rgba(255, 255, 255, 0.08) 48% 50%, transparent 50%) 0 0 / 48px 48px;
+  animation: slideTile48 6s linear infinite;
+}
+.fx--aot::after {
+  left: 0; right: 0; bottom: 0; height: 42%;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.14) 2px, transparent 2px) 0 0 / 100% 24px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.14) 2px, transparent 2px) 0 0 / 48px 24px;
+  -webkit-mask-image: linear-gradient(to top, #000, transparent);
+  mask-image: linear-gradient(to top, #000, transparent);
+}
+.fx--aot i:nth-child(1), .fx--aot i:nth-child(2) {
+  left: -30%; width: 160%; height: 3px;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  box-shadow: 0 0 14px 2px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  animation: aotSlash 3.8s ease-in infinite;
+}
+.fx--aot i:nth-child(1) { top: 30%; }
+.fx--aot i:nth-child(2) { top: 52%; animation-delay: 1.3s; }
+@keyframes aotSlash {
+  0%, 50% { transform: rotate(-24deg) translateX(-120%); opacity: 0; }
+  56% { opacity: 1; }
+  78% { transform: rotate(-24deg) translateX(120%); opacity: 1; }
+  100% { transform: rotate(-24deg) translateX(120%); opacity: 0; }
+}
+
+/* ===== Naruto ===== */
+.acard--naruto { --c1: #ffa31a; --bg: radial-gradient(circle at 50% 40%, #3a1d05, #140a02 70%); }
+.fx--naruto::before {
+  left: -20%; top: -12%; width: 140%; aspect-ratio: 1; border-radius: 50%;
+  background: repeating-conic-gradient(rgba(255, 160, 0, 0) 0 18deg, rgba(255, 160, 0, 0.32) 18deg 36deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 10%, #000 14%, transparent 68%);
+  mask-image: radial-gradient(circle, transparent 10%, #000 14%, transparent 68%);
+  animation: spin 7s linear infinite;
+}
+.fx--naruto i { left: 50%; top: 40%; border-radius: 50%; }
+.fx--naruto i:nth-child(1) {
+  width: 96px; height: 96px; margin: -48px 0 0 -48px;
+  background: radial-gradient(circle, #fff7d6, #ffb300 45%, transparent 72%);
+  animation: chakraPulse 1.7s ease-in-out infinite;
+}
+.fx--naruto i:nth-child(2), .fx--naruto i:nth-child(3) {
+  border: 2px solid rgba(255, 205, 90, 0.9);
+  border-top-color: transparent; border-bottom-color: transparent;
+}
+.fx--naruto i:nth-child(2) { width: 130px; height: 130px; margin: -65px 0 0 -65px; animation: spin 1.6s linear infinite; }
+.fx--naruto i:nth-child(3) { width: 180px; height: 180px; margin: -90px 0 0 -90px; animation: spinBack 2.4s linear infinite; }
+@keyframes chakraPulse {
+  0%, 100% { transform: scale(0.85); opacity: 0.85; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* ===== Death Note ===== */
+.acard--deathnote { --c1: #e03a4e; --bg: linear-gradient(180deg, #121217, #08080b); }
+.fx--deathnote::before {
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, transparent 0 27px, rgba(232, 226, 208, 0.13) 27px 28px);
+  animation: pageScroll 4s linear infinite;
+}
+@keyframes pageScroll { to { background-position: 0 -28px; } }
+.fx--deathnote::after { left: 15%; top: 0; width: 2px; height: 100%; background: rgba(224, 58, 78, 0.55); }
+.fx--deathnote i:nth-child(1) {
+  left: 21%; top: 34%;
+  width: 0; overflow: hidden; white-space: nowrap;
+  border-right: 2px solid #e8e2d0;
+  font: 700 1.05rem/1.4 ui-monospace, Menlo, Consolas, monospace;
+  color: #e8e2d0;
+  animation: typeName 4s steps(14) infinite, caret 0.7s step-end infinite;
+}
+.fx--deathnote i:nth-child(1)::after { content: "Name: ________"; position: static; }
+@keyframes typeName { 0% { width: 0; } 55%, 88% { width: 14ch; } 100% { width: 0; } }
+@keyframes caret { 50% { border-color: transparent; } }
+
+/* ===== Vinland Saga ===== */
+.acard--vinland { --c1: #7fb8dc; --bg: linear-gradient(180deg, #17384a, #0b1820); }
+.fx--vinland::after {
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+    radial-gradient(2px 2px at 90px 120px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 140px 70px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 50px 160px, #fff, transparent);
+  background-size: 180px 200px;
+  opacity: 0.75;
+  animation: snowFall 9s linear infinite;
+}
+@keyframes snowFall { to { background-position: 0 200px, 0 200px, 0 200px, 0 200px; } }
+.fx--vinland i:nth-child(1), .fx--vinland i:nth-child(2) { left: 0; right: 0; }
+.fx--vinland i:nth-child(1) { bottom: 0; height: 40%; background: linear-gradient(rgba(127, 184, 220, 0.28), rgba(8, 18, 24, 0.95)); }
+.fx--vinland i:nth-child(2) { bottom: 0; height: 30%; background: linear-gradient(rgba(127, 184, 220, 0.2), rgba(8, 18, 24, 0.95)); }
+.fx--vinland i:nth-child(1)::before, .fx--vinland i:nth-child(2)::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -19px; height: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20'%3E%3Cpath d='M0 10 Q30 0 60 10 T120 10 V20 H0Z' fill='%237fb8dc' fill-opacity='.4'/%3E%3C/svg%3E") 0 0 / 120px 20px repeat-x;
+  animation: waveX 6s linear infinite;
+}
+.fx--vinland i:nth-child(2)::before { animation-duration: 9s; animation-direction: reverse; }
+@keyframes waveX { to { background-position: 120px 0; } }
+
+/* ===== Jujutsu Kaisen ===== */
+.acard--jjk { --c1: #a98bff; --bg: radial-gradient(circle at 50% 42%, #2a1260, #0a0614 70%); }
+.fx--jjk::before {
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 4px);
+  animation: jjkFlicker 3s steps(2) infinite;
+}
+@keyframes jjkFlicker { 0%, 92%, 100% { opacity: 1; } 94% { opacity: 0.4; } 97% { opacity: 0.8; } }
+.fx--jjk i {
+  left: 50%; top: 42%; width: 60px; height: 60px; margin: -30px 0 0 -30px;
+  border: 2px solid rgba(169, 139, 255, 0.95); border-radius: 50%;
+  box-shadow: 0 0 18px rgba(169, 139, 255, 0.8), inset 0 0 14px rgba(169, 139, 255, 0.5);
+  opacity: 0;
+  animation: domainRing 3.6s ease-out infinite;
+}
+.fx--jjk i:nth-child(2) { animation-delay: 1.2s; }
+.fx--jjk i:nth-child(3) { animation-delay: 2.4s; }
+@keyframes domainRing { from { transform: scale(0.2); opacity: 1; } to { transform: scale(7); opacity: 0; } }
+.acard--jjk:hover h3 { animation: glitch 0.4s steps(2) infinite; }
+@keyframes glitch {
+  0% { text-shadow: 2px 0 #a98bff, -2px 0 #4de1ff; }
+  50% { text-shadow: -2px 1px #a98bff, 2px -1px #4de1ff; }
+  100% { text-shadow: 1px 0 #a98bff, -1px 0 #4de1ff; }
+}
+
+/* ===== Demon Slayer ===== */
+.acard--demonslayer { --c1: #4fe3a1; --bg: #0b1f15; }
+.fx--demonslayer::before {
+  inset: 0;
+  background: conic-gradient(#0e2c1c 25%, #17492e 0 50%, #0e2c1c 0 75%, #17492e 0) 0 0 / 44px 44px;
+  animation: slideTile44 5s linear infinite;
+}
+.fx--demonslayer::after {
+  inset: 0;
+  background: radial-gradient(circle at 50% 38%, rgba(79, 227, 161, 0.3), transparent 60%);
+  animation: waterGlow 3s ease-in-out infinite;
+}
+@keyframes waterGlow { 50% { opacity: 0.45; } }
+.fx--demonslayer i {
+  left: -20%; top: 22%; width: 140%; height: 90px;
+  border-radius: 50%;
+  border-top: 3px solid rgba(160, 255, 215, 0.95);
+  box-shadow: 0 -10px 20px rgba(79, 227, 161, 0.6);
+  opacity: 0;
+  animation: waterArc 3.6s ease-in-out infinite;
+}
+.fx--demonslayer i:nth-child(2) { top: 34%; animation-delay: 0.5s; }
+.fx--demonslayer i:nth-child(3) { top: 46%; animation-delay: 1s; }
+@keyframes waterArc {
+  0% { transform: translateX(-70%) rotate(-14deg); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: translateX(70%) rotate(-14deg); opacity: 0; }
+}
+
+/* ---------- small screens ---------- */
+@media (max-width: 520px) {
+  .acard { min-height: 320px; }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .anime__item { opacity: 1; transform: none; transition: none; }
+  .acard { transform: none !important; transition: none; }
+  .fx, .fx::before, .fx::after, .fx i, .fx i::before, .acard h3 { animation: none !important; }
+  .fx--deathnote i:nth-child(1) { width: 14ch; }
+}

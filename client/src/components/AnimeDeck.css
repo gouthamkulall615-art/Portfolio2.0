@@ -1,0 +1,141 @@
+/* ===== Beyond code: anime deck ===== */
+.ad {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(3rem, 7vw, 5rem) 1rem;
+  overflow-x: clip; /* the fan and ring can swing wide, never cause sideways scroll */
+}
+.ad__head { text-align: center; max-width: 36rem; margin: 0 auto; }
+.ad__head h2 {
+  margin: 0 0 0.6rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.03em;
+  color: var(--text-primary, #111);
+}
+.ad__head p { margin: 0; line-height: 1.7; color: var(--text-secondary, #666); }
+
+/* ---------- controls ---------- */
+.ad__controls { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.6rem; margin: 1.75rem 0 0.6rem; }
+.ad__seg {
+  display: inline-flex; gap: 0.25rem; padding: 0.25rem;
+  border: 1px solid var(--card-border, rgba(128, 128, 128, 0.35)); border-radius: 999px;
+  background: var(--card-bg, transparent);
+}
+.ad__seg button, .ad__shuffle {
+  border: 0; border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  background: transparent;
+  color: var(--text-secondary, #555);
+  font: inherit; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+.ad__seg button:hover, .ad__shuffle:hover { color: var(--text-primary, #111); }
+.ad__seg button.is-active { background: var(--text-primary, #111); color: var(--bg-black, #fff); }
+.ad__shuffle { border: 1px solid var(--card-border, rgba(128, 128, 128, 0.35)); }
+.ad__shuffle:active { transform: scale(0.94); }
+.ad__seg button:focus-visible, .ad__shuffle:focus-visible { outline: 2px solid var(--text-primary, #111); outline-offset: 2px; }
+.ad__hint { margin: 0 0 1.5rem; text-align: center; font-size: 0.8rem; letter-spacing: 0.04em; color: var(--text-secondary, #777); }
+
+/* ---------- the deck ---------- */
+.ad__deck {
+  position: relative;
+  perspective: 1400px;
+  perspective-origin: 50% 30%;
+  transition: height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.ad__deck[data-mode="ring"] { cursor: grab; }
+.ad__deck[data-mode="ring"]:active { cursor: grabbing; }
+
+/* a card's position is set from JavaScript every frame */
+.ad__card {
+  position: absolute; left: 50%; top: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+  cursor: pointer;
+  outline: none;
+}
+.ad__lift, .ad__flip { position: absolute; inset: 0; transform-style: preserve-3d; }
+.ad__lift { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.ad__flip { transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.ad__flip.is-flipped { transform: rotateY(180deg); }
+
+/* hover lift depends on the layout */
+.ad__deck[data-mode="fan"] .ad__card:hover .ad__lift,
+.ad__deck[data-mode="fan"] .ad__card:focus-visible .ad__lift { transform: translate3d(0, -48px, 90px) scale(1.07); }
+.ad__deck[data-mode="grid"] .ad__card:hover .ad__lift,
+.ad__deck[data-mode="grid"] .ad__card:focus-visible .ad__lift { transform: translate3d(0, -8px, 30px); }
+
+/* ---------- faces ---------- */
+.ad__face {
+  position: absolute; inset: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  color: #fff;
+}
+.ad__front {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.2rem;
+  background:
+    radial-gradient(120% 80% at 100% 0%, hsl(var(--hue) 80% 45% / 0.5), transparent 60%),
+    linear-gradient(160deg, #1a1a23, #0c0c12);
+  border: 1px solid hsl(var(--hue) 60% 50% / 0.45);
+  box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.75);
+}
+.ad__card:hover .ad__front, .ad__card:focus-visible .ad__front {
+  border-color: hsl(var(--hue) 85% 62%);
+  box-shadow: 0 24px 46px -20px hsl(var(--hue) 85% 55% / 0.6);
+}
+.ad__card:focus-visible .ad__front { outline: 2px solid hsl(var(--hue) 90% 70%); outline-offset: 3px; }
+
+/* light sweeps across the card on hover */
+.ad__front::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.14) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.9s ease;
+}
+.ad__card:hover .ad__front::after { transform: translateX(120%); }
+
+.ad__num {
+  position: absolute; top: 0.7rem; left: 1rem;
+  font: 800 3.4rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: transparent;
+  -webkit-text-stroke: 1px hsl(var(--hue) 85% 65% / 0.7);
+}
+.ad__text { position: relative; z-index: 2; }
+.ad__tag {
+  display: inline-block; margin-bottom: 0.5rem;
+  padding: 0.18rem 0.65rem;
+  border: 1px solid hsl(var(--hue) 85% 65%); border-radius: 999px;
+  font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: hsl(var(--hue) 85% 72%);
+}
+.ad__title { margin: 0; font-size: 1.35rem; line-height: 1.2; color: #fff; }
+
+/* optional picture on the front */
+.ad__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; pointer-events: none; }
+.has-img::before {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 20%, transparent 70%);
+}
+
+/* back of the card */
+.ad__back {
+  transform: rotateY(180deg);
+  display: flex; flex-direction: column; justify-content: center; gap: 0.7rem;
+  padding: 1.4rem;
+  background: linear-gradient(160deg, hsl(var(--hue) 55% 22%), #0c0c12);
+  border: 1px solid hsl(var(--hue) 60% 50% / 0.55);
+  box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.75);
+}
+.ad__back p { margin: 0; font-size: 0.95rem; line-height: 1.65; color: rgba(255, 255, 255, 0.9); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ad__deck, .ad__lift, .ad__flip, .ad__front::after { transition: none; }
+}
