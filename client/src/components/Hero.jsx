@@ -28,9 +28,11 @@ const renderRowContent = (units, repeat = 4, isItalic = false) => {
 export function Hero() {
   const containerRef = useRef(null);
   const marqueeRef = useRef(null);
-  const portraitRef = useRef(null);
+  const portraitFrameRef = useRef(null);
+  const animeLayerRef = useRef(null);
   const pillRef = useRef(null);
 
+  // 1. Scroll-driven fade transition (Hero -> Projects)
   useEffect(() => {
     let ticking = false;
 
@@ -38,9 +40,9 @@ export function Hero() {
       ticking = false;
       const container = containerRef.current;
       const marquee = marqueeRef.current;
-      const portrait = portraitRef.current;
+      const portraitFrame = portraitFrameRef.current;
       const pill = pillRef.current;
-      if (!container || !marquee || !portrait) return;
+      if (!container || !marquee || !portraitFrame) return;
 
       const scrollY = window.scrollY || window.pageYOffset || 0;
       const heroHeight = container.offsetHeight || window.innerHeight;
@@ -51,8 +53,8 @@ export function Hero() {
           container.style.visibility = 'hidden';
           container.style.pointerEvents = 'none';
           marquee.style.opacity = '0';
-          portrait.style.opacity = '0';
-          portrait.style.transform = 'scale(0.96)';
+          portraitFrame.style.opacity = '0';
+          portraitFrame.style.transform = 'scale(0.96)';
           if (pill) {
             pill.style.opacity = '0';
             pill.style.pointerEvents = 'none';
@@ -71,8 +73,8 @@ export function Hero() {
         container.style.visibility = 'visible';
         container.style.pointerEvents = 'auto';
         marquee.style.opacity = '1';
-        portrait.style.opacity = '1';
-        portrait.style.transform = '';
+        portraitFrame.style.opacity = '1';
+        portraitFrame.style.transform = '';
         if (pill) {
           pill.style.opacity = '';
           pill.style.pointerEvents = '';
@@ -82,8 +84,8 @@ export function Hero() {
         container.style.visibility = 'hidden';
         container.style.pointerEvents = 'none';
         marquee.style.opacity = '0';
-        portrait.style.opacity = '0';
-        portrait.style.transform = 'scale(0.96)';
+        portraitFrame.style.opacity = '0';
+        portraitFrame.style.transform = 'scale(0.96)';
         if (pill) {
           pill.style.opacity = '0';
           pill.style.pointerEvents = 'none';
@@ -99,8 +101,8 @@ export function Hero() {
         container.style.visibility = 'visible';
         container.style.pointerEvents = opacity < 0.1 ? 'none' : 'auto';
         marquee.style.opacity = opacity.toFixed(3);
-        portrait.style.opacity = opacity.toFixed(3);
-        portrait.style.transform = `scale(${scale.toFixed(4)})`;
+        portraitFrame.style.opacity = opacity.toFixed(3);
+        portraitFrame.style.transform = `scale(${scale.toFixed(4)})`;
         if (pill) {
           pill.style.opacity = opacity.toFixed(3);
           pill.style.pointerEvents = opacity < 0.15 ? 'none' : '';
@@ -124,6 +126,109 @@ export function Hero() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+  // 2. Cursor-following radial reveal effect (Easter Egg: Anime image peek)
+  useEffect(() => {
+    // Disable completely on touch devices / devices without hover
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    const frame = portraitFrameRef.current;
+    const animeLayer = animeLayerRef.current;
+    if (!frame || !animeLayer) return;
+
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let targetProgress = 0;
+    let currentProgress = 0;
+    let isHovering = false;
+    let rafId = null;
+
+    const lerp = (start, end, factor) => start + (end - start) * factor;
+
+    const renderLoop = () => {
+      // Smooth interpolation/lerp for fluid cursor follow
+      currentX = lerp(currentX, targetX, 0.15);
+      currentY = lerp(currentY, targetY, 0.15);
+
+      // Smooth reveal progress lerp
+      currentProgress = lerp(currentProgress, targetProgress, isHovering ? 0.18 : 0.12);
+
+      if (currentProgress > 0.005) {
+        // Feathered circular mask: 80px - 140px desktop radius with smooth gradient edge
+        const outerRadius = 115 * currentProgress;
+        const innerRadius = 38 * currentProgress;
+        const mask = `radial-gradient(circle ${outerRadius.toFixed(1)}px at ${currentX.toFixed(1)}px ${currentY.toFixed(1)}px, black 0%, black ${innerRadius.toFixed(1)}px, transparent 100%)`;
+
+        animeLayer.style.maskImage = mask;
+        animeLayer.style.webkitMaskImage = mask;
+        animeLayer.style.opacity = currentProgress.toFixed(3);
+        animeLayer.style.visibility = 'visible';
+
+        rafId = requestAnimationFrame(renderLoop);
+      } else {
+        // Fully hidden when mouse leaves
+        animeLayer.style.opacity = '0';
+        animeLayer.style.visibility = 'hidden';
+        animeLayer.style.maskImage = 'none';
+        animeLayer.style.webkitMaskImage = 'none';
+        rafId = null;
+      }
+    };
+
+    const handlePointerMove = (e) => {
+      const rect = frame.getBoundingClientRect();
+      targetX = e.clientX - rect.left;
+      targetY = e.clientY - rect.top;
+
+      if (!isHovering) {
+        isHovering = true;
+        targetProgress = 1;
+        if (currentProgress < 0.05) {
+          currentX = targetX;
+          currentY = targetY;
+        }
+        if (!rafId) {
+          rafId = requestAnimationFrame(renderLoop);
+        }
+      }
+    };
+
+    const handlePointerEnter = (e) => {
+      const rect = frame.getBoundingClientRect();
+      targetX = e.clientX - rect.left;
+      targetY = e.clientY - rect.top;
+      currentX = targetX;
+      currentY = targetY;
+      isHovering = true;
+      targetProgress = 1;
+      if (!rafId) {
+        rafId = requestAnimationFrame(renderLoop);
+      }
+    };
+
+    const handlePointerLeave = () => {
+      isHovering = false;
+      targetProgress = 0;
+      if (!rafId) {
+        rafId = requestAnimationFrame(renderLoop);
+      }
+    };
+
+    frame.addEventListener('pointermove', handlePointerMove, { passive: true });
+    frame.addEventListener('pointerenter', handlePointerEnter, { passive: true });
+    frame.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+
+    return () => {
+      frame.removeEventListener('pointermove', handlePointerMove);
+      frame.removeEventListener('pointerenter', handlePointerEnter);
+      frame.removeEventListener('pointerleave', handlePointerLeave);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
     };
   }, []);
 
@@ -168,20 +273,40 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Main Foreground Visual: Centered Profile Cutout & Interactive Glass Pill (Layer 10) */}
+      {/* Main Foreground Visual: Portrait Stack & Interactive Glass Pill (Layer 10) */}
       <div className="hero-portrait-container">
         <div className="hero-portrait-wrapper">
-          <img
-            ref={portraitRef}
-            src="/final-profile.png"
-            onError={(e) => {
-              e.currentTarget.src = '/mypic.jpeg';
-            }}
-            alt="Goutham M"
-            className="hero-portrait-img"
-            loading="eager"
-            fetchPriority="high"
-          />
+          {/* Portrait Frame holding both Real Photograph & Anime Reveal Layer */}
+          <div ref={portraitFrameRef} className="hero-portrait-frame">
+            {/* Primary Real Photograph */}
+            <img
+              src="/final-profile.png"
+              onError={(e) => {
+                e.currentTarget.src = '/mypic.jpeg';
+              }}
+              alt="Goutham M"
+              className="hero-portrait-img hero-portrait-real"
+              loading="eager"
+              fetchPriority="high"
+            />
+
+            {/* Anime Easter-Egg Reveal Layer (feathered radial mask around cursor) */}
+            <div
+              ref={animeLayerRef}
+              className="hero-portrait-anime-layer"
+              aria-hidden="true"
+            >
+              <img
+                src="/animeversion.png"
+                onError={(e) => {
+                  e.currentTarget.src = '/assets/anime version-Photoroom.png';
+                }}
+                alt=""
+                className="hero-portrait-img hero-portrait-anime"
+                loading="eager"
+              />
+            </div>
+          </div>
 
           {/* Interactive Glass Pill directly underneath portrait */}
           <nav

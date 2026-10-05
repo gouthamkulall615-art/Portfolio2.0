@@ -183,6 +183,24 @@ html.dark .hero-editorial {
   pointer-events: auto;
 }
 
+.hero-portrait-frame {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  width: auto;
+  pointer-events: auto;
+  transform-origin: center bottom;
+  will-change: opacity, transform;
+  cursor: default;
+  transition: transform 0.35s ease;
+}
+
+.hero-portrait-wrapper:hover .hero-portrait-frame {
+  transform: scale(1.012);
+}
+
 .hero-portrait-img {
   display: block;
   /* Dominant focal point - top of head touches/approaches Line 1 */
@@ -194,13 +212,34 @@ html.dark .hero-editorial {
   object-position: bottom center;
   transform-origin: center bottom;
   filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.38));
-  will-change: opacity, transform;
-  pointer-events: auto;
-  transition: transform 0.35s ease;
+  user-select: none;
+  pointer-events: none;
 }
 
-.hero-portrait-wrapper:hover .hero-portrait-img {
-  transform: scale(1.012);
+.hero-portrait-real {
+  position: relative;
+  z-index: 1;
+}
+
+/* Anime Easter-Egg Reveal Layer */
+.hero-portrait-anime-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  will-change: mask-image, -webkit-mask-image, opacity;
+}
+
+.hero-portrait-anime {
+  position: relative;
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.38));
 }
 
 /* ---------- Interactive Glass Pill Control ---------- */
@@ -349,6 +388,13 @@ html.dark .hero-pill-link:hover {
 
 /* Mobile & Touch Devices: Always visible, compact, easy to tap */
 @media (hover: none), (max-width: 768px) {
+  /* Disable cursor radial reveal on touch devices completely */
+  .hero-portrait-anime-layer {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
   .hero-glass-pill {
     opacity: 1 !important;
     transform: translate(-50%, 0) !important;
