@@ -132,6 +132,7 @@ const StickyProjectCards = ({ cards = [] }) => {
               style={{ zIndex: i + 1 }}
               className="sticky-project-card"
             >
+              {/* Project Image */}
               <div className="project-card-img-wrap">
                 <img
                   className="project-card-img"
@@ -142,40 +143,57 @@ const StickyProjectCards = ({ cards = [] }) => {
                 />
               </div>
 
-              {/* Top-Right Action Pill */}
-              <div className="project-card-floating-actions">
-                {card.githubUrl && (
-                  <a
-                    href={card.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-link-btn"
-                    title="View Source on GitHub"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <GithubIcon size={14} />
-                    <span>GitHub</span>
-                  </a>
-                )}
-                {card.demoUrl && (
-                  <a
-                    href={card.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-link-btn"
-                    title="Open Live Website"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <ExternalLink size={13} />
-                    <span>Live Demo</span>
-                  </a>
-                )}
+              {/* Minimal Top-Left Title Badge (visible before hover on desktop) */}
+              <div className="project-card-badge">
+                <span>{card.title}</span>
               </div>
 
-              {/* Bottom Details Overlay */}
-              <div className="project-card-overlay">
-                <h3 className="project-card-title">{card.title}</h3>
-                <p className="project-card-desc">{card.description}</p>
+              {/* Black Panel that slides up on hover (Reference Image Style) */}
+              <div className="project-card-black-panel">
+                <p className="project-panel-desc">{card.description}</p>
+
+                {card.stack && card.stack.length > 0 && (
+                  <div className="project-panel-stack">
+                    {card.stack.map((tech) => (
+                      <span key={tech} className="project-stack-tag">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="project-panel-footer">
+                  <h3 className="project-panel-title">{card.title}</h3>
+
+                  <div className="project-panel-actions">
+                    {card.githubUrl && (
+                      <a
+                        href={card.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-btn-github"
+                        title="View Source on GitHub"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GithubIcon size={14} />
+                        <span>GitHub</span>
+                      </a>
+                    )}
+                    {card.demoUrl && (
+                      <a
+                        href={card.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-btn-live"
+                        title="Open Live Website"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ExternalLink size={14} />
+                        <span>Live</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))}

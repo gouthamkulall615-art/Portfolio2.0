@@ -34,6 +34,7 @@ const projects = [
     image: synccanvasImg,
     demoUrl: 'https://sync-canvas-three.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/SyncCanvas',
+    stack: ['REACT', 'REACT KONVA', 'MONGODB', 'EXPRESS', 'WEBSOCKETS'],
   },
   {
     id: 2,
@@ -42,14 +43,16 @@ const projects = [
     image: cryptoImg,
     demoUrl: 'https://coinpulse-beryl.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/Crypto-price-website',
+    stack: ['REACT', 'TAILWIND CSS', 'COINGECKO API'],
   },
   {
     id: 3,
     title: 'InteriQ',
-    description: 'A platform helping people land internships with ATS resume analysis, a personalized roadmap, and an AI cover letter generator.',
+    description: 'An interior design platform with intelligent recommendations.',
     image: interiqImg,
     demoUrl: 'https://intern-iq-omega.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/InternIQ',
+    stack: ['MERN STACK', 'GEMINI API'],
   },
   {
     id: 4,
@@ -58,6 +61,7 @@ const projects = [
     image: taskifyImg,
     demoUrl: 'https://taskify-self-five.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/TASKIFY',
+    stack: ['HTML', 'CSS', 'JAVASCRIPT'],
   },
 ];
 
