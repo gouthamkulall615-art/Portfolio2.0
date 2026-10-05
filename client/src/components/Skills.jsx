@@ -51,6 +51,7 @@ const skills = [
     name: "GitHub",
     icon: "/icons/github.svg",
     fallback: "/images/github.webp",
+    invertInDark: true,
   },
   {
     name: "Socket.IO",
@@ -71,6 +72,7 @@ const skills = [
     name: "Vercel",
     icon: "/icons/vercel.svg",
     fallback: "/images/vercel.webp",
+    invertInDark: true,
   },
   {
     name: "Postman",
@@ -81,6 +83,7 @@ const skills = [
 
 function SkillOrbitItem({ skill, index, total }) {
   const angle = (360 / total) * index;
+  const isDarkMonochrome = skill.invertInDark || skill.name === "GitHub" || skill.name === "Vercel";
 
   return (
     <div
@@ -91,11 +94,11 @@ function SkillOrbitItem({ skill, index, total }) {
         "--total": total,
       }}
     >
-      <div className="skill-orbit-circle">
+      <div className={`skill-orbit-circle ${isDarkMonochrome ? 'skill-orbit-circle-monochrome' : ''}`}>
         <img
           src={skill.icon}
           alt={skill.name}
-          className="skill-orbit-icon"
+          className={`skill-orbit-icon ${isDarkMonochrome ? 'skill-icon-invert-dark' : ''}`}
           loading="lazy"
           onError={(e) => {
             if (skill.fallback && e.currentTarget.src !== skill.fallback) {

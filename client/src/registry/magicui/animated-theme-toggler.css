@@ -39,12 +39,29 @@
 
 .animated-theme-toggler-btn:hover {
   transform: scale(1.08);
-  border-color: var(--accent-crimson-bright, #e12b48);
-  box-shadow: 0 0 20px rgba(225, 43, 72, 0.4);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="light"] .animated-theme-toggler-btn:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
 }
 
 .animated-theme-toggler-btn:active {
   transform: scale(0.95);
+}
+
+.animated-theme-toggler-btn:focus,
+.animated-theme-toggler-btn:focus-visible {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+[data-theme="light"] .animated-theme-toggler-btn:focus,
+[data-theme="light"] .animated-theme-toggler-btn:focus-visible {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.25);
 }
 
 .toggler-icon-wrapper {

@@ -186,6 +186,61 @@ html.light .skill-orbit-circle {
   display: block;
   user-select: none;
   pointer-events: none;
+  transition: filter 0.25s ease, transform 0.25s ease;
+}
+
+/* ==========================================================================
+   DARK MODE ICON VISIBILITY FIX FOR MONOCHROME / BLACK ICONS (VERCEL & GITHUB)
+   In dark mode, invert dark paths to crisp brilliant white against dark glass.
+   In light mode, keep them solid dark/black against white glass.
+   ========================================================================== */
+
+/* Dark mode (default & explicitly toggled) */
+:root:not([data-theme="light"]):not(.light) .skill-icon-invert-dark,
+:root:not([data-theme="light"]):not(.light) .skill-orbit-icon[src*="vercel"],
+:root:not([data-theme="light"]):not(.light) .skill-orbit-icon[src*="github"],
+html[data-theme="dark"] .skill-icon-invert-dark,
+html[data-theme="dark"] .skill-orbit-icon[src*="vercel"],
+html[data-theme="dark"] .skill-orbit-icon[src*="github"],
+html.dark .skill-icon-invert-dark,
+html.dark .skill-orbit-icon[src*="vercel"],
+html.dark .skill-orbit-icon[src*="github"] {
+  filter: invert(1) brightness(1.25);
+}
+
+/* Hover glow in dark mode for extra polish */
+:root:not([data-theme="light"]):not(.light) .skill-orbit-circle:hover .skill-icon-invert-dark,
+:root:not([data-theme="light"]):not(.light) .skill-orbit-circle:hover .skill-orbit-icon[src*="vercel"],
+:root:not([data-theme="light"]):not(.light) .skill-orbit-circle:hover .skill-orbit-icon[src*="github"],
+html[data-theme="dark"] .skill-orbit-circle:hover .skill-icon-invert-dark,
+html[data-theme="dark"] .skill-orbit-circle:hover .skill-orbit-icon[src*="vercel"],
+html[data-theme="dark"] .skill-orbit-circle:hover .skill-orbit-icon[src*="github"],
+html.dark .skill-orbit-circle:hover .skill-icon-invert-dark,
+html.dark .skill-orbit-circle:hover .skill-orbit-icon[src*="vercel"],
+html.dark .skill-orbit-circle:hover .skill-orbit-icon[src*="github"] {
+  filter: invert(1) brightness(1.4) drop-shadow(0 0 10px rgba(255, 255, 255, 0.45));
+}
+
+/* Light mode explicitly preserves dark/black on white glass */
+html[data-theme="light"] .skill-icon-invert-dark,
+html[data-theme="light"] .skill-orbit-icon[src*="vercel"],
+html[data-theme="light"] .skill-orbit-icon[src*="github"],
+html.light .skill-icon-invert-dark,
+html.light .skill-orbit-icon[src*="vercel"],
+html.light .skill-orbit-icon[src*="github"],
+[data-theme="light"] .skill-icon-invert-dark,
+[data-theme="light"] .skill-orbit-icon[src*="vercel"],
+[data-theme="light"] .skill-orbit-icon[src*="github"] {
+  filter: none;
+}
+
+[data-theme="light"] .skill-orbit-circle:hover .skill-icon-invert-dark,
+[data-theme="light"] .skill-orbit-circle:hover .skill-orbit-icon[src*="vercel"],
+[data-theme="light"] .skill-orbit-circle:hover .skill-orbit-icon[src*="github"],
+html.light .skill-orbit-circle:hover .skill-icon-invert-dark,
+html.light .skill-orbit-circle:hover .skill-orbit-icon[src*="vercel"],
+html.light .skill-orbit-circle:hover .skill-orbit-icon[src*="github"] {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.18));
 }
 
 /* Subtle clean tooltip showing skill name on hover */

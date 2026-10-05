@@ -69,11 +69,11 @@ export function Hero() {
       const endFade = heroHeight * 0.82;
 
       if (scrollY <= startFade) {
-        // Hero fully visible at top — clear inline styles so CSS hover/media queries operate cleanly
+        // Hero fully visible at top — clear inline styles so CSS handles responsive opacities cleanly
         container.style.visibility = 'visible';
         container.style.pointerEvents = 'auto';
-        marquee.style.opacity = '1';
-        portraitFrame.style.opacity = '1';
+        marquee.style.opacity = '';
+        portraitFrame.style.opacity = '';
         portraitFrame.style.transform = '';
         if (pill) {
           pill.style.opacity = '';
@@ -98,9 +98,12 @@ export function Hero() {
         const opacity = 1 - progress;
         const scale = 1 - progress * 0.04; // scale: 1 -> 0.96
 
+        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+        const baseMarqueeOpacity = isMobile ? 0.42 : 1;
+
         container.style.visibility = 'visible';
         container.style.pointerEvents = opacity < 0.1 ? 'none' : 'auto';
-        marquee.style.opacity = opacity.toFixed(3);
+        marquee.style.opacity = (opacity * baseMarqueeOpacity).toFixed(3);
         portraitFrame.style.opacity = opacity.toFixed(3);
         portraitFrame.style.transform = `scale(${scale.toFixed(4)})`;
         if (pill) {
@@ -271,6 +274,18 @@ export function Hero() {
             </div>
           </div>
         </div>
+
+        {/* Row 4: Mobile-only extra row for dense continuous editorial background */}
+        <div className="hero-marquee-row row-rtl speed-2 hero-marquee-row-mobile-only">
+          <div className="hero-marquee-track">
+            <div className="hero-marquee-content row-2-content">
+              {renderRowContent(row2Units, 4, true)}
+            </div>
+            <div className="hero-marquee-content row-2-content" aria-hidden="true">
+              {renderRowContent(row2Units, 4, true)}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Foreground Visual: Portrait Stack & Interactive Glass Pill (Layer 10) */}
@@ -279,16 +294,19 @@ export function Hero() {
           {/* Portrait Frame holding both Real Photograph & Anime Reveal Layer */}
           <div ref={portraitFrameRef} className="hero-portrait-frame">
             {/* Primary Real Photograph */}
-            <img
-              src="/final-profile.png"
-              onError={(e) => {
-                e.currentTarget.src = '/mypic.jpeg';
-              }}
-              alt="Goutham M"
-              className="hero-portrait-img hero-portrait-real"
-              loading="eager"
-              fetchPriority="high"
-            />
+            <picture className="hero-portrait-picture">
+              <source media="(max-width: 768px)" srcSet="/final-profile-portrait.png" />
+              <img
+                src="/final-profile.png"
+                onError={(e) => {
+                  e.currentTarget.src = '/mypic.jpeg';
+                }}
+                alt="Goutham M"
+                className="hero-portrait-img hero-portrait-real"
+                loading="eager"
+                fetchPriority="high"
+              />
+            </picture>
 
             {/* Anime Easter-Egg Reveal Layer (feathered radial mask around cursor) */}
             <div

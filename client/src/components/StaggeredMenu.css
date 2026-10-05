@@ -39,6 +39,36 @@
   z-index: 20;
 }
 
+@media (max-width: 768px) {
+  .staggered-menu-header {
+    padding: 1.1rem clamp(1.2rem, 5.5vw, 1.5rem); /* Consistent 20-24px padding */
+    box-sizing: border-box;
+    max-width: 100vw;
+  }
+
+  .sm-logo-text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .sm-toggle-group {
+    gap: 0.5rem;
+  }
+
+  .sm-toggle {
+    padding: 0.46rem 0.85rem;
+    font-size: 0.82rem;
+  }
+
+  .sm-toggle-addon .animated-theme-toggler-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+
 .staggered-menu-header>* {
   pointer-events: auto;
 }
