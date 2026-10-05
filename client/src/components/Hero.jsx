@@ -132,11 +132,8 @@ export function Hero() {
     };
   }, []);
 
-  // 2. Cursor-following radial reveal effect (Easter Egg: Anime image peek)
+  // 2. Interactive radial reveal effect (Easter Egg: Anime image peek on hover & touch)
   useEffect(() => {
-    // Disable completely on touch devices / devices without hover
-    if (window.matchMedia('(hover: none)').matches) return;
-
     const frame = portraitFrameRef.current;
     const animeLayer = animeLayerRef.current;
     if (!frame || !animeLayer) return;
@@ -149,21 +146,25 @@ export function Hero() {
     let currentProgress = 0;
     let isHovering = false;
     let rafId = null;
+    let touchFadeTimer = null;
 
     const lerp = (start, end, factor) => start + (end - start) * factor;
 
     const renderLoop = () => {
-      // Smooth interpolation/lerp for fluid cursor follow
+      // Smooth interpolation/lerp for fluid cursor / touch follow
       currentX = lerp(currentX, targetX, 0.15);
       currentY = lerp(currentY, targetY, 0.15);
 
       // Smooth reveal progress lerp
-      currentProgress = lerp(currentProgress, targetProgress, isHovering ? 0.18 : 0.12);
+      currentProgress = lerp(currentProgress, targetProgress, isHovering ? 0.18 : 0.08);
 
       if (currentProgress > 0.005) {
-        // Feathered circular mask: 80px - 140px desktop radius with smooth gradient edge
-        const outerRadius = 115 * currentProgress;
-        const innerRadius = 38 * currentProgress;
+        // Feathered circular mask scaled appropriately for mobile vs desktop
+        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+        const maxOuter = isMobile ? 95 : 115;
+        const maxInner = isMobile ? 28 : 38;
+        const outerRadius = maxOuter * currentProgress;
+        const innerRadius = maxInner * currentProgress;
         const mask = `radial-gradient(circle ${outerRadius.toFixed(1)}px at ${currentX.toFixed(1)}px ${currentY.toFixed(1)}px, black 0%, black ${innerRadius.toFixed(1)}px, transparent 100%)`;
 
         animeLayer.style.maskImage = mask;
@@ -173,7 +174,7 @@ export function Hero() {
 
         rafId = requestAnimationFrame(renderLoop);
       } else {
-        // Fully hidden when mouse leaves
+        // Fully hidden when deactivated
         animeLayer.style.opacity = '0';
         animeLayer.style.visibility = 'hidden';
         animeLayer.style.maskImage = 'none';
@@ -182,30 +183,15 @@ export function Hero() {
       }
     };
 
-    const handlePointerMove = (e) => {
+    const activateAt = (clientX, clientY, snap = false) => {
+      if (touchFadeTimer) clearTimeout(touchFadeTimer);
       const rect = frame.getBoundingClientRect();
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
-
-      if (!isHovering) {
-        isHovering = true;
-        targetProgress = 1;
-        if (currentProgress < 0.05) {
-          currentX = targetX;
-          currentY = targetY;
-        }
-        if (!rafId) {
-          rafId = requestAnimationFrame(renderLoop);
-        }
+      targetX = clientX - rect.left;
+      targetY = clientY - rect.top;
+      if (snap || currentProgress < 0.05) {
+        currentX = targetX;
+        currentY = targetY;
       }
-    };
-
-    const handlePointerEnter = (e) => {
-      const rect = frame.getBoundingClientRect();
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
-      currentX = targetX;
-      currentY = targetY;
       isHovering = true;
       targetProgress = 1;
       if (!rafId) {
@@ -213,25 +199,84 @@ export function Hero() {
       }
     };
 
-    const handlePointerLeave = () => {
-      isHovering = false;
-      targetProgress = 0;
-      if (!rafId) {
-        rafId = requestAnimationFrame(renderLoop);
+    const deactivateAfter = (delayMs = 0) => {
+      if (touchFadeTimer) clearTimeout(touchFadeTimer);
+      if (delayMs > 0) {
+        touchFadeTimer = setTimeout(() => {
+          isHovering = false;
+          targetProgress = 0;
+          if (!rafId) {
+            rafId = requestAnimationFrame(renderLoop);
+          }
+        }, delayMs);
+      } else {
+        isHovering = false;
+        targetProgress = 0;
+        if (!rafId) {
+          rafId = requestAnimationFrame(renderLoop);
+        }
       }
+    };
+
+    // Desktop Mouse / Pointer Events
+    const handlePointerMove = (e) => {
+      if (e.pointerType === 'touch') return; // Handled reliably by touch events
+      activateAt(e.clientX, e.clientY, false);
+    };
+
+    const handlePointerEnter = (e) => {
+      if (e.pointerType === 'touch') return;
+      activateAt(e.clientX, e.clientY, true);
+    };
+
+    const handlePointerLeave = (e) => {
+      if (e.pointerType === 'touch') return;
+      deactivateAfter(0);
+    };
+
+    // Mobile Touch Events (Tap & Drag to reveal with gentle lingering dissolve)
+    const handleTouchStart = (e) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      activateAt(touch.clientX, touch.clientY, true);
+    };
+
+    const handleTouchMove = (e) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      activateAt(touch.clientX, touch.clientY, false);
+    };
+
+    const handleTouchEnd = () => {
+      // Keep reveal visible for ~1.2s on mobile before smoothly dissolving back
+      deactivateAfter(1200);
+    };
+
+    const handleTouchCancel = () => {
+      deactivateAfter(400);
     };
 
     frame.addEventListener('pointermove', handlePointerMove, { passive: true });
     frame.addEventListener('pointerenter', handlePointerEnter, { passive: true });
     frame.addEventListener('pointerleave', handlePointerLeave, { passive: true });
 
+    frame.addEventListener('touchstart', handleTouchStart, { passive: true });
+    frame.addEventListener('touchmove', handleTouchMove, { passive: true });
+    frame.addEventListener('touchend', handleTouchEnd, { passive: true });
+    frame.addEventListener('touchcancel', handleTouchCancel, { passive: true });
+
     return () => {
       frame.removeEventListener('pointermove', handlePointerMove);
       frame.removeEventListener('pointerenter', handlePointerEnter);
       frame.removeEventListener('pointerleave', handlePointerLeave);
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
+
+      frame.removeEventListener('touchstart', handleTouchStart);
+      frame.removeEventListener('touchmove', handleTouchMove);
+      frame.removeEventListener('touchend', handleTouchEnd);
+      frame.removeEventListener('touchcancel', handleTouchCancel);
+
+      if (touchFadeTimer) clearTimeout(touchFadeTimer);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -308,21 +353,24 @@ export function Hero() {
               />
             </picture>
 
-            {/* Anime Easter-Egg Reveal Layer (feathered radial mask around cursor) */}
+            {/* Anime Easter-Egg Reveal Layer (feathered radial mask around cursor/touch) */}
             <div
               ref={animeLayerRef}
               className="hero-portrait-anime-layer"
               aria-hidden="true"
             >
-              <img
-                src="/animeversion.png"
-                onError={(e) => {
-                  e.currentTarget.src = '/assets/anime version-Photoroom.png';
-                }}
-                alt=""
-                className="hero-portrait-img hero-portrait-anime"
-                loading="eager"
-              />
+              <picture className="hero-portrait-picture">
+                <source media="(max-width: 768px)" srcSet="/animeversion-portrait.png" />
+                <img
+                  src="/animeversion.png"
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/anime version-Photoroom.png';
+                  }}
+                  alt=""
+                  className="hero-portrait-img hero-portrait-anime"
+                  loading="eager"
+                />
+              </picture>
             </div>
           </div>
 

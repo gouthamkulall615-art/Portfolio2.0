@@ -547,6 +547,7 @@ html.dark .hero-pill-link:hover {
     justify-content: center;
     border-radius: 0 0 28px 28px;
     overflow: hidden;
+    touch-action: pan-y;
   }
 
   .hero-portrait-picture {
@@ -557,11 +558,22 @@ html.dark .hero-pill-link:hover {
     max-width: 100%;
   }
 
-  /* Disable cursor radial reveal easter-egg on touch devices */
+  /* Enable animated radial reveal easter-egg on touch/mobile */
   .hero-portrait-anime-layer {
-    display: none !important;
-    pointer-events: none !important;
-    visibility: hidden !important;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+    will-change: mask-image, -webkit-mask-image, opacity;
+    border-radius: 0 0 28px 28px;
+    overflow: hidden;
   }
 
   /* Tall, prominent portrait reaching upwards so head touches Line 1 and body sits between lines */
