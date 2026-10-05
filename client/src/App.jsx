@@ -1,20 +1,20 @@
 import React, { useState, lazy, Suspense } from 'react';
-import CinematicIntro from './components/CinematicIntro';
-import GooeyNav from './components/GooeyNav';
-import StaggeredMenu from './components/StaggeredMenu';
-import { Hero } from './components/Hero';
-import EducationSection from './components/EducationSection';
-import MarqueeBanner from './components/MarqueeBanner';
-import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
-import './styles/anime.css';
+import CinematicIntro from './jsx/CinematicIntro';
+import GooeyNav from './jsx/GooeyNav';
+import StaggeredMenu from './jsx/StaggeredMenu';
+import { Hero } from './jsx/Hero';
+import EducationSection from './jsx/EducationSection';
+import MarqueeBanner from './jsx/MarqueeBanner';
+import { AnimatedThemeToggler } from './jsx/AnimatedThemeToggler';
+import './css/anime.css';
 
-import Skills from './components/Skills';
+import Skills from './jsx/Skills';
 
 // Code-split heavy 3D and media-rich sections for fast initial load
-const ProjectsSection = lazy(() => import('./components/ProjectsSection'));
-const ContactSection = lazy(() => import('./components/ContactSection'));
-const CinematicFooter = lazy(() => import('./components/CinematicFooter'));
-const AnimeCards = lazy(() => import('./components/AnimeDeck'));
+const ProjectsSection = lazy(() => import('./jsx/ProjectsSection'));
+const ContactSection = lazy(() => import('./jsx/ContactSection'));
+const CinematicFooter = lazy(() => import('./jsx/CinematicFooter'));
+const AnimeCards = lazy(() => import('./jsx/AnimeDeck'));
 
 const navItems = [
   { label: 'Home', href: '#home', ariaLabel: 'Go to home section' },
