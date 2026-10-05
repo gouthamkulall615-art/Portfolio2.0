@@ -46,7 +46,7 @@ const StickyProjectCards = ({ cards = [] }) => {
       const triggerEl = container.current?.querySelector(".sticky-project-cards");
       if (!triggerEl) return;
 
-      const isMobile = window.innerWidth < 640;
+      const isMobile = window.innerWidth <= 768;
       const targetScale = isMobile ? 0.92 : 0.78;
       const targetRotation = isMobile ? 0 : 3.5;
       const targetOpacity = isMobile ? 0.15 : 0.35;
