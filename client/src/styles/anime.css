@@ -61,8 +61,7 @@ body {
 }
 
 /* ---- off-screen rendering skip (huge win on long pages) ---- */
-/* Apply to every major section that is NOT the hero */
-#projects,
+/* Apply to every major section that is NOT the hero or pinned sections */
 #skills,
 #education,
 #beyond-code,

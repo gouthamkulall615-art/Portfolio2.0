@@ -1,11 +1,13 @@
-import { ExternalLink } from 'lucide-react';
-import ScrollStack, { ScrollStackItem } from './ScrollStack';
+// import { ExternalLink } from 'lucide-react';
+// import ScrollStack, { ScrollStackItem } from './ScrollStack';
+import { ProjectsStickyScroll } from './StickyProjectCards';
 import synccanvasImg from '../assets/synccanvas landing page.webp';
 import cryptoImg from '../assets/crypto landing page 2.webp';
 import interiqImg from '../assets/interiq landing page.webp';
 import taskifyImg from '../assets/taskify landing page.webp';
 import './ProjectsSection.css';
 
+/*
 const GithubIcon = ({ size = 18, className = '' }) => (
   <svg
     width={size}
@@ -22,34 +24,39 @@ const GithubIcon = ({ size = 18, className = '' }) => (
     />
   </svg>
 );
+*/
 
 const projects = [
   {
+    id: 1,
     title: 'SyncCanvas',
     description: 'A real-time collaborative drawing and whiteboard application.',
     image: synccanvasImg,
-    liveUrl: 'https://sync-canvas-three.vercel.app/',
+    demoUrl: 'https://sync-canvas-three.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/SyncCanvas',
   },
   {
-    title: 'Crypto Landing Page',
-    description: 'A modern cryptocurrency landing page with sleek UI.',
+    id: 2,
+    title: 'Crypto Tracker',
+    description: 'Real-time cryptocurrency prices and market data, built with React and the CoinGecko API.',
     image: cryptoImg,
-    liveUrl: 'https://coinpulse-beryl.vercel.app/',
+    demoUrl: 'https://coinpulse-beryl.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/Crypto-price-website',
   },
   {
+    id: 3,
     title: 'InteriQ',
-    description: 'An interior design platform with intelligent recommendations.',
+    description: 'A platform helping people land internships with ATS resume analysis, a personalized roadmap, and an AI cover letter generator.',
     image: interiqImg,
-    liveUrl: 'https://intern-iq-omega.vercel.app/',
+    demoUrl: 'https://intern-iq-omega.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/InternIQ',
   },
   {
+    id: 4,
     title: 'Taskify',
-    description: 'A productivity-first task management application.',
+    description: 'A simple drag-and-drop task management PWA with column-based organization.',
     image: taskifyImg,
-    liveUrl: 'https://taskify-self-five.vercel.app/',
+    demoUrl: 'https://taskify-self-five.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/TASKIFY',
   },
 ];
@@ -62,6 +69,10 @@ export default function ProjectsSection() {
         <h2 className="watermark-fg">PROJECTS</h2>
       </div>
 
+      {/* Sticky pinned stacked project cards with Lenis smooth scrolling */}
+      <ProjectsStickyScroll projects={projects} />
+
+      {/* --- PREVIOUS SCROLLSTACK IMPLEMENTATION (COMMENTED OUT) ---
       <ScrollStack useWindowScroll>
         {projects.map((project) => (
           <ScrollStackItem key={project.title}>
@@ -73,7 +84,6 @@ export default function ProjectsSection() {
                 loading="lazy"
               />
 
-              {/* Floating Top-Right Action Pill */}
               <div className="project-card-floating-actions">
                 {project.githubUrl && (
                   <a
@@ -103,7 +113,6 @@ export default function ProjectsSection() {
                 )}
               </div>
 
-              {/* Bottom Details Overlay */}
               <div className="project-card-overlay">
                 <h3 className="project-card-title">{project.title}</h3>
                 <p className="project-card-desc">{project.description}</p>
@@ -112,6 +121,7 @@ export default function ProjectsSection() {
           </ScrollStackItem>
         ))}
       </ScrollStack>
+      ------------------------------------------------------------ */}
     </section>
   );
 }

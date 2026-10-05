@@ -48,16 +48,17 @@
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.35);
 }
 
+/* Neutral hover states without color tint */
 .projects-section .scroll-stack-card:hover,
 .projects-section .scroll-stack-card:active {
-  border-color: rgba(196, 30, 58, 0.45);
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.16), 0 0 28px rgba(196, 30, 58, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="dark"] .projects-section .scroll-stack-card:hover,
 [data-theme="dark"] .projects-section .scroll-stack-card:active {
-  border-color: rgba(225, 43, 72, 0.5);
-  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.55), 0 0 32px rgba(196, 30, 58, 0.3);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.6);
 }
 
 /* Inner layout — image fills, overlay at bottom */
@@ -118,10 +119,10 @@
 
 .project-action-btn:hover,
 .project-action-btn:active {
-  background: rgba(196, 30, 58, 0.92);
-  border-color: rgba(225, 43, 72, 0.85);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
   color: #ffffff;
-  box-shadow: 0 6px 20px rgba(196, 30, 58, 0.45);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }
 
@@ -163,7 +164,6 @@
 
 .projects-section .scroll-stack-card:hover .project-card-title {
   color: #ffffff;
-  text-shadow: 0 0 16px rgba(225, 43, 72, 0.4);
 }
 
 .project-card-desc {
