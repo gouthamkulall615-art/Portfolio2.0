@@ -3,8 +3,6 @@ import CinematicIntro from './components/CinematicIntro';
 import GooeyNav from './components/GooeyNav';
 import StaggeredMenu from './components/StaggeredMenu';
 import { Hero } from './components/Hero';
-import Lanyard from './components/Lanyard';
-import Floating3DParticles from './components/Floating3DParticles';
 import EducationSection from './components/EducationSection';
 import MarqueeBanner from './components/MarqueeBanner';
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
@@ -40,18 +38,6 @@ export default function App() {
 
   return (
     <div className="portfolio-app-root">
-      {/* 3D Floating Particle Background — sits below everything */}
-      {/* quantity=120 → 24 on mobile (component scales to 20% internally) */}
-      <Floating3DParticles
-        quantity={120}
-        color="#374151"
-        size={6}
-        opacity={0.45}
-        drift={0.5}
-        depth={0.65}
-        className="particles-bg"
-      />
-
       {/* Minimal Cinematic Intro Sequence */}
       {showIntro && (
         <CinematicIntro onComplete={handleIntroComplete} />
@@ -93,28 +79,7 @@ export default function App() {
 
       {/* Hero Section — full viewport */}
       <section id="home" className="portfolio-hero-section">
-        <div className="portfolio-layout">
-          {/* Left: Hero text */}
-          <div className="portfolio-details-col">
-            <Hero />
-          </div>
-
-          {/* Right: 3D Draggable Lanyard Card (deferred until intro sequence completes) */}
-          <div className="portfolio-lanyard-col">
-            {!showIntro && (
-              <Lanyard
-                position={[0, -0.6, 14.5]}
-                fov={34}
-                gravity={[0, -40, 0]}
-                frontImage="/mypic.jpeg"
-                backImage="/mypic.jpeg"
-                imageFit="cover"
-                cardScale={4.0}
-                lanyardWidth={0.7}
-              />
-            )}
-          </div>
-        </div>
+        <Hero />
       </section>
 
       {/* Heavy sections loaded smoothly via Suspense */}

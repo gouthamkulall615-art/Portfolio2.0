@@ -115,7 +115,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* 2-Column Layout: Left for details (55%), Right for 3D Draggable Lanyard Card (45%) */
@@ -176,9 +176,9 @@ body {
   }
 
   .portfolio-hero-section {
-    height: auto !important;
-    min-height: auto !important;
-    overflow: visible !important;
+    height: 100svh !important;
+    min-height: 560px !important;
+    overflow: hidden !important;
   }
 
   .portfolio-layout {
@@ -313,25 +313,10 @@ body {
   will-change: opacity, transform;
 }
 
-/* On very small phones hide the background particle canvas completely —
-   the page still looks great and this saves ~3-4ms per frame on low-end devices. */
-@media (max-width: 480px) {
-  .particles-bg {
-    display: none;
-  }
-}
-
 /* Give the scroll container a stacking context so the fixed header
-   and fixed particle canvas don't participate in every section repaint. */
+   doesn't participate in every section repaint. */
 .portfolio-app-root {
   isolation: isolate;
-}
-
-/* Prevent the fixed particle canvas from consuming touch events —
-   this is already set inline but belt-and-suspenders via CSS too. */
-.particles-bg {
-  pointer-events: none !important;
-  touch-action: none !important;
 }
 
 /* Reduce CSS transition cost on low-power devices.

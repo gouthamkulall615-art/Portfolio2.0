@@ -1,161 +1,266 @@
 /* ==========================================================================
-   HERO COMPONENT STYLES
+   EDITORIAL HERO SECTION
+   Sophisticated Marquee Typography (Medium/Bold + Line 2 Editorial Italic)
+   Oversized Centered Portrait Visual (Foreground Focal Point)
    ========================================================================== */
 
-.hero-section {
+.hero-editorial {
+  position: relative;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+
+  /* Sophisticated dark-grey palette (#4A4A4A to #606060) */
+  --hero-marquee-color: #4c4c52;
+  --hero-divider-color: #5a5a62;
 }
 
-/* Text block — fills the left column, left-aligned on desktop, centered on mobile */
-.hero-text-block {
+/* Maintain proper contrast in both themes */
+:root,
+html[data-theme="light"] .hero-editorial,
+html.light .hero-editorial {
+  --hero-marquee-color: #4a4a50;
+  --hero-divider-color: #5c5c64;
+}
+
+html[data-theme="dark"] .hero-editorial,
+html.dark .hero-editorial {
+  --hero-marquee-color: #a8a8b2;
+  --hero-divider-color: #8c8c96;
+}
+
+/* ---------- 3 Continuous Background Marquee Rows (Layer 1) ---------- */
+
+.hero-marquee-wrapper {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-width: 38rem;
-  position: relative;
-  z-index: 20;
-}
-
-.hero-text-inner {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* ---------- Headline ---------- */
-
-.hero-headline {
-  font-size: clamp(2.5rem, 5vw, 4.25rem);
-  font-weight: 400;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  text-align: left;
-  color: var(--text-primary);
-}
-
-.hero-greeting {
-  color: var(--text-primary);
-  display: block;
-}
-
-/* Carousel container — holds the animated titles */
-.hero-title-carousel {
-  position: relative;
-  display: flex;
-  width: 100%;
-  justify-content: flex-start;
-  align-items: center;
-  overflow: visible;
-  clip-path: inset(-0.15em -50vw -0.2em -50vw);
-  text-align: left;
-  padding-bottom: 0.25rem;
-  padding-top: 0.125rem;
-  min-height: 1.35em;
-  height: 1.35em;
+  justify-content: space-evenly;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  padding: 5rem 0 1.5rem;
   box-sizing: border-box;
+  will-change: opacity;
 }
 
-.hero-title-item {
-  position: absolute;
-  top: 0;
-  left: 0;
+.hero-marquee-row {
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  overflow: hidden;
   white-space: nowrap;
-  font-weight: 700;
-  color: var(--accent-crimson-bright, #e12b48);
-  box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
-/* ---------- Subtext ---------- */
-
-.hero-subtext {
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  line-height: 1.7;
-  letter-spacing: -0.01em;
-  color: var(--text-muted);
-  max-width: 32rem;
-  text-align: left;
+.hero-marquee-track {
+  display: flex;
+  width: fit-content;
+  will-change: transform;
 }
 
-/* ==========================================================================
-   RESPONSIVE — MOBILE & TABLET (below 900px)
-   ========================================================================== */
+.hero-marquee-content {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: clamp(3.2rem, 7vw, 6.2rem);
+  line-height: 1.05;
+  color: var(--hero-marquee-color);
+  padding-right: 0.85rem;
+  -webkit-font-smoothing: antialiased;
+}
 
-@media (max-width: 900px) {
-  .hero-section {
-    justify-content: center;
+/* ---------- Line 1 & Line 3: Bold Modern Sans Typography ---------- */
+.row-1-content,
+.row-3-content {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+/* ---------- Line 2: Tasteful Editorial Modern Italic Typography ---------- */
+.row-2-content {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.hero-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.hero-text-phrase {
+  display: inline-block;
+}
+
+/* Subtle, unaccented divider dot matching typography (NO red dot) */
+.hero-divider {
+  display: inline-block;
+  margin: 0 1.35rem;
+  font-weight: 500;
+  font-style: normal;
+  color: var(--hero-divider-color);
+  transform: translateY(-0.06em);
+  user-select: none;
+}
+
+/* Seamless infinite looping animations without jumps */
+.row-ltr .hero-marquee-track {
+  animation: hero-marquee-ltr linear infinite;
+}
+
+.row-rtl .hero-marquee-track {
+  animation: hero-marquee-rtl linear infinite;
+}
+
+/* Calm, slow editorial speeds (approx 40-60s per cycle) */
+.speed-1 .hero-marquee-track {
+  animation-duration: 54s;
+}
+
+.speed-2 .hero-marquee-track {
+  animation-duration: 45s;
+}
+
+.speed-3 .hero-marquee-track {
+  animation-duration: 58s;
+}
+
+@keyframes hero-marquee-ltr {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0%, 0, 0);
+  }
+}
+
+@keyframes hero-marquee-rtl {
+  0% {
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ---------- Foreground Profile Photo (Layer 10) ---------- */
+
+.hero-portrait-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}
+
+.hero-portrait-img {
+  display: block;
+  /* Dominant focal point - top of head touches/approaches Line 1 */
+  height: 84vh;
+  max-height: 740px;
+  min-height: 500px;
+  width: auto;
+  object-fit: contain;
+  object-position: bottom center;
+  transform-origin: center bottom;
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.38));
+  will-change: opacity, transform;
+  pointer-events: auto;
+}
+
+.hero-portrait-img:hover {
+  transform: scale(1.015);
+}
+
+/* ---------- Responsive Adjustments ---------- */
+
+@media (max-width: 1024px) {
+  .hero-marquee-content {
+    font-size: clamp(2.8rem, 6.4vw, 4.8rem);
   }
 
-  .hero-text-block {
-    max-width: 100%;
-    text-align: center;
+  .hero-divider {
+    margin: 0 1.1rem;
   }
 
-  .hero-text-inner {
-    align-items: center;
-    gap: 1.25rem;
+  .hero-portrait-img {
+    height: 78vh;
+    max-height: 650px;
+    min-height: 440px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-marquee-wrapper {
+    padding: 4.5rem 0 1.5rem;
+    justify-content: space-evenly;
   }
 
-  .hero-headline {
-    font-size: clamp(2.2rem, 5.5vw, 3rem);
-    text-align: center;
+  .hero-marquee-content {
+    font-size: clamp(2rem, 6.2vw, 3.2rem);
   }
 
-  .hero-title-carousel {
-    justify-content: center;
-    min-height: 1.35em;
-    height: 1.35em;
+  .hero-divider {
+    margin: 0 0.85rem;
   }
 
-  .hero-title-item {
-    justify-content: center;
-    text-align: center;
-    font-size: clamp(1.6rem, 4.8vw, 2.3rem);
+  .hero-portrait-img {
+    height: 70vh;
+    max-height: 540px;
+    min-height: 380px;
   }
 
-  .hero-subtext {
-    text-align: center;
-    max-width: 28rem;
-    margin: 0 auto;
+  .speed-1 .hero-marquee-track {
+    animation-duration: 42s;
+  }
+
+  .speed-2 .hero-marquee-track {
+    animation-duration: 35s;
+  }
+
+  .speed-3 .hero-marquee-track {
+    animation-duration: 46s;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-text-inner {
-    gap: 1rem;
+  .hero-editorial {
+    height: 100svh;
+    min-height: 540px;
   }
 
-  .hero-headline {
-    font-size: clamp(2rem, 8.2vw, 2.55rem);
-    line-height: 1.15;
+  .hero-marquee-wrapper {
+    padding: 4.5rem 0 1.2rem;
   }
 
-  .hero-title-carousel {
-    min-height: 1.35em;
-    height: 1.35em;
+  .hero-marquee-content {
+    font-size: clamp(1.65rem, 5.8vw, 2.25rem);
   }
 
-  .hero-title-item {
-    font-size: clamp(1.4rem, 5.6vw, 1.75rem);
+  .hero-divider {
+    margin: 0 0.6rem;
   }
 
-  .hero-subtext {
-    font-size: 0.95rem;
-    padding: 0 0.5rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .hero-headline {
-    font-size: clamp(1.75rem, 7.5vw, 2.1rem);
-  }
-
-  .hero-title-item {
-    font-size: clamp(1.25rem, 5.2vw, 1.45rem);
+  .hero-portrait-img {
+    height: 64vh;
+    max-height: 460px;
+    min-height: 320px;
   }
 }
