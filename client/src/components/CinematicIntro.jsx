@@ -9,11 +9,12 @@ const DEFAULT_CUTOFF_SECONDS = 7.0; // Cut intro video at 7 seconds
  * 
  * Specs:
  * - Full-viewport 100vw x 100vh pure black background (#000000)
- * - Video plays centered with audio enabled until 7.0 seconds
- * - At 7.0 seconds, video audio and playback cut immediately
+ * - Video plays centered and completely muted
+ * - At 7.0 seconds, video playback cuts immediately
  * - Shows centered "UNDER MY GENJUTSU" with FuzzyText in Poppins font
  * - Holds for ~2 seconds, then smoothly reveals the portfolio
- * - Click or tap anywhere to smoothly skip ahead
+ * - "Skip Intro" button visible in top right
+ * - Click anywhere or press Escape/Space to skip
  */
 export default function CinematicIntro({
   onComplete,
@@ -24,7 +25,6 @@ export default function CinematicIntro({
   holdDuration = 2000,
   overlayFadeDuration = 1000,
 }) {
-  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isVideoCut, setIsVideoCut] = useState(false);
   const [showText, setShowText] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
@@ -33,71 +33,15 @@ export default function CinematicIntro({
   const hasCutRef = useRef(false);
   const isExitingRef = useRef(false);
   const timerRef = useRef(null);
-  const isAudioMutedRef = useRef(false);
-
-  // Helper to unlock Web Audio API on iOS and mobile browsers
-  const unlockAudioContext = useCallback(() => {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        const ctx = new AudioCtx();
-        if (ctx.state === 'suspended') {
-          ctx.resume();
-        }
-        const buffer = ctx.createBuffer(1, 1, 22050);
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        source.start(0);
-      }
-    } catch {
-      // Audio context unlock fallback
-    }
-  }, []);
-
-  // Unmute audio immediately and keep playing
-  const unmuteAudio = useCallback(async () => {
-    if (hasCutRef.current || isExitingRef.current) return;
-    unlockAudioContext();
-    const video = videoRef.current;
-    if (video) {
-      try {
-        video.muted = false;
-        video.volume = 1.0;
-        await video.play();
-        isAudioMutedRef.current = false;
-        setIsAudioMuted(false);
-      } catch (err) {
-        console.warn('Playback error during unmute:', err);
-      }
-    }
-  }, [unlockAudioContext]);
-
-  // Toggle audio between muted and unmuted
-  const toggleAudio = useCallback(() => {
-    if (hasCutRef.current || isExitingRef.current) return;
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (isAudioMutedRef.current) {
-      unmuteAudio();
-    } else {
-      video.muted = true;
-      isAudioMutedRef.current = true;
-      setIsAudioMuted(true);
-    }
-  }, [unmuteAudio]);
 
   // Smooth exit transition to reveal portfolio
   const startExitTransition = useCallback(() => {
     if (isExitingRef.current) return;
     isExitingRef.current = true;
 
-    // Immediately stop and mute audio on exit/skip
     const video = videoRef.current;
     if (video) {
       video.pause();
-      video.muted = true;
     }
 
     if (timerRef.current) {
@@ -114,7 +58,7 @@ export default function CinematicIntro({
     }, overlayFadeDuration);
   }, [onComplete, overlayFadeDuration]);
 
-  // Cut video and sound at 7 seconds & show text in the middle
+  // Cut video at 7 seconds & show text in the middle
   const triggerCutoff = useCallback(() => {
     if (hasCutRef.current || isExitingRef.current) return;
     hasCutRef.current = true;
@@ -122,7 +66,6 @@ export default function CinematicIntro({
     const video = videoRef.current;
     if (video) {
       video.pause();
-      video.muted = true; // Cut sound dead at 7 seconds
     }
 
     setIsVideoCut(true);
@@ -134,64 +77,20 @@ export default function CinematicIntro({
     }, textFadeDuration + holdDuration);
   }, [startExitTransition, textFadeDuration, holdDuration]);
 
-  // Video playback, audio, & 7-second cutoff tracking
+  // Completely muted video playback & 7-second cutoff tracking
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     video.playsInline = true;
-    video.volume = 1.0;
+    video.muted = true; // Completely muted
 
-    let cleanupListeners = null;
-
-    const attemptPlay = async () => {
-      // 1. First attempt unmuted autoplay (succeeds automatically if browser allows sound)
-      video.muted = false;
-      try {
-        await video.play();
-        isAudioMutedRef.current = false;
-        setIsAudioMuted(false);
-      } catch (err) {
-        // 2. Browser blocked unmuted autoplay: start muted immediately so video never stalls
-        console.log('Unmuted autoplay prevented by browser policy; starting muted and enabling auto-unmute on first touch:', err);
-        video.muted = true;
-        isAudioMutedRef.current = true;
-        setIsAudioMuted(true);
-        try {
-          await video.play();
-        } catch (e) {
-          console.warn('Autoplay error:', e);
-        }
-
-        // 3. Automatically turn on sound on the VERY FIRST touch or interaction anywhere
-        const onFirstInteraction = (e) => {
-          if (e.target && e.target.closest && e.target.closest('.cinematic-skip-btn')) {
-            return;
-          }
-          unmuteAudio();
-          cleanup();
-        };
-
-        const cleanup = () => {
-          window.removeEventListener('pointerdown', onFirstInteraction, true);
-          window.removeEventListener('touchstart', onFirstInteraction, true);
-          window.removeEventListener('touchend', onFirstInteraction, true);
-          window.removeEventListener('mousedown', onFirstInteraction, true);
-          window.removeEventListener('click', onFirstInteraction, true);
-          window.removeEventListener('keydown', onFirstInteraction, true);
-        };
-        cleanupListeners = cleanup;
-
-        window.addEventListener('pointerdown', onFirstInteraction, { once: true, capture: true });
-        window.addEventListener('touchstart', onFirstInteraction, { once: true, capture: true });
-        window.addEventListener('touchend', onFirstInteraction, { once: true, capture: true });
-        window.addEventListener('mousedown', onFirstInteraction, { once: true, capture: true });
-        window.addEventListener('click', onFirstInteraction, { once: true, capture: true });
-        window.addEventListener('keydown', onFirstInteraction, { once: true, capture: true });
-      }
-    };
-
-    attemptPlay();
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.warn('Autoplay error:', err);
+      });
+    }
 
     let animationFrameId;
 
@@ -217,15 +116,11 @@ export default function CinematicIntro({
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      if (cleanupListeners) {
-        cleanupListeners();
-      }
       if (video) {
         video.pause();
-        video.muted = true;
       }
     };
-  }, [cutoffSeconds, triggerCutoff, unmuteAudio]);
+  }, [cutoffSeconds, triggerCutoff]);
 
   // Handle video ended event if video finishes before 7s
   const handleVideoEnded = useCallback(() => {
@@ -248,73 +143,10 @@ export default function CinematicIntro({
   return (
     <div
       className={`cinematic-intro-root ${isFadingOut ? 'fade-out' : ''}`}
-      onClick={() => {
-        if (!isVideoCut && isAudioMuted) {
-          unmuteAudio();
-        } else if (showText) {
-          startExitTransition();
-        }
-      }}
+      onClick={startExitTransition}
       role="region"
       aria-label="Cinematic intro sequence"
     >
-      {/* Sound Toggle Button (Top Left) */}
-      {!isVideoCut && (
-        <button
-          type="button"
-          className={`cinematic-sound-btn ${isAudioMuted ? 'is-muted' : 'is-unmuted'}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleAudio();
-          }}
-          aria-label={isAudioMuted ? 'Turn on sound' : 'Sound is on - click to mute'}
-        >
-          {isAudioMuted ? (
-            <>
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" />
-                <line x1="23" y1="9" x2="17" y2="15" />
-                <line x1="17" y1="9" x2="23" y2="15" />
-              </svg>
-              <span>Tap for sound</span>
-            </>
-          ) : (
-            <>
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" />
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-              </svg>
-              <span className="sound-wave-bars" aria-hidden="true">
-                <span className="bar bar-1"></span>
-                <span className="bar bar-2"></span>
-                <span className="bar bar-3"></span>
-              </span>
-              <span>Sound On</span>
-            </>
-          )}
-        </button>
-      )}
-
       {/* Skip Intro Button (Top Right) */}
       <button
         type="button"
@@ -349,7 +181,7 @@ export default function CinematicIntro({
           className={`cinematic-video ${isVideoCut ? 'video-cut' : ''}`}
           autoPlay
           playsInline
-          muted={isAudioMuted}
+          muted
           controls={false}
           disablePictureInPicture
           onEnded={handleVideoEnded}
