@@ -8,7 +8,7 @@ import MarqueeBanner from './components/MarqueeBanner';
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import './styles/anime.css';
 
-import TechStack from './components/TechStack';
+import Skills from './components/Skills';
 
 // Code-split heavy 3D and media-rich sections for fast initial load
 const ProjectsSection = lazy(() => import('./components/ProjectsSection'));
@@ -87,8 +87,8 @@ export default function App() {
         <ProjectsSection />
       </Suspense>
 
-      {/* 3D Interactive Tech Stack Spheres */}
-      <TechStack />
+      {/* Orbiting Technology Skills Section */}
+      <Skills />
 
       {/* Education Timeline Section */}
       <EducationSection />
