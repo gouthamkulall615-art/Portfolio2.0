@@ -256,16 +256,17 @@
 /* Mobile Media Queries */
 @media (max-width: 768px) {
   .sticky-project-cards {
-    height: 94vh;
+    height: 100vh;
+    height: 100svh;
     padding: 0.75rem 0.5rem;
   }
 
   .sticky-project-card-stage {
     width: calc(100vw - 1.25rem);
-    max-width: 25rem;
-    height: 64vh;
-    max-height: 32rem;
-    min-height: 380px;
+    max-width: 24.5rem;
+    height: clamp(340px, 48vh, 395px);
+    min-height: 330px;
+    max-height: 410px;
   }
 
   .sticky-project-card {
@@ -276,7 +277,7 @@
     overflow: hidden;
   }
 
-  /* Screenshot fills upper section seamlessly down to the panel with zero black patch */
+  /* Screenshot preserves full uncropped width so text is never cut off */
   .sticky-project-card .project-card-img-wrap {
     position: relative !important;
     inset: auto !important;
@@ -284,14 +285,19 @@
     width: 100% !important;
     min-height: 0 !important;
     overflow: hidden !important;
-    background: #070709;
+    background: #09090c;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
   }
 
+  /* object-fit: contain keeps 100% of website content visible without cropping sides/text;
+     object-position: center bottom docks screenshot directly to the panel with zero gap */
   .sticky-project-card .project-card-img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important;
-    object-position: top center !important;
+    object-fit: contain !important;
+    object-position: center bottom !important;
     display: block !important;
     background: transparent;
   }
@@ -300,7 +306,7 @@
     display: none;
   }
 
-  /* On mobile, dock the black panel directly beneath the image with no gap/patch */
+  /* Dock the black panel directly beneath the image with no gap/patch */
   .project-card-black-panel {
     position: relative !important;
     bottom: auto !important;
@@ -311,8 +317,8 @@
     flex-shrink: 0 !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    padding: 1rem 1rem 0.9rem;
-    gap: 0.6rem;
+    padding: 0.85rem 1rem 0.85rem;
+    gap: 0.5rem;
     background: #09090b;
     border-top: 1px solid rgba(255, 255, 255, 0.16);
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
@@ -342,7 +348,7 @@
   }
 
   .project-panel-title {
-    font-size: 1.2rem;
+    font-size: 1.18rem;
   }
 
   .project-panel-actions {
@@ -365,8 +371,14 @@
 /* Very Small Mobile */
 @media (max-width: 380px) {
   .sticky-project-card-stage {
-    height: 60vh;
-    min-height: 350px;
+    width: calc(100vw - 1rem);
+    height: clamp(310px, 48vh, 355px);
+    min-height: 300px;
+  }
+
+  .project-card-black-panel {
+    padding: 0.7rem 0.8rem 0.75rem;
+    gap: 0.4rem;
   }
 
   .project-panel-title {
