@@ -9,6 +9,7 @@ import { AnimatedThemeToggler } from './jsx/AnimatedThemeToggler';
 import './css/anime.css';
 
 import Skills from './jsx/Skills';
+import CustomCursor from './jsx/CustomCursor';
 
 // Code-split heavy 3D and media-rich sections for fast initial load
 const ProjectsSection = lazy(() => import('./jsx/ProjectsSection'));
@@ -38,6 +39,9 @@ export default function App() {
 
   return (
     <div className="portfolio-app-root">
+      {/* Crisp high-contrast custom cursor */}
+      <CustomCursor />
+
       {/* Minimal Cinematic Intro Sequence */}
       {showIntro && (
         <CinematicIntro onComplete={handleIntroComplete} />
