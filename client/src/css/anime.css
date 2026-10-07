@@ -21,6 +21,21 @@ html.light {
 
   --c-fg: hsl(var(--foreground, 240 10% 3.9%));
   --subhero-grid-line: rgba(0, 0, 0, 0.035);
+
+  /* Shared Glass Tokens (Hero Pills & Top Navbar) */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-scrolled: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-shadow: rgba(20, 20, 30, 0.08);
+  --glass-blur: 14px;
+  --glass-blur-scrolled: 18px;
+  --glass-indicator-bg: #111111;
+  --glass-indicator-fg: #ffffff;
+  --glass-link-muted: #52525b;
+  --glass-link-hover-bg: rgba(255, 255, 255, 0.35);
+  --glass-link-hover-fg: #111111;
+  --glass-focus-ring: rgba(196, 30, 58, 0.85);
 }
 
 html[data-theme="dark"],
@@ -41,6 +56,21 @@ html.dark {
 
   --c-fg: hsl(var(--foreground, 0 0% 98%));
   --subhero-grid-line: rgba(255, 255, 255, 0.035);
+
+  /* Shared Glass Tokens (Hero Pills & Top Navbar - Dark Mode) */
+  --glass-bg: rgba(24, 24, 28, 0.5);
+  --glass-bg-scrolled: rgba(24, 24, 28, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --glass-blur: 14px;
+  --glass-blur-scrolled: 18px;
+  --glass-indicator-bg: #ffffff;
+  --glass-indicator-fg: #111111;
+  --glass-link-muted: #a1a1aa;
+  --glass-link-hover-bg: rgba(255, 255, 255, 0.08);
+  --glass-link-hover-fg: #ffffff;
+  --glass-focus-ring: rgba(225, 43, 72, 0.85);
 }
 
 @supports (color: color-mix(in oklch, black, white)) {
@@ -93,17 +123,16 @@ body {
 
 .portfolio-header {
   position: fixed;
-  top: 1.5rem;
+  top: 12px;
   left: 0;
   right: 0;
   margin: 0 auto;
   width: fit-content;
-  max-width: 95vw;
+  max-width: calc(100vw - 24px);
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.85rem;
   padding: 0;
   background: transparent;
   border: none;

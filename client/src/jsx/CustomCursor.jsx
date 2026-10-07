@@ -102,12 +102,10 @@ export default function CustomCursor() {
     const handleMouseDown = (e) => {
       // Don't shrink ring on right click
       if (e.button !== 0) return;
-      isDown = true;
       ring.classList.add('is-down');
     };
 
     const handleMouseUp = () => {
-      isDown = false;
       ring.classList.remove('is-down');
     };
 

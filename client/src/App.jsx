@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import CinematicIntro from './jsx/CinematicIntro';
-import GooeyNav from './jsx/GooeyNav';
+import GlassNavbar from './jsx/GlassNavbar';
 import StaggeredMenu from './jsx/StaggeredMenu';
 import { Hero } from './jsx/Hero';
 import EducationSection from './jsx/EducationSection';
@@ -47,19 +47,9 @@ export default function App() {
         <CinematicIntro onComplete={handleIntroComplete} />
       )}
 
-      {/* Floating Top GooeyNav for Desktop with AnimatedThemeToggler on right */}
+      {/* Liquid Glass Top Navbar for Desktop with Integrated Theme Toggle */}
       <header className="portfolio-header">
-        <GooeyNav
-          items={navItems}
-          particleCount={15}
-          particleDistances={[80, 10]}
-          particleR={90}
-          initialActiveIndex={0}
-          animationTime={600}
-          timeVariance={250}
-          colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-        />
-        <AnimatedThemeToggler />
+        <GlassNavbar items={navItems} />
       </header>
 
       {/* Mobile Responsive Staggered Sidebar Menu (Opens from Left to Right) */}
