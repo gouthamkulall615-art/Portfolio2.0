@@ -7,7 +7,7 @@
   position: relative;
   width: 100%;
   min-height: 140vh;
-  background: var(--bg-black);
+  background: transparent;
   color: var(--text-primary);
   padding: 6rem 1.5rem 10rem;
   overflow: hidden;

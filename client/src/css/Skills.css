@@ -15,7 +15,7 @@
   padding: 5rem 1.5rem 4rem;
   box-sizing: border-box;
   overflow: hidden;
-  background: var(--bg-black, transparent);
+  background: transparent;
   user-select: none;
 }
 

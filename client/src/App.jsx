@@ -77,39 +77,44 @@ export default function App() {
         />
       </div>
 
-      {/* Hero Section — full viewport */}
+      {/* Hero Section — full viewport (no grid) */}
       <section id="home" className="portfolio-hero-section">
         <Hero />
       </section>
 
-      {/* Heavy sections loaded smoothly via Suspense */}
-      <Suspense fallback={null}>
-        <ProjectsSection />
-      </Suspense>
+      {/* Main content below Hero — persistent subtle grid background matching footer */}
+      <div className="portfolio-subhero-wrapper">
+        <div className="portfolio-subhero-grid" aria-hidden="true" />
 
-      {/* Orbiting Technology Skills Section */}
-      <Skills />
+        {/* Heavy sections loaded smoothly via Suspense */}
+        <Suspense fallback={null}>
+          <ProjectsSection />
+        </Suspense>
 
-      {/* Education Timeline Section */}
-      <EducationSection />
+        {/* Orbiting Technology Skills Section */}
+        <Skills />
 
-      {/* Beyond Code — animated anime cards */}
-      <Suspense fallback={null}>
-        <AnimeCards />
-      </Suspense>
+        {/* Education Timeline Section */}
+        <EducationSection />
 
-      {/* Full-width Horizontal Marquee Ticker Banner */}
-      <MarqueeBanner />
+        {/* Beyond Code — animated anime cards */}
+        <Suspense fallback={null}>
+          <AnimeCards />
+        </Suspense>
 
-      {/* Scroll-triggered Hands Touching Contact Section */}
-      <Suspense fallback={null}>
-        <ContactSection />
-      </Suspense>
+        {/* Full-width Horizontal Marquee Ticker Banner */}
+        <MarqueeBanner />
 
-      {/* Full-screen Cinematic Curtain Reveal Footer */}
-      <Suspense fallback={null}>
-        <CinematicFooter />
-      </Suspense>
+        {/* Scroll-triggered Hands Touching Contact Section */}
+        <Suspense fallback={null}>
+          <ContactSection />
+        </Suspense>
+
+        {/* Full-screen Cinematic Curtain Reveal Footer */}
+        <Suspense fallback={null}>
+          <CinematicFooter />
+        </Suspense>
+      </div>
     </div>
   );
 }
