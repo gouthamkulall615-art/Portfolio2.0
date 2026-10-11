@@ -81,24 +81,36 @@ export default function ConcaveCarousel({
       let r = radius;
       let s = step;
 
-      if (width < 480) {
-        scale = 0.65;
-        w = 190;
-        h = 280;
-        r = 430;
-        s = 24;
+      if (width < 420) {
+        scale = 0.62;
+        w = 165;
+        h = 245;
+        r = 450;
+        s = 29;
+      } else if (width < 640) {
+        scale = 0.72;
+        w = 185;
+        h = 275;
+        r = 500;
+        s = 29;
       } else if (width < 768) {
-        scale = 0.78;
-        w = 220;
-        h = 320;
-        r = 520;
-        s = 26;
+        scale = 0.8;
+        w = 210;
+        h = 310;
+        r = 560;
+        s = 29;
       } else if (width < 1024) {
         scale = 0.88;
-        w = 245;
+        w = 240;
         h = 350;
-        r = 600;
-        s = 28;
+        r = 630;
+        s = 30;
+      } else {
+        scale = 1;
+        w = cardWidth;
+        h = cardHeight;
+        r = radius;
+        s = step;
       }
 
       setDimensions({ w, h, r, s, scale });
@@ -193,16 +205,16 @@ export default function ConcaveCarousel({
     <div
       ref={containerRef}
       className={`relative w-full bg-transparent ${className}`}
-      style={{ height: "260vh" }} // 100vh viewport + 160vh of scroll travel
+      style={{ height: dimensions.w < 200 ? "210vh" : "260vh" }}
       aria-label="Anime concave scroll showcase"
     >
       {/* Sticky Viewport Stage (Sticks only while scrolling inside this container) */}
-      <div className="sticky top-[70px] w-full h-[calc(100vh-70px)] flex flex-col justify-center items-center overflow-visible select-none pointer-events-auto">
+      <div className="sticky top-[58px] sm:top-[70px] w-full h-[calc(100vh-58px)] sm:h-[calc(100vh-70px)] flex flex-col justify-center items-center overflow-visible select-none pointer-events-auto">
         {/* 3D Stage (Transparent, no black box) */}
         <div
           className="relative w-full flex items-center justify-center overflow-visible"
           style={{
-            height: h + 110,
+            height: h + (dimensions.w < 200 ? 75 : 110),
             perspective,
             perspectiveOrigin: "50% 45%",
           }}
@@ -268,37 +280,37 @@ export default function ConcaveCarousel({
         </div>
 
         {/* Caption + Scroll Status (Theme adaptive: dark and light) */}
-        <div className="relative mt-6 md:mt-10 flex flex-col items-center gap-2.5 text-center px-4 z-20">
+        <div className="relative mt-3 sm:mt-8 flex flex-col items-center gap-1.5 sm:gap-2 text-center px-4 z-20">
           <div
             key={active}
             className="carousel-caption animate-[fadeUp_.35s_ease] text-center max-w-xl transition-all"
           >
-            <div className="inline-flex items-center gap-2 mb-1">
+            <div className="inline-flex items-center gap-2 mb-0.5 sm:mb-1">
               {current?.tag && (
-                <span className="text-[11px] font-semibold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-zinc-200 dark:bg-white/10 text-zinc-800 dark:text-white/80 border border-zinc-300 dark:border-white/15">
+                <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest px-2 sm:px-2.5 py-0.5 rounded-full bg-zinc-200 dark:bg-white/10 text-zinc-800 dark:text-white/80 border border-zinc-300 dark:border-white/15">
                   {current.tag}
                 </span>
               )}
-              <span className="text-xs font-mono font-medium text-zinc-500 dark:text-white/50 tracking-wider">
+              <span className="text-[11px] sm:text-xs font-mono font-medium text-zinc-500 dark:text-white/50 tracking-wider">
                 {pad(active + 1)} / {pad(n)}
               </span>
             </div>
 
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white drop-shadow-sm">
+            <h3 className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white drop-shadow-sm leading-tight">
               {current?.title}
             </h3>
 
             {current?.subtitle && (
-              <p className="mt-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300/85 max-w-lg mx-auto leading-relaxed">
+              <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-zinc-600 dark:text-zinc-300/85 max-w-lg mx-auto leading-relaxed line-clamp-2">
                 {current?.subtitle}
               </p>
             )}
           </div>
 
           {/* Minimal Scroll Helper Badge */}
-          <div className="flex items-center gap-2 mt-1 px-3 py-1 rounded-full bg-zinc-200/60 dark:bg-white/5 border border-zinc-300/80 dark:border-white/10 backdrop-blur-md text-[11px] text-zinc-600 dark:text-zinc-400">
+          <div className="flex items-center gap-1.5 sm:gap-2 mt-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-zinc-200/60 dark:bg-white/5 border border-zinc-300/80 dark:border-white/10 backdrop-blur-md text-[10px] sm:text-[11px] text-zinc-600 dark:text-zinc-400">
             <svg
-              className="w-3.5 h-3.5 animate-bounce text-zinc-500 dark:text-zinc-400"
+              className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-bounce text-zinc-500 dark:text-zinc-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

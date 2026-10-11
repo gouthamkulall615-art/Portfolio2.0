@@ -44,7 +44,7 @@ export default function AnimeCard({
       >
         {/* FRONT FACE */}
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] [WebkitBackfaceVisibility:hidden] flex flex-col justify-end p-5 transition-shadow duration-300"
+          className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] [WebkitBackfaceVisibility:hidden] flex flex-col justify-end p-3.5 sm:p-5 transition-shadow duration-300"
           style={
             {
               background: `radial-gradient(120% 80% at 100% 0%, hsl(${hue} 80% 45% / 0.4), transparent 60%), linear-gradient(160deg, #181820, #0c0c12)`,
@@ -76,9 +76,9 @@ export default function AnimeCard({
           />
 
           {/* Top Row: Outline Index Number & Flip Indicator */}
-          <div className="absolute top-3.5 inset-x-4 flex items-center justify-between z-10 pointer-events-none">
+          <div className="absolute top-3 inset-x-3.5 sm:top-3.5 sm:inset-x-4 flex items-center justify-between z-10 pointer-events-none">
             <span
-              className="font-mono font-black text-3xl leading-none select-none"
+              className="font-mono font-black text-2xl sm:text-3xl leading-none select-none"
               style={{
                 color: "transparent",
                 WebkitTextStroke: `1.5px hsl(${hue} 85% 70% / 0.85)`,
@@ -88,7 +88,7 @@ export default function AnimeCard({
             </span>
 
             <span
-              className="text-[10px] uppercase tracking-widest px-2.5 py-0.5 rounded-full font-semibold pointer-events-auto backdrop-blur-md transition-all group-hover:scale-105 shadow-sm"
+              className="text-[9px] sm:text-[10px] uppercase tracking-widest px-2 sm:px-2.5 py-0.5 rounded-full font-semibold pointer-events-auto backdrop-blur-md transition-all group-hover:scale-105 shadow-sm"
               style={{
                 background: `hsl(${hue} 80% 50% / 0.28)`,
                 border: `1px solid hsl(${hue} 85% 65% / 0.55)`,
@@ -103,7 +103,7 @@ export default function AnimeCard({
           <div className="relative z-10 flex flex-col items-start gap-1">
             {item.tag && (
               <span
-                className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full"
+                className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest px-2 sm:px-2.5 py-0.5 rounded-full"
                 style={{
                   background: `hsl(${hue} 85% 55% / 0.25)`,
                   border: `1px solid hsl(${hue} 85% 65% / 0.5)`,
@@ -113,7 +113,7 @@ export default function AnimeCard({
                 {item.tag}
               </span>
             )}
-            <h4 className="text-lg md:text-xl font-bold text-white tracking-tight leading-snug drop-shadow-md">
+            <h4 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight leading-snug drop-shadow-md">
               {item.title}
             </h4>
           </div>

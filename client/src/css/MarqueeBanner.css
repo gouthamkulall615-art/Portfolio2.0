@@ -1,6 +1,6 @@
 .reveal-section {
   position: relative;
-  height: 320vh;            /* 100vh stage + 220vh of scrolling */
+  height: 300vh;            /* 100vh stage + 200vh of scrolling */
   background: transparent;  /* Native portfolio theme background */
   width: 100%;
 }
@@ -9,6 +9,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   perspective: 1200px;
   perspective-origin: 50% 50%;
@@ -23,7 +24,7 @@
   inset: 0;
   transform-style: preserve-3d;
   font-family: 'Anton', Impact, 'Arial Narrow Bold', sans-serif;
-  font-size: clamp(3.5rem, 15vw, 13rem);
+  font-size: clamp(5.2rem, 16vw, 13.5rem);
   line-height: 1;
 }
 
@@ -41,16 +42,33 @@
   background-clip: text;
   backface-visibility: hidden;
   will-change: transform, opacity;
+  letter-spacing: -0.01em;
+}
+
+/* Mobile responsive tuning: bigger font, reduced top/bottom gap, tighter scroll distance */
+@media (max-width: 640px) {
+  .reveal-section {
+    height: 220vh;          /* Tighter scroll distance on mobile */
+  }
+
+  .reveal-cylinder {
+    font-size: clamp(4.2rem, 19.5vw, 6.6rem); /* Big impactful font that fills the screen */
+    perspective: 1000px;
+  }
+
+  .reveal-line {
+    letter-spacing: -0.02em;
+  }
 }
 
 /* prefers-reduced-motion fallback */
 .reveal-static {
   background: transparent;
-  padding: 6rem 0;
+  padding: 4rem 1rem;
   text-align: center;
   color: var(--text-primary, #ffffff);
   font-family: 'Anton', Impact, sans-serif;
-  font-size: clamp(3.5rem, 15vw, 13rem);
+  font-size: clamp(3.8rem, 18vw, 13rem);
   line-height: 1;
   text-transform: uppercase;
 }
