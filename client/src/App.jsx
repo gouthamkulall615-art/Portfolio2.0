@@ -15,7 +15,7 @@ import CustomCursor from './jsx/CustomCursor';
 const ProjectsSection = lazy(() => import('./jsx/ProjectsSection'));
 const ContactSection = lazy(() => import('./jsx/ContactSection'));
 const CinematicFooter = lazy(() => import('./jsx/CinematicFooter'));
-const AnimeCards = lazy(() => import('./jsx/AnimeDeck'));
+const AnimeSection = lazy(() => import('./components/AnimeSection'));
 
 const navItems = [
   { label: 'Home', href: '#home', ariaLabel: 'Go to home section' },
@@ -91,9 +91,9 @@ export default function App() {
         {/* Education Timeline Section */}
         <EducationSection />
 
-        {/* Beyond Code — animated anime cards */}
+        {/* Beyond Code — Concave anime showcase carousel */}
         <Suspense fallback={null}>
-          <AnimeCards />
+          <AnimeSection />
         </Suspense>
 
         {/* Full-width Horizontal Marquee Ticker Banner */}
