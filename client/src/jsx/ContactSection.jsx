@@ -9,7 +9,7 @@ import {
 import { Send, Loader2, AlertCircle } from 'lucide-react';
 import humanHandImg from '../assets/human-hand.webp';
 import robotHandImg from '../assets/robot-hand.webp';
-import ContactCardEffects from './ContactCardEffects';
+import FlameShaderCanvas from '../components/FlameShaderCanvas';
 import ContactParticles from './ContactParticles';
 import '../css/ContactSection.css';
 
@@ -48,6 +48,17 @@ const contactMethods = [
       </svg>
     ),
   },
+  {
+    label: 'LEETCODE',
+    value: 'leetcode.com/u/GouthamKulal_16',
+    href: 'https://leetcode.com/u/GouthamKulal_16/',
+    isExternal: true,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="contact-icon-svg">
+        <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .271 4.735 5.574 5.574 0 0 0 3.336 2.614 5.617 5.617 0 0 0 1.365.174c1.196 0 2.378-.4 3.328-1.144l4.248-3.323a1.374 1.374 0 1 0-1.706-2.177l-4.248 3.322a2.868 2.868 0 0 1-1.706.586 2.869 2.869 0 0 1-2.404-1.392 2.784 2.784 0 0 1-.137-2.375 2.81 2.81 0 0 1 .637-1.111l3.855-4.127 5.405-5.787a1.374 1.374 0 0 0-.96-2.31zM10.8 12.022a1.374 1.374 0 0 0-1.374 1.374 1.374 1.374 0 0 0 1.374 1.374h9.826a1.374 1.374 0 0 0 1.374-1.374 1.374 1.374 0 0 0-1.374-1.374H10.8z" />
+      </svg>
+    ),
+  },
 ];
 
 // Exact glowing fingertip coordinates from raw image analysis (2528 x 1696 px)
@@ -83,6 +94,30 @@ export default function ContactSection() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [errors, setErrors] = useState({});
+
+  const [isLight, setIsLight] = useState(() => {
+    if (typeof document === 'undefined') return false;
+    const dt = document.documentElement.getAttribute('data-theme');
+    return dt === 'light' || document.documentElement.classList.contains('light');
+  });
+
+  useEffect(() => {
+    const checkTheme = () => {
+      const dt = document.documentElement.getAttribute('data-theme');
+      setIsLight(dt === 'light' || document.documentElement.classList.contains('light'));
+    };
+    checkTheme();
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class'],
+    });
+    window.addEventListener('themechange', checkTheme);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('themechange', checkTheme);
+    };
+  }, []);
 
   // Measure stage and calculate responsive hand dimensions
   useEffect(() => {
@@ -330,18 +365,10 @@ export default function ContactSection() {
         variants={containerVariants}
       >
 
-        <ContactCardEffects
-          enableStars={true}
-          enableSpotlight={true}
-          enableBorderGlow={true}
-          enableTilt={false}
-          enableMagnetism={false}
-          clickEffect={true}
-          spotlightRadius={300}
-          particleCount={10}
-        >
-          <div className="contact-card">
-            <div className="contact-card-content contact-two-column-layout">
+        <div className="contact-card relative overflow-hidden rounded-[28px]">
+          {/* Luminous purple flame shader rising from bottom behind content */}
+          <FlameShaderCanvas color="#8b5cf6" speed={0.9} active={hasTouched} isLight={isLight} />
+          <div className="contact-card-content contact-two-column-layout relative z-10">
               {/* Left Column: Heading, Subtext, Contact Methods List */}
               <div className="contact-left-col">
                 <h2 className="contact-title">Let's Connect</h2>
@@ -518,7 +545,6 @@ export default function ContactSection() {
               </div>
             </div>
           </div>
-        </ContactCardEffects>
       </motion.div>
     </section>
   );
