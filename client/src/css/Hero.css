@@ -195,6 +195,7 @@ html.dark .hero-editorial {
 
 .hero-portrait-frame {
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -202,9 +203,12 @@ html.dark .hero-editorial {
   width: auto;
   pointer-events: auto;
   transform-origin: center bottom;
-  will-change: opacity, transform;
+  will-change: transform;
   cursor: default;
   transition: transform 0.35s ease;
+  --reveal-radius: 125px;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
 }
 
 .hero-portrait-wrapper:hover .hero-portrait-frame {
@@ -234,13 +238,8 @@ html.dark .hero-editorial {
   pointer-events: none;
 }
 
-.hero-portrait-real {
-  position: relative;
-  z-index: 1;
-}
-
-/* Anime Easter-Egg Reveal Layer */
-.hero-portrait-anime-layer {
+/* Bottom Layer: Real Photograph (Layer 1 - directly behind Obito at full opacity) */
+.hero-portrait-real-layer {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -249,15 +248,60 @@ html.dark .hero-editorial {
   align-items: flex-end;
   justify-content: center;
   pointer-events: none;
-  z-index: 2;
-  opacity: 0;
-  visibility: hidden;
-  will-change: mask-image, -webkit-mask-image, opacity;
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
 }
 
-.hero-portrait-anime {
+.hero-portrait-real {
   position: relative;
-  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.38));
+  -webkit-mask-image: url('/obito-silhouette.png');
+  mask-image: url('/obito-silhouette.png');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: bottom center;
+  mask-position: bottom center;
+}
+
+/* Top Layer: Complete Obito Uchiha Character (Layer 2 - cursor-following mask applied on hover) */
+.hero-portrait-obito-layer {
+  position: relative;
+  width: auto;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 1;
+  -webkit-mask-image: none;
+  mask-image: none;
+  will-change: mask-image, -webkit-mask-image;
+}
+
+.hero-portrait-obito {
+  position: relative;
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.42));
+}
+
+/* Localized circular cursor-following reveal applied to Obito layer only */
+.hero-portrait-frame.is-revealing .hero-portrait-obito-layer {
+  -webkit-mask-image: radial-gradient(
+    circle var(--reveal-radius, 125px) at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    transparent 0%,
+    transparent 70%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--reveal-radius, 125px) at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    transparent 0%,
+    transparent 70%,
+    #000 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 /* ---------- Interactive Glass Pill Control ---------- */
@@ -406,12 +450,6 @@ html.dark .hero-pill-link:hover {
 
 /* Touch Devices (Tablet / iPad hover: none on larger screens) */
 @media (hover: none) and (min-width: 769px) {
-  .hero-portrait-anime-layer {
-    display: none !important;
-    pointer-events: none !important;
-    visibility: hidden !important;
-  }
-
   .hero-glass-pill {
     opacity: 1 !important;
     transform: translate(-50%, 0) !important;
@@ -540,6 +578,7 @@ html.dark .hero-pill-link:hover {
 
   .hero-portrait-frame {
     position: relative;
+    isolation: isolate;
     width: 100%;
     max-width: 100%;
     display: flex;
@@ -548,6 +587,7 @@ html.dark .hero-pill-link:hover {
     border-radius: 0 0 28px 28px;
     overflow: hidden;
     touch-action: pan-y;
+    --reveal-radius: 95px;
   }
 
   .hero-portrait-picture {
@@ -559,8 +599,8 @@ html.dark .hero-pill-link:hover {
     flex-shrink: 0;
   }
 
-  /* Enable animated radial reveal easter-egg on touch/mobile */
-  .hero-portrait-anime-layer {
+  /* Layer styling for mobile portrait */
+  .hero-portrait-real-layer {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -569,10 +609,34 @@ html.dark .hero-pill-link:hover {
     align-items: flex-end;
     justify-content: center;
     pointer-events: none;
+    z-index: 1;
+    opacity: 1;
+    visibility: visible;
+    border-radius: 0 0 28px 28px;
+    overflow: hidden;
+  }
+
+  .hero-portrait-real {
+    -webkit-mask-image: url('/obito-silhouette-portrait.png');
+    mask-image: url('/obito-silhouette-portrait.png');
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: bottom center;
+    mask-position: bottom center;
+  }
+
+  .hero-portrait-obito-layer {
+    position: relative;
+    width: auto;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
     z-index: 2;
-    opacity: 0;
-    visibility: hidden;
-    will-change: mask-image, -webkit-mask-image, opacity;
+    opacity: 1;
     border-radius: 0 0 28px 28px;
     overflow: hidden;
   }
@@ -669,6 +733,16 @@ html.dark .hero-pill-link:hover {
     width: 15px;
     height: 15px;
     flex-shrink: 0;
+  }
+}
+
+/* Reduced motion preference support */
+@media (prefers-reduced-motion: reduce) {
+  .hero-portrait-frame {
+    transition: none !important;
+  }
+  .hero-marquee-track {
+    animation-duration: 160s !important;
   }
 }
 

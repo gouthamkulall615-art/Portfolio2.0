@@ -29,7 +29,8 @@ export function Hero() {
   const containerRef = useRef(null);
   const marqueeRef = useRef(null);
   const portraitFrameRef = useRef(null);
-  const animeLayerRef = useRef(null);
+  const portraitLayerRef = useRef(null);
+  const obitoLayerRef = useRef(null);
   const pillRef = useRef(null);
 
   // 1. Scroll-driven fade transition (Hero -> Projects)
@@ -52,9 +53,7 @@ export function Hero() {
         if (container.style.visibility !== 'hidden') {
           container.style.visibility = 'hidden';
           container.style.pointerEvents = 'none';
-          marquee.style.opacity = '0';
-          portraitFrame.style.opacity = '0';
-          portraitFrame.style.transform = 'scale(0.96)';
+          container.style.opacity = '0';
           if (pill) {
             pill.style.opacity = '0';
             pill.style.pointerEvents = 'none';
@@ -69,11 +68,10 @@ export function Hero() {
       const endFade = heroHeight * 0.82;
 
       if (scrollY <= startFade) {
-        // Hero fully visible at top — clear inline styles so CSS handles responsive opacities cleanly
+        // Hero fully visible at top
         container.style.visibility = 'visible';
         container.style.pointerEvents = 'auto';
-        marquee.style.opacity = '';
-        portraitFrame.style.opacity = '';
+        container.style.opacity = '1';
         portraitFrame.style.transform = '';
         if (pill) {
           pill.style.opacity = '';
@@ -83,28 +81,23 @@ export function Hero() {
         // Hero completely faded out before bottom
         container.style.visibility = 'hidden';
         container.style.pointerEvents = 'none';
-        marquee.style.opacity = '0';
-        portraitFrame.style.opacity = '0';
+        container.style.opacity = '0';
         portraitFrame.style.transform = 'scale(0.96)';
         if (pill) {
           pill.style.opacity = '0';
           pill.style.pointerEvents = 'none';
         }
       } else {
-        // Progressive, scroll-driven natural fade
+        // Progressive, scroll-driven natural fade (fading whole container preserves opacity of portrait over marquee)
         const rawProgress = (scrollY - startFade) / (endFade - startFade);
         const progress = Math.max(0, Math.min(1, rawProgress));
 
         const opacity = 1 - progress;
         const scale = 1 - progress * 0.04; // scale: 1 -> 0.96
 
-        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-        const baseMarqueeOpacity = isMobile ? 0.42 : 1;
-
         container.style.visibility = 'visible';
         container.style.pointerEvents = opacity < 0.1 ? 'none' : 'auto';
-        marquee.style.opacity = (opacity * baseMarqueeOpacity).toFixed(3);
-        portraitFrame.style.opacity = opacity.toFixed(3);
+        container.style.opacity = opacity.toFixed(3);
         portraitFrame.style.transform = `scale(${scale.toFixed(4)})`;
         if (pill) {
           pill.style.opacity = opacity.toFixed(3);
@@ -132,151 +125,82 @@ export function Hero() {
     };
   }, []);
 
-  // 2. Interactive radial reveal effect (Easter Egg: Anime image peek on hover & touch)
+  // 2. Cursor-following localized reveal tracking (updates CSS variables directly without React re-renders)
   useEffect(() => {
     const frame = portraitFrameRef.current;
-    const animeLayer = animeLayerRef.current;
-    if (!frame || !animeLayer) return;
+    if (!frame) return;
 
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let targetProgress = 0;
-    let currentProgress = 0;
-    let isHovering = false;
-    let rafId = null;
-    let touchFadeTimer = null;
+    let isInside = false;
 
-    const lerp = (start, end, factor) => start + (end - start) * factor;
-
-    const renderLoop = () => {
-      // Smooth interpolation/lerp for fluid cursor / touch follow
-      currentX = lerp(currentX, targetX, 0.15);
-      currentY = lerp(currentY, targetY, 0.15);
-
-      // Smooth reveal progress lerp
-      currentProgress = lerp(currentProgress, targetProgress, isHovering ? 0.18 : 0.08);
-
-      if (currentProgress > 0.005) {
-        // Feathered circular mask scaled appropriately for mobile vs desktop
-        const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-        const maxOuter = isMobile ? 95 : 115;
-        const maxInner = isMobile ? 28 : 38;
-        const outerRadius = maxOuter * currentProgress;
-        const innerRadius = maxInner * currentProgress;
-        const mask = `radial-gradient(circle ${outerRadius.toFixed(1)}px at ${currentX.toFixed(1)}px ${currentY.toFixed(1)}px, black 0%, black ${innerRadius.toFixed(1)}px, transparent 100%)`;
-
-        animeLayer.style.maskImage = mask;
-        animeLayer.style.webkitMaskImage = mask;
-        animeLayer.style.opacity = currentProgress.toFixed(3);
-        animeLayer.style.visibility = 'visible';
-
-        rafId = requestAnimationFrame(renderLoop);
-      } else {
-        // Fully hidden when deactivated
-        animeLayer.style.opacity = '0';
-        animeLayer.style.visibility = 'hidden';
-        animeLayer.style.maskImage = 'none';
-        animeLayer.style.webkitMaskImage = 'none';
-        rafId = null;
-      }
-    };
-
-    const activateAt = (clientX, clientY, snap = false) => {
-      if (touchFadeTimer) clearTimeout(touchFadeTimer);
+    const updateCoords = (clientX, clientY) => {
       const rect = frame.getBoundingClientRect();
-      targetX = clientX - rect.left;
-      targetY = clientY - rect.top;
-      if (snap || currentProgress < 0.05) {
-        currentX = targetX;
-        currentY = targetY;
-      }
-      isHovering = true;
-      targetProgress = 1;
-      if (!rafId) {
-        rafId = requestAnimationFrame(renderLoop);
-      }
-    };
+      if (!rect.width || !rect.height) return;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const clampedX = Math.max(0, Math.min(rect.width, x));
+      const clampedY = Math.max(0, Math.min(rect.height, y));
 
-    const deactivateAfter = (delayMs = 0) => {
-      if (touchFadeTimer) clearTimeout(touchFadeTimer);
-      if (delayMs > 0) {
-        touchFadeTimer = setTimeout(() => {
-          isHovering = false;
-          targetProgress = 0;
-          if (!rafId) {
-            rafId = requestAnimationFrame(renderLoop);
-          }
-        }, delayMs);
-      } else {
-        isHovering = false;
-        targetProgress = 0;
-        if (!rafId) {
-          rafId = requestAnimationFrame(renderLoop);
-        }
-      }
-    };
-
-    // Desktop Mouse / Pointer Events
-    const handlePointerMove = (e) => {
-      if (e.pointerType === 'touch') return; // Handled reliably by touch events
-      activateAt(e.clientX, e.clientY, false);
+      frame.style.setProperty('--mouse-x', `${clampedX.toFixed(1)}px`);
+      frame.style.setProperty('--mouse-y', `${clampedY.toFixed(1)}px`);
     };
 
     const handlePointerEnter = (e) => {
-      if (e.pointerType === 'touch') return;
-      activateAt(e.clientX, e.clientY, true);
+      isInside = true;
+      updateCoords(e.clientX, e.clientY);
+      frame.classList.add('is-revealing');
     };
 
-    const handlePointerLeave = (e) => {
-      if (e.pointerType === 'touch') return;
-      deactivateAfter(0);
+    const handlePointerMove = (e) => {
+      if (!isInside) {
+        isInside = true;
+        frame.classList.add('is-revealing');
+      }
+      updateCoords(e.clientX, e.clientY);
     };
 
-    // Mobile Touch Events (Tap & Drag to reveal with gentle lingering dissolve)
+    const handlePointerLeave = () => {
+      isInside = false;
+      frame.classList.remove('is-revealing');
+    };
+
+    // Mobile touch support: smooth tap-and-drag spotlight
     const handleTouchStart = (e) => {
-      const touch = e.touches[0];
-      if (!touch) return;
-      activateAt(touch.clientX, touch.clientY, true);
+      if (e.touches && e.touches[0]) {
+        isInside = true;
+        updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+        frame.classList.add('is-revealing');
+      }
     };
 
     const handleTouchMove = (e) => {
-      const touch = e.touches[0];
-      if (!touch) return;
-      activateAt(touch.clientX, touch.clientY, false);
+      if (e.touches && e.touches[0]) {
+        updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+      }
     };
 
     const handleTouchEnd = () => {
-      // Keep reveal visible for ~1.2s on mobile before smoothly dissolving back
-      deactivateAfter(1200);
+      isInside = false;
+      frame.classList.remove('is-revealing');
     };
 
-    const handleTouchCancel = () => {
-      deactivateAfter(400);
-    };
-
-    frame.addEventListener('pointermove', handlePointerMove, { passive: true });
-    frame.addEventListener('pointerenter', handlePointerEnter, { passive: true });
-    frame.addEventListener('pointerleave', handlePointerLeave, { passive: true });
-
+    frame.addEventListener('pointerenter', handlePointerEnter);
+    frame.addEventListener('pointermove', handlePointerMove);
+    frame.addEventListener('pointerleave', handlePointerLeave);
+    frame.addEventListener('pointercancel', handlePointerLeave);
     frame.addEventListener('touchstart', handleTouchStart, { passive: true });
     frame.addEventListener('touchmove', handleTouchMove, { passive: true });
     frame.addEventListener('touchend', handleTouchEnd, { passive: true });
-    frame.addEventListener('touchcancel', handleTouchCancel, { passive: true });
+    frame.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
     return () => {
-      frame.removeEventListener('pointermove', handlePointerMove);
       frame.removeEventListener('pointerenter', handlePointerEnter);
+      frame.removeEventListener('pointermove', handlePointerMove);
       frame.removeEventListener('pointerleave', handlePointerLeave);
-
+      frame.removeEventListener('pointercancel', handlePointerLeave);
       frame.removeEventListener('touchstart', handleTouchStart);
       frame.removeEventListener('touchmove', handleTouchMove);
       frame.removeEventListener('touchend', handleTouchEnd);
-      frame.removeEventListener('touchcancel', handleTouchCancel);
-
-      if (touchFadeTimer) clearTimeout(touchFadeTimer);
-      if (rafId) cancelAnimationFrame(rafId);
+      frame.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, []);
 
@@ -336,39 +260,49 @@ export function Hero() {
       {/* Main Foreground Visual: Portrait Stack & Interactive Glass Pill (Layer 10) */}
       <div className="hero-portrait-container">
         <div className="hero-portrait-wrapper">
-          {/* Portrait Frame holding both Real Photograph & Anime Reveal Layer */}
-          <div ref={portraitFrameRef} className="hero-portrait-frame">
-            {/* Primary Real Photograph */}
-            <picture className="hero-portrait-picture">
-              <source media="(max-width: 768px)" srcSet="/final-profile-portrait.png" />
-              <img
-                src="/final-profile.png"
-                onError={(e) => {
-                  e.currentTarget.src = '/mypic.jpeg';
-                }}
-                alt="Goutham M"
-                className="hero-portrait-img hero-portrait-real"
-                loading="eager"
-                fetchPriority="high"
-              />
-            </picture>
-
-            {/* Anime Easter-Egg Reveal Layer (feathered radial mask around cursor/touch) */}
+          {/* Portrait Frame holding both Real Portrait (bottom) & Obito (top) */}
+          <div
+            ref={portraitFrameRef}
+            className="hero-portrait-frame"
+            aria-label="Interactive character portrait: Obito Uchiha revealing Goutham M"
+          >
+            {/* Bottom Layer: Real Photograph (revealed cleanly on hover) */}
             <div
-              ref={animeLayerRef}
-              className="hero-portrait-anime-layer"
+              ref={portraitLayerRef}
+              className="hero-portrait-real-layer"
               aria-hidden="true"
             >
               <picture className="hero-portrait-picture">
-                <source media="(max-width: 768px)" srcSet="/animeversion-portrait.png" />
+                <source media="(max-width: 768px)" srcSet="/final-profile-portrait.png" />
                 <img
-                  src="/animeversion.png"
+                  src="/final-profile.png"
+                  onError={(e) => {
+                    e.currentTarget.src = '/mypic.jpeg';
+                  }}
+                  alt="Goutham M"
+                  className="hero-portrait-img hero-portrait-real"
+                  loading="eager"
+                  fetchPriority="high"
+                />
+              </picture>
+            </div>
+
+            {/* Top Layer: Complete Obito Uchiha Character (default visible, masked on hover) */}
+            <div
+              ref={obitoLayerRef}
+              className="hero-portrait-obito-layer"
+            >
+              <picture className="hero-portrait-picture">
+                <source media="(max-width: 768px)" srcSet="/obito-portrait.png" />
+                <img
+                  src="/obito.png"
                   onError={(e) => {
                     e.currentTarget.src = '/animeversion.png';
                   }}
-                  alt=""
-                  className="hero-portrait-img hero-portrait-anime"
+                  alt="Obito Uchiha character (hover to reveal real portrait)"
+                  className="hero-portrait-img hero-portrait-obito"
                   loading="eager"
+                  fetchPriority="high"
                 />
               </picture>
             </div>
