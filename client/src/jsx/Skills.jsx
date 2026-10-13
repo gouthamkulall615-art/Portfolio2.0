@@ -85,16 +85,7 @@ const skills = [
     iconSrc: "/skill-icons/cpp.svg",
     fallback: "/images/cpp.webp",
   },
-  {
-    name: "TypeScript",
-    symbol: "Ts",
-    category: "Languages",
-    blurb: "Strongly typed JavaScript superset offering compile-time type safety, cleaner refactors, and predictability.",
-    iconMode: "color",
-    projects: ["TODO"],
-    iconSrc: "/skill-icons/typescript.svg",
-    fallback: "/icons/typescript.svg",
-  },
+
   {
     name: "Git",
     symbol: "Gt",
@@ -160,7 +151,7 @@ const skills = [
     symbol: "Pm",
     category: "Tools",
     blurb: "API lifecycle testing suite for prototyping, validating, and debugging HTTP requests and endpoints.",
-    iconMode: "invert",
+    iconMode: "color",
     projects: ["TODO"],
     iconSrc: "/skill-icons/postman.svg",
     fallback: "/images/postman.webp",
