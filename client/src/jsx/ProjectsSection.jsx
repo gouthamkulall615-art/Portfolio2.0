@@ -26,8 +26,8 @@ const projects = [
   },
   {
     id: 3,
-    title: 'InteriQ',
-    description: 'An interior design platform with intelligent recommendations.',
+    title: 'InternIQ',
+    description: 'A career preparation workspace featuring ATS resume analysis, skill gap evaluation, and AI cover letter generation.',
     image: interiqImg,
     demoUrl: 'https://intern-iq-omega.vercel.app/',
     githubUrl: 'https://github.com/gouthamkulall615-art/InternIQ',
