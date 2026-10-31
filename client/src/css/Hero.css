@@ -204,104 +204,21 @@ html.dark .hero-editorial {
   pointer-events: auto;
   transform-origin: center bottom;
   will-change: transform;
-  cursor: default;
   transition: transform 0.35s ease;
-  --reveal-radius: 125px;
-  --mouse-x: 50%;
-  --mouse-y: 50%;
 }
 
-.hero-portrait-wrapper:hover .hero-portrait-frame {
-  transform: scale(1.012);
-}
-
-.hero-portrait-picture {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  height: 100%;
-  width: auto;
-}
-
-.hero-portrait-img {
+.hero-portrait-img,
+.hero-portrait-composite {
   display: block;
   /* Dominant focal point - top of head touches/approaches Line 1 */
   height: 84vh;
   max-height: 740px;
   min-height: 500px;
   width: auto;
-  object-fit: contain;
-  object-position: bottom center;
   transform-origin: center bottom;
-  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.38));
-  user-select: none;
-  pointer-events: none;
-}
-
-/* Bottom Layer: Real Photograph (Layer 1 - directly behind Obito at full opacity) */
-.hero-portrait-real-layer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 1;
-  visibility: visible;
-}
-
-.hero-portrait-real {
-  position: relative;
-  -webkit-mask-image: url('/obito-silhouette.png');
-  mask-image: url('/obito-silhouette.png');
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: bottom center;
-  mask-position: bottom center;
-}
-
-/* Top Layer: Complete Obito Uchiha Character (Layer 2 - cursor-following mask applied on hover) */
-.hero-portrait-obito-layer {
-  position: relative;
-  width: auto;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 2;
-  opacity: 1;
-  -webkit-mask-image: none;
-  mask-image: none;
-  will-change: mask-image, -webkit-mask-image;
-}
-
-.hero-portrait-obito {
-  position: relative;
   filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.42));
-}
-
-/* Localized circular cursor-following reveal applied to Obito layer only */
-.hero-portrait-frame.is-revealing .hero-portrait-obito-layer {
-  -webkit-mask-image: radial-gradient(
-    circle var(--reveal-radius, 125px) at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    transparent 0%,
-    transparent 70%,
-    #000 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--reveal-radius, 125px) at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    transparent 0%,
-    transparent 70%,
-    #000 100%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
+  user-select: none;
+  pointer-events: auto;
 }
 
 /* ---------- Interactive Glass Pill Control ---------- */
@@ -586,72 +503,19 @@ html.dark .hero-pill-link:hover {
     justify-content: center;
     border-radius: 0 0 28px 28px;
     overflow: hidden;
-    touch-action: pan-y;
-    --reveal-radius: 95px;
-  }
-
-  .hero-portrait-picture {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    width: auto;
-    max-width: none;
-    flex-shrink: 0;
-  }
-
-  /* Layer styling for mobile portrait */
-  .hero-portrait-real-layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 1;
-    visibility: visible;
-    border-radius: 0 0 28px 28px;
-    overflow: hidden;
-  }
-
-  .hero-portrait-real {
-    -webkit-mask-image: url('/obito-silhouette-portrait.png');
-    mask-image: url('/obito-silhouette-portrait.png');
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: bottom center;
-    mask-position: bottom center;
-  }
-
-  .hero-portrait-obito-layer {
-    position: relative;
-    width: auto;
-    height: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 1;
-    border-radius: 0 0 28px 28px;
-    overflow: hidden;
+    touch-action: manipulation;
   }
 
   /* Tall, prominent portrait reaching upwards so head touches Line 1/2 and body sits between lines on long phones */
-  .hero-portrait-img {
+  .hero-portrait-img,
+  .hero-portrait-composite {
     height: clamp(430px, 58svh, 600px);
     width: auto;
     max-width: none;
-    object-fit: contain;
-    object-position: center bottom;
     border-radius: 0 0 28px 28px;
     filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.55));
     user-select: none;
-    pointer-events: none;
+    pointer-events: auto;
     transform: none;
   }
 

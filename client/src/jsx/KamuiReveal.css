@@ -1,0 +1,83 @@
+.kamui-wrap {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  width: auto;
+}
+.kamui-wrap canvas { touch-action: manipulation; }
+
+.kamui-pill {
+  --pill-fg: #14141a;                    /* default dark text for light pages */
+  --pill-tint: rgba(255, 255, 255, 0.34);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px 9px 12px;
+  border-radius: 999px;
+  font: 500 13px/1 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--pill-fg);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.55) 0%, var(--pill-tint) 40%, rgba(255,255,255,0.12) 100%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%) brightness(1.08);
+  backdrop-filter: blur(14px) saturate(180%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 0 14px rgba(255, 255, 255, 0.18),
+    0 10px 28px rgba(0, 0, 0, 0.22),
+    0 0 0 0.5px rgba(0, 0, 0, 0.18);
+}
+
+/* Readable pill on dark themes */
+[data-theme="dark"] .kamui-pill,
+html[data-theme="dark"] .kamui-pill,
+html.dark .kamui-pill {
+  --pill-fg: #f5f5f7;
+  --pill-tint: rgba(255, 255, 255, 0.18);
+}
+
+/* Chromium only: liquid refraction of whatever is behind the pill */
+.kamui-pill--refract {
+  -webkit-backdrop-filter: blur(6px) url(#kamui-liquid) saturate(170%);
+  backdrop-filter: blur(6px) url(#kamui-liquid) saturate(170%);
+}
+/* specular gloss */
+.kamui-pill::before {
+  content: '';
+  position: absolute;
+  inset: 1px 8px auto 8px;
+  height: 46%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0));
+  opacity: 0.55;
+  pointer-events: none;
+}
+.kamui-pill__dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd27a, #ff5a0a 70%);
+  box-shadow: 0 0 8px rgba(255, 90, 10, 0.8);
+  animation: kamui-pulse 1.6s ease-in-out infinite;
+}
+.kamui-pill__label { position: relative; }
+
+@keyframes kamui-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 6px rgba(255, 90, 10, 0.7); }
+  50%      { transform: scale(1.25); box-shadow: 0 0 12px rgba(255, 120, 20, 1); }
+}
+@media (prefers-reduced-motion: reduce) { .kamui-pill__dot { animation: none; } }
+@media (hover: none) { .kamui-pill { display: none; } }

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../css/Hero.css';
+import KamuiReveal from './KamuiReveal';
 
 const row1Units = ['I’M GOUTHAM', 'I’M GOUTHAM', 'I’M GOUTHAM'];
 const row2Units = ['WEB DEVELOPER', 'MERN STACK', 'CREATIVE BUILDER'];
@@ -29,9 +30,19 @@ export function Hero() {
   const containerRef = useRef(null);
   const marqueeRef = useRef(null);
   const portraitFrameRef = useRef(null);
-  const portraitLayerRef = useRef(null);
-  const obitoLayerRef = useRef(null);
   const pillRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  );
+
+  // Resize listener for responsive mobile checks
+  useEffect(() => {
+    const updateMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', updateMobile, { passive: true });
+    return () => window.removeEventListener('resize', updateMobile);
+  }, []);
 
   // 1. Scroll-driven fade transition (Hero -> Projects)
   useEffect(() => {
@@ -125,85 +136,6 @@ export function Hero() {
     };
   }, []);
 
-  // 2. Cursor-following localized reveal tracking (updates CSS variables directly without React re-renders)
-  useEffect(() => {
-    const frame = portraitFrameRef.current;
-    if (!frame) return;
-
-    let isInside = false;
-
-    const updateCoords = (clientX, clientY) => {
-      const rect = frame.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      const clampedX = Math.max(0, Math.min(rect.width, x));
-      const clampedY = Math.max(0, Math.min(rect.height, y));
-
-      frame.style.setProperty('--mouse-x', `${clampedX.toFixed(1)}px`);
-      frame.style.setProperty('--mouse-y', `${clampedY.toFixed(1)}px`);
-    };
-
-    const handlePointerEnter = (e) => {
-      isInside = true;
-      updateCoords(e.clientX, e.clientY);
-      frame.classList.add('is-revealing');
-    };
-
-    const handlePointerMove = (e) => {
-      if (!isInside) {
-        isInside = true;
-        frame.classList.add('is-revealing');
-      }
-      updateCoords(e.clientX, e.clientY);
-    };
-
-    const handlePointerLeave = () => {
-      isInside = false;
-      frame.classList.remove('is-revealing');
-    };
-
-    // Mobile touch support: smooth tap-and-drag spotlight
-    const handleTouchStart = (e) => {
-      if (e.touches && e.touches[0]) {
-        isInside = true;
-        updateCoords(e.touches[0].clientX, e.touches[0].clientY);
-        frame.classList.add('is-revealing');
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      if (e.touches && e.touches[0]) {
-        updateCoords(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    };
-
-    const handleTouchEnd = () => {
-      isInside = false;
-      frame.classList.remove('is-revealing');
-    };
-
-    frame.addEventListener('pointerenter', handlePointerEnter);
-    frame.addEventListener('pointermove', handlePointerMove);
-    frame.addEventListener('pointerleave', handlePointerLeave);
-    frame.addEventListener('pointercancel', handlePointerLeave);
-    frame.addEventListener('touchstart', handleTouchStart, { passive: true });
-    frame.addEventListener('touchmove', handleTouchMove, { passive: true });
-    frame.addEventListener('touchend', handleTouchEnd, { passive: true });
-    frame.addEventListener('touchcancel', handleTouchEnd, { passive: true });
-
-    return () => {
-      frame.removeEventListener('pointerenter', handlePointerEnter);
-      frame.removeEventListener('pointermove', handlePointerMove);
-      frame.removeEventListener('pointerleave', handlePointerLeave);
-      frame.removeEventListener('pointercancel', handlePointerLeave);
-      frame.removeEventListener('touchstart', handleTouchStart);
-      frame.removeEventListener('touchmove', handleTouchMove);
-      frame.removeEventListener('touchend', handleTouchEnd);
-      frame.removeEventListener('touchcancel', handleTouchEnd);
-    };
-  }, []);
-
   return (
     <div ref={containerRef} className="hero-editorial">
       {/* 3 Continuous Background Marquee Rows (Layer 1) */}
@@ -260,52 +192,21 @@ export function Hero() {
       {/* Main Foreground Visual: Portrait Stack & Interactive Glass Pill (Layer 10) */}
       <div className="hero-portrait-container">
         <div className="hero-portrait-wrapper">
-          {/* Portrait Frame holding both Real Portrait (bottom) & Obito (top) */}
+          {/* Portrait Frame holding the Kamui Spiral Reveal Composite */}
           <div
             ref={portraitFrameRef}
             className="hero-portrait-frame"
             aria-label="Interactive character portrait: Obito Uchiha revealing Goutham M"
           >
-            {/* Bottom Layer: Real Photograph (revealed cleanly on hover) */}
-            <div
-              ref={portraitLayerRef}
-              className="hero-portrait-real-layer"
-              aria-hidden="true"
-            >
-              <picture className="hero-portrait-picture">
-                <source media="(max-width: 768px)" srcSet="/final-profile-portrait.png" />
-                <img
-                  src="/final-profile.png"
-                  onError={(e) => {
-                    e.currentTarget.src = '/mypic.jpeg';
-                  }}
-                  alt="Goutham M"
-                  className="hero-portrait-img hero-portrait-real"
-                  loading="eager"
-                  fetchPriority="high"
-                />
-              </picture>
-            </div>
-
-            {/* Top Layer: Complete Obito Uchiha Character (default visible, masked on hover) */}
-            <div
-              ref={obitoLayerRef}
-              className="hero-portrait-obito-layer"
-            >
-              <picture className="hero-portrait-picture">
-                <source media="(max-width: 768px)" srcSet="/obito-portrait.png" />
-                <img
-                  src="/obito.png"
-                  onError={(e) => {
-                    e.currentTarget.src = '/animeversion.png';
-                  }}
-                  alt="Obito Uchiha character (hover to reveal real portrait)"
-                  className="hero-portrait-img hero-portrait-obito"
-                  loading="eager"
-                  fetchPriority="high"
-                />
-              </picture>
-            </div>
+            <KamuiReveal
+              obitoSrc={isMobile ? '/obito-portrait.png' : '/obito.png'}
+              faceSrc={isMobile ? '/final-profile-portrait.png' : '/final-profile.png'}
+              eye={isMobile ? [0.446, 0.439] : [0.4675, 0.405]}
+              faceCenter={isMobile ? [0.475, 0.464] : [0.496, 0.424]}
+              faceRadius={isMobile ? [0.122, 0.189] : [0.127, 0.29]}
+              r0={isMobile ? 0.011 : 0.012}
+              rMax={isMobile ? 0.189 : 0.205}
+            />
           </div>
 
           {/* Interactive Glass Pill directly underneath portrait */}
