@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
+import VenomButton from "../components/VenomButton";
 
 // Register ScrollTrigger safely for React
 if (typeof window !== "undefined") {
@@ -288,6 +289,15 @@ export function CinematicFooter() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleConnectClick = () => {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = "mailto:gouthamkulall615@gmail.com";
+    }
+  };
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
@@ -314,12 +324,22 @@ export function CinematicFooter() {
           <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 sm:px-6 w-full max-w-5xl mx-auto">
             <h2
               ref={headingRef}
-              className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black footer-text-glow tracking-tighter mb-6 sm:mb-8 md:mb-12 text-center px-2"
+              className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black footer-text-glow tracking-tighter mb-2 sm:mb-4 text-center px-2"
             >
               Let's build something great
             </h2>
 
-            <div ref={linksRef} className="flex flex-col items-center gap-4 sm:gap-6 w-full">
+            {/* Interactive Venom Symbiote Centerpiece */}
+            <div className="w-full max-w-xl mx-auto my-[-10px] sm:my-[-15px] z-20">
+              <VenomButton
+                label="Let's Connect"
+                size={58}
+                height={260}
+                onClick={handleConnectClick}
+              />
+            </div>
+
+            <div ref={linksRef} className="flex flex-col items-center gap-4 sm:gap-6 w-full mt-2">
               {/* Primary actions — resume + GitHub */}
               <div className="flex flex-wrap justify-center gap-3 sm:gap-4 w-full">
                 <MagneticButton

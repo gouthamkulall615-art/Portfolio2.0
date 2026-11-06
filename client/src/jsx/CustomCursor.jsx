@@ -67,8 +67,8 @@ export default function CustomCursor() {
       // Detect hover targets
       const target = e.target;
       if (target) {
-        // Text inputs & editable elements: hide custom cursor to show native cursor
-        const inputEl = target.closest('input, textarea, select, [contenteditable="true"]');
+        // Text inputs, editable elements, and custom canvas stages (Venom Button): hide custom cursor
+        const inputEl = target.closest('input, textarea, select, [contenteditable="true"], .venom-stage, [data-no-cursor="true"]');
         if (inputEl) {
           if (!isInput) {
             isInput = true;

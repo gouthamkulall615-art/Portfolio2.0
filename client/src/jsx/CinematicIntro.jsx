@@ -82,21 +82,31 @@ export default function CinematicIntro({
     const video = videoRef.current;
     if (!video) return;
 
-    video.playsInline = true;
+    video.defaultMuted = true;
     video.muted = true; // Completely muted
+    video.playsInline = true;
 
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((err) => {
-        console.warn('Autoplay error:', err);
-      });
-    }
+    let isMounted = true;
+    let playPromise = null;
+
+    const startPlayback = () => {
+      playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          if (err.name !== 'AbortError') {
+            console.warn('Autoplay error:', err);
+          }
+        });
+      }
+    };
+
+    startPlayback();
 
     let animationFrameId;
 
     // High-precision RAF loop checking for 7.0s cutoff
     const checkPlaybackTime = () => {
-      if (hasCutRef.current) return;
+      if (hasCutRef.current || !isMounted) return;
 
       const currentTime = video.currentTime || 0;
       if (currentTime >= cutoffSeconds) {
@@ -110,6 +120,7 @@ export default function CinematicIntro({
     animationFrameId = requestAnimationFrame(checkPlaybackTime);
 
     return () => {
+      isMounted = false;
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
@@ -117,7 +128,15 @@ export default function CinematicIntro({
         clearTimeout(timerRef.current);
       }
       if (video) {
-        video.pause();
+        if (playPromise !== null && typeof playPromise.then === 'function') {
+          playPromise
+            .then(() => {
+              video.pause();
+            })
+            .catch(() => {});
+        } else {
+          video.pause();
+        }
       }
     };
   }, [cutoffSeconds, triggerCutoff]);
