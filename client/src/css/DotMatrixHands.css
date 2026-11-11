@@ -1,0 +1,44 @@
+/* ==========================================================================
+   DOT-MATRIX HANDS SECTION
+   Visual Language: High-contrast monochrome halftone / LED matrix
+   ========================================================================== */
+
+.dot-matrix-hero {
+  position: relative;
+  width: 100%;
+  height: clamp(520px, 78vh, 850px);
+  min-height: 520px;
+  overflow: hidden;
+  background-color: transparent;
+  color: var(--kindred-ink, #111111);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .dot-matrix-hero,
+.dark .dot-matrix-hero {
+  --kindred-bg: #09090b;
+  --kindred-ink: #f4f4f5;
+  --kindred-mute: #8e8e93;
+  --kindred-sub: #a1a1aa;
+}
+
+[data-theme="light"] .dot-matrix-hero,
+.light .dot-matrix-hero {
+  --kindred-bg: #ffffff;
+  --kindred-ink: #111111;
+  --kindred-mute: #9a9a9a;
+  --kindred-sub: #7b7b7b;
+}
+
+/* Dots Canvas */
+.dot-matrix-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+}
