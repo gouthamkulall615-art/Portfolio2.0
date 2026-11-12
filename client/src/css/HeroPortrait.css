@@ -1,0 +1,356 @@
+/* ==========================================================================
+   HERO LIVING PORTRAIT & MARQUEE SECTION STYLES (HERO-SCOPED)
+   ========================================================================== */
+
+/* Theme Variables for Hero */
+:root {
+  --hero-bg: #09090b;
+  --hero-marquee-color: #a8a8b2;
+  --hero-divider-color: #8c8c96;
+  --glass-bg: rgba(24, 24, 27, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --hero-link-color: #d4d4d8;
+  --hero-link-hover: #ffffff;
+  --hero-pill-hover-bg: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"],
+html.dark {
+  --hero-bg: #09090b;
+  --hero-marquee-color: #a8a8b2;
+  --hero-divider-color: #8c8c96;
+  --glass-bg: rgba(24, 24, 27, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --hero-link-color: #d4d4d8;
+  --hero-link-hover: #ffffff;
+  --hero-pill-hover-bg: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="light"],
+html.light {
+  --hero-bg: #ffffff;
+  --hero-marquee-color: #4a4a50;
+  --hero-divider-color: #5c5c64;
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-shadow: rgba(0, 0, 0, 0.08);
+  --hero-link-color: #3f3f46;
+  --hero-link-hover: #09090b;
+  --hero-pill-hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- Main Hero Container ---------- */
+.hero-editorial {
+  position: relative;
+  width: 100%;
+  max-width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  overflow-x: clip;
+  background-color: var(--hero-bg);
+  color: var(--hero-link-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: none;
+}
+
+/* ---------- 3 Continuous Background Marquee Rows (Layer 0) ---------- */
+.hero-marquee-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+  overflow-x: clip;
+  padding: 1.5rem 0;
+  box-sizing: border-box;
+}
+
+.hero-marquee-row {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  overflow-x: clip;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.hero-marquee-row-mobile-only {
+  display: none;
+}
+
+.hero-marquee-track {
+  display: flex;
+  width: fit-content;
+  will-change: transform;
+}
+
+.hero-marquee-content {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: clamp(3rem, 7.5vw, 6.5rem);
+  line-height: 1.05;
+  color: var(--hero-marquee-color);
+  padding-right: 0.85rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Line 1 & Line 3: Bold Modern Sans Typography */
+.row-1-content,
+.row-3-content {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+/* Line 2: Editorial Italic Serif Typography */
+.row-2-content {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.hero-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.hero-text-phrase {
+  display: inline-block;
+}
+
+/* Divider Dot matching typography */
+.hero-divider {
+  display: inline-block;
+  margin: 0 1.35rem;
+  font-weight: 500;
+  font-style: normal;
+  color: var(--hero-divider-color);
+  transform: translateY(-0.06em);
+  user-select: none;
+}
+
+/* Infinite loop animations */
+.row-ltr .hero-marquee-track {
+  animation: hero-marquee-ltr linear infinite;
+}
+
+.row-rtl .hero-marquee-track {
+  animation: hero-marquee-rtl linear infinite;
+}
+
+.speed-1 .hero-marquee-track {
+  animation-duration: 54s;
+}
+
+.speed-2 .hero-marquee-track {
+  animation-duration: 45s;
+}
+
+.speed-3 .hero-marquee-track {
+  animation-duration: 58s;
+}
+
+@keyframes hero-marquee-ltr {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0%, 0, 0);
+  }
+}
+
+@keyframes hero-marquee-rtl {
+  0% {
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ---------- Big Dominant Living Portrait (Layer 10) ---------- */
+.hero-portrait-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: -45px;
+  top: auto;
+  transform: translateX(-50%);
+  width: min(calc(100svh + 60px), 96vw, 920px);
+  height: min(calc(100svh + 60px), 96vw, 920px);
+  margin: 0;
+  user-select: none;
+  touch-action: pan-y;
+  z-index: 10;
+}
+
+.hero-portrait-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+#faceFallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#faceGl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  cursor: grab;
+  touch-action: none;
+}
+
+#faceGl:active {
+  cursor: grabbing;
+}
+
+/* ---------- Interactive Floating Glass Pill Control (Layer 20) ---------- */
+.hero-glass-pill {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 9999px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 8px 32px var(--glass-shadow);
+  z-index: 20;
+  user-select: none;
+  opacity: 1;
+  pointer-events: auto;
+  max-width: min(94vw, 540px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-glass-pill:hover {
+  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 12px 40px var(--glass-shadow);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.hero-pill-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 9999px;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--hero-link-color);
+  text-decoration: none;
+  background: transparent;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  white-space: nowrap;
+}
+
+.hero-pill-link:hover {
+  transform: translateY(-1px) scale(1.02);
+  color: var(--hero-link-hover);
+  background: var(--hero-pill-hover-bg);
+}
+
+.hero-pill-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.hero-pill-link:hover .hero-pill-icon {
+  transform: scale(1.08);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .hero-marquee-wrapper {
+    padding: calc(64px + env(safe-area-inset-top, 0px)) 0 clamp(3.5rem, 6vh, 4.8rem);
+    justify-content: space-evenly;
+  }
+
+  .hero-marquee-row-mobile-only {
+    display: flex;
+  }
+
+  .hero-marquee-content {
+    font-size: clamp(2.8rem, calc(7.5vw + 2.4vh), 4.6rem);
+    line-height: 1.06;
+    padding-right: 0.75rem;
+  }
+
+  .hero-portrait-wrap {
+    width: min(86svh, 850px);
+    height: min(86svh, 850px);
+    bottom: -6svh;
+    max-width: none;
+    max-height: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-glass-pill {
+    bottom: 1.25rem;
+    gap: 0.2rem;
+    padding: 0.3rem 0.4rem;
+  }
+  .hero-pill-link {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.78rem;
+    gap: 0.3rem;
+  }
+  .hero-pill-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+}
