@@ -234,7 +234,7 @@ html.light {
   height: 100%;
   z-index: 2;
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 #faceGl:active {
@@ -322,9 +322,9 @@ html.light {
   }
 
   .hero-portrait-wrap {
-    width: min(86svh, 850px);
-    height: min(86svh, 850px);
-    bottom: -6svh;
+    width: min(74svh, 88vw, 540px);
+    height: min(74svh, 88vw, 540px);
+    bottom: clamp(4.5rem, 11vh, 6.5rem);
     max-width: none;
     max-height: none;
   }

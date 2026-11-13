@@ -365,20 +365,88 @@ export function initLivingPortrait(root: HTMLElement): () => void {
     resetIdleTimer();
   };
 
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchMoved = false;
+  let isTouchScroll = false;
+
   const onTouchStart = e => {
-    if (e.cancelable) e.preventDefault();
-    onPointerDown(e);
+    if (!e.touches || e.touches.length !== 1) return;
+    const t = e.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    touchMoved = false;
+    isTouchScroll = false;
+
+    // Do NOT trigger expression on touch start!
+    // Initialize potential drag coordinates without locking scroll
+    const rect = canvas.getBoundingClientRect();
+    const u = (t.clientX - rect.left) / rect.width;
+    const v = (t.clientY - rect.top) / rect.height;
+    dragStartU = u;
+    dragStartV = v;
+    dragCurU = u;
+    dragCurV = v;
   };
 
   const onTouchMove = e => {
+    if (!e.touches || e.touches.length !== 1) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    // Dominant vertical motion means the user wants to scroll downwards / upwards!
+    if (!isDragging && !isTouchScroll) {
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 7) {
+        isTouchScroll = true;
+        return; // Allow native page scroll to proceed completely unobstructed!
+      }
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
+        // Dominant horizontal motion means dragging/pulling the face
+        isDragging = true;
+      }
+    }
+
+    if (isTouchScroll) return;
+
     if (isDragging) {
+      touchMoved = true;
       if (e.cancelable) e.preventDefault();
       onPointerMove(e);
     }
   };
 
-  const onTouchEnd = () => {
-    onPointerUp();
+  const onTouchEnd = e => {
+    if (isTouchScroll) {
+      isTouchScroll = false;
+      return;
+    }
+
+    if (isDragging) {
+      isDragging = false;
+      ripples.push({ u: dragCurU, v: dragCurV, time: performance.now(), amp: 0.035 });
+      show('tensed', 60);
+      setTimeout(() => {
+        if (!isDragging && !isActing) show('rest', 70);
+      }, 320);
+      resetIdleTimer();
+      return;
+    }
+
+    // Only if it was a stationary, intentional tap (user didn't swipe to scroll)
+    const coords = getCoords(e);
+    const dist = Math.hypot(coords.clientX - touchStartX, coords.clientY - touchStartY);
+    if (!touchMoved && dist < 14) {
+      const rect = canvas.getBoundingClientRect();
+      const u = (touchStartX - rect.left) / rect.width;
+      const v = (touchStartY - rect.top) / rect.height;
+      const zone = zoneAt(u, v);
+      if (zone in ZONES.tap) {
+        const act = ZONES.tap[zone];
+        show(act, 60);
+      }
+      resetIdleTimer();
+    }
   };
 
   const onScroll = () => {
