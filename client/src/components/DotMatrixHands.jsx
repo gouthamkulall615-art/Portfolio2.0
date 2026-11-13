@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import humanHandImg from '../assets/human-hand.webp';
+import robotHandImg from '../assets/robot-hand.webp';
 import '../css/DotMatrixHands.css';
 
 const SHEET_URL =
@@ -127,6 +129,43 @@ export default function DotMatrixHands({ className = '', style = {} }) {
       return tile;
     };
 
+    // Preload local fallback hand assets
+    const localHumanImg = new Image();
+    localHumanImg.src = humanHandImg;
+    const localRobotImg = new Image();
+    localRobotImg.src = robotHandImg;
+
+    const createFallbackFromLocal = () => {
+      if (!localHumanImg.complete || !localRobotImg.complete || !localHumanImg.naturalWidth) {
+        return false;
+      }
+      const tw = 420;
+      const th = Math.round(tw * ((0.4 * 1520) / (0.47 * 2688)));
+
+      const makeTile = (img, flip) => {
+        const t = document.createElement('canvas');
+        t.width = tw;
+        t.height = th;
+        const c = t.getContext('2d');
+        c.fillStyle = '#ffffff';
+        c.fillRect(0, 0, tw, th);
+        c.save();
+        if (flip) {
+          c.translate(tw, 0);
+          c.scale(-1, 1);
+        }
+        c.drawImage(img, 0, 0, tw, th);
+        c.restore();
+        return t;
+      };
+
+      tileLA = makeTile(localHumanImg, false);
+      tileRA = makeTile(localRobotImg, true);
+      tileLB = makeTile(localHumanImg, false);
+      tileRB = makeTile(localRobotImg, true);
+      return true;
+    };
+
     // Load source sheet
     const sheetImg = new Image();
     sheetImg.crossOrigin = 'anonymous';
@@ -139,18 +178,22 @@ export default function DotMatrixHands({ className = '', style = {} }) {
         tileRB = createTile(sheetImg, RB_RECT);
       } catch (err) {
         console.warn('CORS or canvas slice fallback engaged:', err);
-        tileLA = createProceduralFallbackTile(true, false);
-        tileRA = createProceduralFallbackTile(false, false);
-        tileLB = createProceduralFallbackTile(true, true);
-        tileRB = createProceduralFallbackTile(false, true);
+        if (!createFallbackFromLocal()) {
+          tileLA = createProceduralFallbackTile(true);
+          tileRA = createProceduralFallbackTile(false);
+          tileLB = createProceduralFallbackTile(true);
+          tileRB = createProceduralFallbackTile(false);
+        }
       }
     };
     sheetImg.onerror = () => {
       if (isDisposed) return;
-      tileLA = createProceduralFallbackTile(true, false);
-      tileRA = createProceduralFallbackTile(false, false);
-      tileLB = createProceduralFallbackTile(true, true);
-      tileRB = createProceduralFallbackTile(false, true);
+      if (!createFallbackFromLocal()) {
+        tileLA = createProceduralFallbackTile(true);
+        tileRA = createProceduralFallbackTile(false);
+        tileLB = createProceduralFallbackTile(true);
+        tileRB = createProceduralFallbackTile(false);
+      }
     };
     sheetImg.src = SHEET_URL;
 
@@ -191,12 +234,15 @@ export default function DotMatrixHands({ className = '', style = {} }) {
       const H = container.offsetHeight || window.innerHeight;
       if (!W || !H) return;
 
+      const isMobile = W <= 768;
+      const isPortrait = H > W;
+
       const DPR = Math.min(2, window.devicePixelRatio || 1);
-      const step = Math.max(5, W / 205);
-      const rowStep = step * 2.05;
+      const step = isMobile ? Math.max(5.5, W / 68) : Math.max(5, W / 205);
+      const rowStep = step * (isMobile ? 1.95 : 2.05);
       const cols = Math.ceil(W / step);
       const rows = Math.ceil(H / rowStep);
-      const R = step * 0.46;
+      const R = step * (isMobile ? 0.48 : 0.46);
 
       // Sync visible canvas backing resolution
       const targetW = Math.round(W * DPR);
@@ -215,28 +261,38 @@ export default function DotMatrixHands({ className = '', style = {} }) {
         fB.height = rows;
       }
 
+      // If tiles not ready yet, try local fallback
+      if (!tileLA) {
+        createFallbackFromLocal();
+      }
+
       // Time & Loop (20s seamless loop)
       const LOOP = 20;
       const t = ((timeSec % LOOP) + LOOP) % LOOP;
       const a = (2 * Math.PI * t) / LOOP;
 
-      const isPortrait = H > W;
-      const hw = W * (isPortrait ? 0.66 : 0.53);
-      const hh = hw * ((0.4 * 1520) / (0.47 * 2688));
-      const cy = H * (isPortrait ? 0.66 : 0.54);
+      // Vertical centering: ALWAYS center at H * 0.5
+      const cy = H * 0.5;
+
+      // Hand dimensions: significantly larger and bolder on mobile
+      const hw = isMobile ? Math.min(Math.max(W * 0.84, 320), 460) : W * (isPortrait ? 0.66 : 0.53);
+      const hh = hw * ((0.4 * 1520) / (0.47 * 2688)) * (isMobile ? 1.25 : 1.0);
 
       // Left hand motion (ph = 0)
-      const reachL = (0.035 * Math.sin(a) + 0.012 * Math.sin(2 * a + 1.3)) * W;
-      const scaleL = 1 + 0.07 * Math.sin(a + 0.9);
-      const rotL = 0.045 * Math.sin(a + 2.1);
-      const xL = reachL - W * 0.045;
+      const reachL = (0.032 * Math.sin(a) + 0.012 * Math.sin(2 * a + 1.3)) * (isMobile ? W * 0.55 : W);
+      const scaleL = 1 + 0.06 * Math.sin(a + 0.9);
+      const rotL = (isMobile ? 0.025 : 0.045) * Math.sin(a + 2.1);
 
       // Right hand motion (ph = PI)
       const aR = a + Math.PI;
-      const reachR = (0.035 * Math.sin(aR) + 0.012 * Math.sin(2 * aR + 1.3)) * W;
-      const scaleR = 1 + 0.07 * Math.sin(aR + 0.9);
-      const rotR = -0.045 * Math.sin(aR + 2.1);
-      const xR = W - hw + W * 0.045 - reachR;
+      const reachR = (0.032 * Math.sin(aR) + 0.012 * Math.sin(2 * aR + 1.3)) * (isMobile ? W * 0.55 : W);
+      const scaleR = 1 + 0.06 * Math.sin(aR + 0.9);
+      const rotR = -(isMobile ? 0.025 : 0.045) * Math.sin(aR + 2.1);
+
+      // Fingertips meeting centered at W * 0.5:
+      const tipMeetingX = W * 0.5;
+      const xL = (tipMeetingX - hw) + reachL;
+      const xR = tipMeetingX - reachR;
 
       // Clear fields to white
       ctxA.fillStyle = '#ffffff';

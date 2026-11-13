@@ -53,6 +53,14 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
 }
 
+@media (max-width: 768px) {
+  .dot-matrix-contact-wrapper {
+    margin: 1rem auto;
+    border-radius: 20px;
+    width: 100%;
+  }
+}
+
 /* Hands Interactive Stage */
 .hands-stage {
   position: relative;
@@ -100,8 +108,7 @@
 }
 
 [data-theme="dark"] .hand-image {
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6))
-          drop-shadow(0 0 24px rgba(139, 92, 246, 0.18));
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 24px rgba(139, 92, 246, 0.18));
 }
 
 /* Touch Spark Emitter at Fingertip Meeting Point */
@@ -149,6 +156,7 @@
     transform: translate(-50%, -50%) scale(0.85);
     opacity: 0.6;
   }
+
   to {
     transform: translate(-50%, -50%) scale(1.15);
     opacity: 0.95;
@@ -215,6 +223,7 @@
     grid-template-columns: 1fr;
     gap: 2.75rem;
   }
+
   .contact-card-content {
     padding: 2.5rem 1.5rem;
   }
@@ -743,7 +752,8 @@ html.light .contact-info-item:active .contact-info-value,
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #000000;
-  background: #ffffff; /* pure white in dark mode */
+  background: #ffffff;
+  /* pure white in dark mode */
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 14px;
   cursor: pointer;
@@ -772,7 +782,8 @@ html.light .send-message-btn,
 html.light .contact-submit-btn,
 .light .send-message-btn,
 .light .contact-submit-btn {
-  background: #111115; /* dark in light mode */
+  background: #111115;
+  /* dark in light mode */
   color: #ffffff;
   border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
@@ -855,7 +866,9 @@ html.light .success-status-pill,
     transform: scale(1);
     opacity: 0.7;
   }
-  75%, 100% {
+
+  75%,
+  100% {
     transform: scale(2.6);
     opacity: 0;
   }
@@ -1018,6 +1031,7 @@ html.light .success-reset-btn:hover,
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -1181,7 +1195,8 @@ html.light .success-reset-btn:hover,
   overflow: hidden;
   border-radius: 28px;
 }
-.contact-card > canvas {
+
+.contact-card>canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1189,8 +1204,8 @@ html.light .success-reset-btn:hover,
   z-index: 0;
   pointer-events: none;
 }
+
 .contact-card-content {
   position: relative;
   z-index: 1;
 }
-

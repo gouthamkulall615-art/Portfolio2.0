@@ -42,3 +42,11 @@
   z-index: 1;
   pointer-events: none;
 }
+
+/* Mobile responsive sizing and vertical centering */
+@media (max-width: 768px) {
+  .dot-matrix-hero {
+    height: clamp(380px, 52vh, 480px);
+    min-height: 380px;
+  }
+}
