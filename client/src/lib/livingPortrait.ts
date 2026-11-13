@@ -23,16 +23,23 @@ export function initLivingPortrait(root: HTMLElement): () => void {
 
   let isDisposed = false;
 
-  const SIDE = 'w'; // 'w' = his eyes look to viewer's LEFT in side.webp, 'e' = RIGHT.
+  const SIDE = 'e'; // 'e' = his eyes look to viewer's RIGHT in side.webp
   const url = id => (import.meta.env.BASE_URL || '/') + 'face/' + id + '.webp';
   const IDS = { rest: 'rest', closed: 'closed', side: 'side', tensed: 'tensed', yawn: 'yawn' };
   const EYE_V = 0.38;
 
   const RING = ['e', 'ene', 'ne', 'nne', 'n', 'nnw', 'nw', 'wnw', 'w', 'wsw', 'sw', 'ssw', 's', 'sse', 'se', 'ese'];
-  const NEAR = ({ w: ['w', 'wnw', 'wsw', 'nw', 'sw'], e: ['e', 'ene', 'ese', 'ne', 'se'] })[SIDE];
+  const EAST_DIRS = ['e', 'ene', 'ese', 'ne', 'se'];
+  const WEST_DIRS = ['w', 'wnw', 'wsw', 'nw', 'sw'];
   const EYEFILE = { closed: 'closed', half: 'closed' };
   RING.forEach(c => {
-    EYEFILE[c] = NEAR.includes(c) ? 'side' : 'rest';
+    if (EAST_DIRS.includes(c)) {
+      EYEFILE[c] = 'side';
+    } else if (WEST_DIRS.includes(c)) {
+      EYEFILE[c] = 'side_left';
+    } else {
+      EYEFILE[c] = 'rest';
+    }
   });
 
   const ALIAS = {
@@ -80,9 +87,9 @@ export function initLivingPortrait(root: HTMLElement): () => void {
       ['eye:rest', 100, 100]
     ],
     shifty: [
-      ['eye:' + SIDE, 60, 560],
+      ['eye:side', 60, 560],
       ['eye:rest', 60, 380],
-      ['eye:' + SIDE, 60, 460],
+      ['eye:side_left', 60, 460],
       ['eye:rest', 60, 260]
     ],
     doze: [
@@ -104,7 +111,7 @@ export function initLivingPortrait(root: HTMLElement): () => void {
     varying vec2 v_uv;
     void main() {
       v_uv = a_base;
-      gl_Position = vec4(a_pos * 2.0 - 1.0, 0.0, 1.0);
+      gl_Position = vec4(a_pos.x * 2.0 - 1.0, 1.0 - a_pos.y * 2.0, 0.0, 1.0);
     }
   `;
 
@@ -115,7 +122,7 @@ export function initLivingPortrait(root: HTMLElement): () => void {
     uniform sampler2D u_texB;
     uniform float u_mix;
     void main() {
-      vec2 uv = vec2(v_uv.x, 1.0 - v_uv.y);
+      vec2 uv = v_uv;
       vec4 colA = texture2D(u_texA, uv);
       vec4 colB = texture2D(u_texB, uv);
       gl_FragColor = mix(colA, colB, u_mix);
@@ -228,6 +235,32 @@ export function initLivingPortrait(root: HTMLElement): () => void {
       if (k === 'rest' && fallback) {
         fallback.style.opacity = '0';
       }
+
+      if (k === 'side') {
+        try {
+          const offCanvas = document.createElement('canvas');
+          offCanvas.width = img.width;
+          offCanvas.height = img.height;
+          const ctx = offCanvas.getContext('2d');
+          if (ctx) {
+            ctx.translate(img.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(img, 0, 0);
+
+            const tFlip = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, tFlip);
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, offCanvas);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            tex['side_left'] = tFlip;
+          }
+        } catch (e) {
+          console.warn('[portrait] Could not create flipped side texture', e);
+        }
+      }
     };
     img.onerror = () => {
       if (k === 'rest') {
@@ -314,11 +347,11 @@ export function initLivingPortrait(root: HTMLElement): () => void {
       dragCurV = pointerV;
     } else if (!isActing && !isBlinking) {
       const dx = pointerU - 0.5;
-      const dy = pointerV - EYE_V;
+      const dy = -(pointerV - EYE_V); // Cartesian Y points UP towards North
       const dist = Math.hypot(dx, dy);
 
       leanX = dx * 0.06;
-      leanY = dy * 0.06;
+      leanY = (pointerV - EYE_V) * 0.06;
 
       if (dist > 0.08) {
         const angle = Math.atan2(dy, dx);
@@ -356,11 +389,18 @@ export function initLivingPortrait(root: HTMLElement): () => void {
   const onPointerUp = () => {
     if (isDragging) {
       isDragging = false;
-      ripples.push({ u: dragCurU, v: dragCurV, time: performance.now(), amp: 0.035 });
-      show('tensed', 60);
-      setTimeout(() => {
-        if (!isDragging && !isActing) show('rest', 70);
-      }, 320);
+      const dragDist = Math.hypot(dragCurU - dragStartU, dragCurV - dragStartV);
+      if (dragDist > 0.02) {
+        ripples.push({ u: dragCurU, v: dragCurV, time: performance.now(), amp: 0.035 });
+        show('tensed', 60);
+        setTimeout(() => {
+          if (!isDragging && !isActing) show('rest', 70);
+        }, 320);
+      } else {
+        setTimeout(() => {
+          if (!isDragging && !isActing) show('rest', 70);
+        }, 450);
+      }
     }
     resetIdleTimer();
   };
@@ -424,11 +464,20 @@ export function initLivingPortrait(root: HTMLElement): () => void {
 
     if (isDragging) {
       isDragging = false;
-      ripples.push({ u: dragCurU, v: dragCurV, time: performance.now(), amp: 0.035 });
-      show('tensed', 60);
-      setTimeout(() => {
-        if (!isDragging && !isActing) show('rest', 70);
-      }, 320);
+      const dragDist = Math.hypot(dragCurU - dragStartU, dragCurV - dragStartV);
+      if (dragDist > 0.02) {
+        ripples.push({ u: dragCurU, v: dragCurV, time: performance.now(), amp: 0.035 });
+        show('tensed', 60);
+        setTimeout(() => {
+          if (!isDragging && !isActing) show('rest', 70);
+        }, 320);
+      } else {
+        setTimeout(() => {
+          if (!isDragging && !isActing) show('rest', 70);
+        }, 450);
+      }
+      leanX = 0;
+      leanY = 0;
       resetIdleTimer();
       return;
     }
@@ -444,7 +493,12 @@ export function initLivingPortrait(root: HTMLElement): () => void {
       if (zone in ZONES.tap) {
         const act = ZONES.tap[zone];
         show(act, 60);
+        setTimeout(() => {
+          if (!isDragging && !isActing) show('rest', 70);
+        }, 450);
       }
+      leanX = 0;
+      leanY = 0;
       resetIdleTimer();
     }
   };
@@ -651,7 +705,7 @@ export function initLivingPortrait(root: HTMLElement): () => void {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuf);
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
-    inner.style.transform = `perspective(1000px) rotateY(${leanX * 18}deg) rotateX(${-leanY * 18}deg)`;
+    inner.style.transform = `perspective(1000px) rotateY(${-leanX * 18}deg) rotateX(${-leanY * 18}deg)`;
 
     animFrameId = requestAnimationFrame(render);
   };
