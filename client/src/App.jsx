@@ -3,6 +3,7 @@ import CinematicIntro from './jsx/CinematicIntro';
 import GlassNavbar from './jsx/GlassNavbar';
 import StaggeredMenu from './jsx/StaggeredMenu';
 import { Hero } from './jsx/Hero';
+import About from './jsx/About';
 import EducationSection from './jsx/EducationSection';
 import MarqueeBanner from './jsx/MarqueeBanner';
 import { AnimatedThemeToggler } from './jsx/AnimatedThemeToggler';
@@ -19,6 +20,7 @@ const AnimeSection = lazy(() => import('./components/AnimeSection'));
 
 const navItems = [
   { label: 'Home', href: '#home', ariaLabel: 'Go to home section' },
+  { label: 'About', href: '#about', ariaLabel: 'View about section' },
   { label: 'Projects', href: '#projects', ariaLabel: 'View projects' },
   { label: 'Skills', href: '#skills', ariaLabel: 'View skills' },
   { label: 'Education', href: '#education', ariaLabel: 'View education' },
@@ -79,6 +81,9 @@ export default function App() {
       {/* Main content below Hero — persistent subtle grid background matching footer */}
       <div className="portfolio-subhero-wrapper">
         <div className="portfolio-subhero-grid" aria-hidden="true" />
+
+        {/* Editorial About Section */}
+        <About />
 
         {/* Heavy sections loaded smoothly via Suspense */}
         <Suspense fallback={null}>

@@ -1,0 +1,630 @@
+/* ==========================================================================
+   ABOUT SECTION STYLESHEET
+   Editorial Two-Font System (Poppins / Outfit + Dancing Script)
+   Crimson Minimal Theme Integration
+   ========================================================================== */
+
+:root {
+  --font-script: 'Dancing Script', cursive;
+  --about-accent: var(--accent-crimson-bright, #e12b48);
+  --about-accent-muted: rgba(225, 43, 72, 0.15);
+  --about-accent-glow: rgba(225, 43, 72, 0.25);
+  --about-spotlight: rgba(225, 43, 72, 0.14);
+}
+
+html[data-theme="light"],
+html.light {
+  --about-spotlight: rgba(196, 30, 58, 0.08);
+  --about-border-subtle: rgba(0, 0, 0, 0.07);
+  --about-card-bg: rgba(255, 255, 255, 0.85);
+  --about-chip-bg: rgba(0, 0, 0, 0.04);
+  --about-chip-text: #374151;
+  --about-dim-text: #6b7280;
+}
+
+html[data-theme="dark"],
+html.dark {
+  --about-spotlight: rgba(225, 43, 72, 0.15);
+  --about-border-subtle: rgba(255, 255, 255, 0.08);
+  --about-card-bg: rgba(18, 18, 22, 0.75);
+  --about-chip-bg: rgba(255, 255, 255, 0.05);
+  --about-chip-text: #d4d4d8;
+  --about-dim-text: #9ca3af;
+}
+
+/* Master Section Shell */
+.about-section {
+  position: relative;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
+  background-color: var(--bg-black);
+  color: var(--text-primary);
+  padding: 0;
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  z-index: 10;
+}
+
+/* Quiet GPU-Light Ambient Background */
+.about-ambient-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.about-ambient-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(130px);
+  will-change: transform, opacity;
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+.shape-1 {
+  width: min(500px, 80vw);
+  height: min(500px, 80vw);
+  background: var(--about-accent);
+  top: 10%;
+  left: -5%;
+  animation: floatAmbient1 24s ease-in-out infinite alternate;
+}
+
+.shape-2 {
+  width: min(600px, 90vw);
+  height: min(600px, 90vw);
+  background: #3b82f6;
+  bottom: 25%;
+  right: -8%;
+  opacity: 0.04;
+  animation: floatAmbient2 28s ease-in-out infinite alternate;
+}
+
+.shape-3 {
+  width: min(450px, 70vw);
+  height: min(450px, 70vw);
+  background: var(--about-accent);
+  bottom: 5%;
+  left: 20%;
+  opacity: 0.05;
+  animation: floatAmbient1 32s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes floatAmbient1 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(40px, -30px, 0) scale(1.08); }
+  100% { transform: translate3d(-30px, 40px, 0) scale(0.95); }
+}
+
+@keyframes floatAmbient2 {
+  0% { transform: translate3d(0, 0, 0) scale(0.95); }
+  50% { transform: translate3d(-50px, 35px, 0) scale(1.05); }
+  100% { transform: translate3d(30px, -45px, 0) scale(1); }
+}
+
+/* Centralized Inner Content Container */
+.about-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .about-inner {
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-inner {
+    padding: 0 3.5rem;
+  }
+}
+
+/* ==========================================================================
+   1. PINNED STATEMENT SECTION
+   ========================================================================== */
+.statement-pinned-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 5rem 0;
+}
+
+.statement-content {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.statement-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--about-accent);
+  margin-bottom: 2rem;
+  padding: 0.45rem 1.25rem;
+  border-radius: 9999px;
+  background: var(--about-accent-muted);
+  border: 1px solid rgba(225, 43, 72, 0.2);
+}
+
+.statement-paragraph {
+  font-size: clamp(1.85rem, 4.4vw, 3.75rem);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  text-wrap: balance;
+}
+
+.statement-word {
+  display: inline-block;
+  position: relative;
+  margin-right: 0.28em;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+/* Script Highlighted Words: ideas, full-stack, DSA */
+.statement-word.statement-highlight {
+  font-family: var(--font-script);
+  font-size: 1.18em;
+  font-weight: 700;
+  color: var(--about-accent);
+  letter-spacing: 0.01em;
+  padding: 0 0.06em;
+  text-shadow: 0 0 30px var(--about-accent-glow);
+}
+
+/* Organic Hand-Drawn SVG Underline / Loop */
+.statement-underline-svg {
+  position: absolute;
+  left: 0;
+  bottom: -0.22em;
+  width: 100%;
+  height: 0.45em;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.statement-underline-path {
+  fill: none;
+  stroke: var(--about-accent);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px var(--about-accent-glow));
+}
+
+/* ==========================================================================
+   2. STATS ROW SECTION
+   ========================================================================== */
+.stats-section-wrap {
+  position: relative;
+  width: 100%;
+  padding: 4.5rem 0 6rem 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  position: relative;
+  padding: 2.5rem 1.5rem;
+  border-radius: 1.5rem;
+  background: var(--about-card-bg);
+  border: 1px solid var(--about-border-subtle);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+@media (min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 3rem 2rem;
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    padding: 3.5rem 2.5rem;
+    gap: 0;
+  }
+}
+
+.stat-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 1rem;
+}
+
+.stat-number-wrap {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-number {
+  font-family: var(--font-main);
+}
+
+.stat-suffix {
+  color: var(--about-accent);
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-left: 0.1em;
+}
+
+.stat-label {
+  font-family: var(--font-script);
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  font-weight: 600;
+  color: var(--about-dim-text);
+  letter-spacing: 0.02em;
+}
+
+/* Thin Animated Divider Lines Between Stats */
+.stat-divider {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .stat-divider {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--about-border-subtle) 30%,
+      var(--about-border-subtle) 70%,
+      transparent
+    );
+    transform-origin: top;
+  }
+}
+
+/* ==========================================================================
+   3. BENTO GRID: "WHAT MAKES ME, ME"
+   ========================================================================== */
+.bento-section-wrap {
+  position: relative;
+  width: 100%;
+  padding: 3rem 0 6rem 0;
+}
+
+.bento-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.bento-kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--about-accent);
+  margin-bottom: 0.75rem;
+}
+
+.bento-main-heading {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.bento-heading-script {
+  font-family: var(--font-script);
+  font-weight: 700;
+  color: var(--about-accent);
+  font-size: 1.15em;
+  margin-left: 0.2em;
+}
+
+/* Asymmetric 5-card Bento Layout */
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  perspective: 1200px;
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.75rem;
+  }
+
+  /* Card 1 spans full row or 2 columns */
+  .bento-card-featured {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  /* Span 2 cols for Hero card 1 and Card 4 */
+  .bento-card-span-2 {
+    grid-column: span 2;
+  }
+
+  .bento-card-span-1 {
+    grid-column: span 1;
+  }
+}
+
+/* Individual Bento Card */
+.bento-card {
+  position: relative;
+  border-radius: 1.5rem;
+  background-color: var(--about-card-bg);
+  border: 1px solid var(--about-border-subtle);
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.bento-card:hover {
+  border-color: rgba(225, 43, 72, 0.3);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08), 0 0 25px var(--about-accent-glow);
+}
+
+/* Custom Cursor Spotlight (No external library) */
+.bento-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    480px circle at var(--mx, -500px) var(--my, -500px),
+    var(--about-spotlight),
+    transparent 75%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 1;
+}
+
+.bento-card:hover::before {
+  opacity: 1;
+}
+
+.bento-card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.bento-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.bento-card-title {
+  font-family: var(--font-script);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--about-accent);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.bento-card-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--about-dim-text);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background: var(--about-chip-bg);
+  border: 1px solid var(--about-border-subtle);
+}
+
+.bento-card-desc {
+  font-family: var(--font-main);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0 0 1.75rem 0;
+  flex-grow: 1;
+}
+
+/* Card Details (Tech Chips / Metrics / Progress) */
+.bento-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.bento-chip {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--about-chip-text);
+  background: var(--about-chip-bg);
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--about-border-subtle);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.bento-chip:hover {
+  background: var(--about-accent-muted);
+  border-color: rgba(225, 43, 72, 0.3);
+  color: var(--about-accent);
+  transform: translateY(-1px);
+}
+
+/* Pulsing Status Dot for Currently Building */
+.bento-status-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--about-dim-text);
+  margin-top: auto;
+}
+
+.bento-pulse-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+}
+
+.bento-pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background-color: #10b981;
+  opacity: 0.6;
+  animation: pulseBeacon 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+}
+
+@keyframes pulseBeacon {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Mini Progress / Accent Line */
+.bento-accent-line {
+  width: 100%;
+  height: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--about-accent) 0%, transparent 85%);
+  margin-top: auto;
+}
+
+/* ==========================================================================
+   4. SCROLL-VELOCITY MARQUEE DIVIDER
+   ========================================================================== */
+.velocity-marquee-section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 2.5rem 0 3.5rem 0;
+  border-top: 1px solid var(--about-border-subtle);
+  border-bottom: 1px solid var(--about-border-subtle);
+  background: var(--about-card-bg);
+  user-select: none;
+  pointer-events: none;
+}
+
+.velocity-marquee-track {
+  display: flex;
+  width: fit-content;
+  will-change: transform;
+  white-space: nowrap;
+}
+
+.velocity-marquee-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.velocity-phrase {
+  font-family: var(--font-script);
+  font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  opacity: 0.88;
+}
+
+.velocity-dot {
+  font-size: 1.4rem;
+  color: var(--about-accent);
+  opacity: 0.9;
+  vertical-align: middle;
+}
+
+/* ==========================================================================
+   5. ACCESSIBILITY & PREFERS-REDUCED-MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .about-ambient-shape {
+    animation: none !important;
+  }
+
+  .statement-word {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .statement-underline-path {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .bento-card {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .velocity-marquee-track {
+    transform: none !important;
+  }
+}
+
