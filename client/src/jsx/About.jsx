@@ -5,8 +5,7 @@ import { useLenis } from 'lenis/react';
 
 import SplitStatement from '../components/about/SplitStatement';
 import StatsRow, { DEFAULT_STATS } from '../components/about/StatsRow';
-import BentoGrid, { DEFAULT_CARDS } from '../components/about/BentoGrid';
-import VelocityMarquee from '../components/about/VelocityMarquee';
+import BentoGrid, { CARDS as DEFAULT_CARDS } from '../components/about/BentoGrid';
 import '../css/About.css';
 
 // Isomorphic layout effect for clean hydration
@@ -22,7 +21,6 @@ export const STATEMENT_TEXT =
 
 export const STATS = DEFAULT_STATS;
 export const CARDS = DEFAULT_CARDS;
-export const MARQUEE_PHRASE = 'Build · Break · Learn · Repeat ·';
 
 export default function About() {
   const sectionRef = useRef(null);
@@ -329,9 +327,6 @@ export default function About() {
         {/* 3. Bento Grid "What Makes Me, Me" */}
         <BentoGrid cards={CARDS} />
       </div>
-
-      {/* 4. Velocity Marquee Divider between About and Next Section */}
-      <VelocityMarquee phrase={MARQUEE_PHRASE} />
     </section>
   );
 }

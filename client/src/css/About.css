@@ -38,6 +38,7 @@ html.dark {
   width: 100%;
   max-width: 100vw;
   overflow-x: clip;
+  scroll-margin-top: clamp(80px, 12vh, 110px);
   background-color: var(--bg-black);
   color: var(--text-primary);
   padding: 0;
@@ -320,36 +321,36 @@ html.dark {
 }
 
 /* ==========================================================================
-   3. BENTO GRID: "WHAT MAKES ME, ME"
+   3. BENTO GRID: "WHAT MAKES ME, ME" (Compact, Visual-First Redesign)
    ========================================================================== */
 .bento-section-wrap {
   position: relative;
   width: 100%;
-  padding: 3rem 0 6rem 0;
+  padding: 2rem 0 5rem 0;
 }
 
 .bento-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.25rem;
 }
 
 .bento-kicker {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--about-accent);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .bento-main-heading {
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-size: clamp(1.85rem, 3.5vw, 2.75rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--text-primary);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .bento-heading-script {
@@ -357,70 +358,114 @@ html.dark {
   font-weight: 700;
   color: var(--about-accent);
   font-size: 1.15em;
-  margin-left: 0.2em;
+  margin-left: 0.15em;
 }
 
-/* Asymmetric 5-card Bento Layout */
+/* Asymmetric 4-column Bento Grid */
 .bento-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: 16px;
   perspective: 1200px;
 }
 
-@media (min-width: 768px) {
+/* Tablet: 2 Columns */
+@media (min-width: 768px) and (max-width: 1023px) {
   .bento-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.75rem;
   }
 
-  /* Card 1 spans full row or 2 columns */
-  .bento-card-featured {
+  .bento-mern {
     grid-column: span 2;
+    min-height: 200px;
+  }
+
+  .bento-dsa {
+    grid-column: span 1;
+    min-height: 240px;
+  }
+
+  .bento-gdg {
+    grid-column: span 1;
+    min-height: 240px;
+  }
+
+  .bento-building {
+    grid-column: span 2;
+    min-height: 180px;
+  }
+
+  .bento-education {
+    grid-column: span 2;
+    min-height: 180px;
   }
 }
 
+/* Desktop: 4 Columns Asymmetric 4x2 Grid */
 @media (min-width: 1024px) {
   .bento-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(180px, auto);
   }
 
-  /* Span 2 cols for Hero card 1 and Card 4 */
-  .bento-card-span-2 {
-    grid-column: span 2;
+  /* Row 1: MERN (cols 1-2) | GDG (col 3) | DSA (col 4, spans 2 rows) */
+  .bento-mern {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    min-height: 215px;
   }
 
-  .bento-card-span-1 {
-    grid-column: span 1;
+  .bento-gdg {
+    grid-column: 3;
+    grid-row: 1;
+    min-height: 215px;
+  }
+
+  .bento-dsa {
+    grid-column: 4;
+    grid-row: 1 / span 2;
+    min-height: 440px;
+  }
+
+  /* Row 2: Building (cols 1-2) | Education (col 3) */
+  .bento-building {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    min-height: 195px;
+  }
+
+  .bento-education {
+    grid-column: 3;
+    grid-row: 2;
+    min-height: 195px;
   }
 }
 
 /* Individual Bento Card */
 .bento-card {
   position: relative;
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   background-color: var(--about-card-bg);
   border: 1px solid var(--about-border-subtle);
-  padding: 2.25rem 2rem;
+  padding: 1.5rem; /* ~24px */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
   transform-style: preserve-3d;
   will-change: transform;
-  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .bento-card:hover {
-  border-color: rgba(225, 43, 72, 0.3);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08), 0 0 25px var(--about-accent-glow);
+  border-color: rgba(225, 43, 72, 0.35);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), 0 0 25px var(--about-accent-glow);
 }
 
-/* Custom Cursor Spotlight (No external library) */
+/* Custom Cursor Spotlight */
 .bento-card::before {
   content: '';
   position: absolute;
@@ -447,161 +492,418 @@ html.dark {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.bento-card-top {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.25rem;
 }
 
-.bento-card-title {
-  font-family: var(--font-script);
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--about-accent);
-  margin: 0;
-  letter-spacing: 0.01em;
-}
-
-.bento-card-badge {
-  font-size: 0.75rem;
+/* Top-Right Absolute Corner Badge */
+.bento-corner-badge {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--about-dim-text);
-  padding: 0.25rem 0.65rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 9999px;
   background: var(--about-chip-bg);
   border: 1px solid var(--about-border-subtle);
+  pointer-events: none;
+  z-index: 3;
 }
 
-.bento-card-desc {
+/* Header with strictly no-wrap title & 1 short line description */
+.bento-card-header {
+  margin-bottom: 0.75rem;
+  padding-right: 3.5rem; /* Prevent collision with corner badge */
+}
+
+.bento-card-title {
+  font-family: var(--font-script);
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--about-accent);
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.15;
+}
+
+.bento-card-oneliner {
   font-family: var(--font-main);
-  font-size: 0.98rem;
-  line-height: 1.65;
-  color: var(--text-secondary);
-  margin: 0 0 1.75rem 0;
-  flex-grow: 1;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: var(--about-dim-text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Card Details (Tech Chips / Metrics / Progress) */
-.bento-chips-row {
+@media (max-width: 640px) {
+  .bento-card-oneliner {
+    white-space: normal;
+  }
+}
+
+/* ==========================================================================
+   VISUAL HOOK 1: MERN Stack Pipeline
+   ========================================================================== */
+.hook-mern-wrap {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  flex-direction: column;
+  justify-content: flex-end;
   margin-top: auto;
 }
 
-.bento-chip {
-  font-size: 0.8rem;
+.mern-pipeline-track {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: var(--about-border-subtle);
+  margin: 1.25rem 0 1rem 0;
+}
+
+.mern-travelling-dot {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--about-accent);
+  box-shadow: 0 0 12px var(--about-accent);
+  animation: mernTravel 4s ease-in-out infinite alternate;
+  z-index: 2;
+}
+
+.bento-card:hover .mern-travelling-dot {
+  animation-duration: 2.2s;
+  box-shadow: 0 0 18px var(--about-accent), 0 0 6px #ffffff;
+}
+
+@keyframes mernTravel {
+  0% { left: 2%; transform: scale(0.85); }
+  50% { transform: scale(1.25); }
+  100% { left: 96%; transform: scale(0.85); }
+}
+
+.mern-nodes-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  top: -12px;
+}
+
+.mern-node-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  position: relative;
+  z-index: 1;
+}
+
+.mern-node-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--about-card-bg);
+  border: 2px solid var(--about-accent);
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.bento-card:hover .mern-node-indicator {
+  background: var(--about-accent);
+}
+
+.mern-node-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.bento-chips-compact {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.bento-chip-pill {
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--about-chip-text);
   background: var(--about-chip-bg);
-  padding: 0.35rem 0.75rem;
-  border-radius: 0.6rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.45rem;
   border: 1px solid var(--about-border-subtle);
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
-.bento-chip:hover {
-  background: var(--about-accent-muted);
-  border-color: rgba(225, 43, 72, 0.3);
+/* ==========================================================================
+   VISUAL HOOK 2: DSA in C++ (Big Number & 7x4 Contribution Heatmap)
+   ========================================================================== */
+.hook-dsa-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  margin-top: 0.75rem;
+}
+
+.dsa-stat-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.dsa-big-number {
+  font-family: var(--font-script);
+  font-size: clamp(3.2rem, 4.5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 0.95;
   color: var(--about-accent);
-  transform: translateY(-1px);
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 25px var(--about-accent-glow);
 }
 
-/* Pulsing Status Dot for Currently Building */
-.bento-status-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.82rem;
-  font-weight: 500;
+.dsa-stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   color: var(--about-dim-text);
+  margin-top: 0.35rem;
+}
+
+.dsa-mini-heatmap {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 5px;
+  width: 100%;
+  max-width: 180px;
   margin-top: auto;
 }
 
-.bento-pulse-dot {
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 2.5px;
+  background: var(--about-accent);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.heatmap-cell.level-0 { opacity: 0.12; background: var(--about-dim-text); }
+.heatmap-cell.level-1 { opacity: 0.35; }
+.heatmap-cell.level-2 { opacity: 0.65; }
+.heatmap-cell.level-3 { opacity: 1.0; box-shadow: 0 0 6px var(--about-accent-glow); }
+
+.bento-card:hover .heatmap-cell {
+  animation: heatmapPulse 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes heatmapPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); filter: brightness(1.2); }
+}
+
+/* ==========================================================================
+   VISUAL HOOK 3: GDG Tech Team (Google-Colored Dots)
+   ========================================================================== */
+.hook-gdg-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.gdg-logo-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.gdg-big-text {
+  font-family: var(--font-main);
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+}
+
+.google-dots-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.g-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  animation: googleDotPulse 1.8s ease-in-out infinite;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.g-blue { background-color: #4285F4; color: rgba(66, 133, 244, 0.4); animation-delay: 0s; }
+.g-red { background-color: #EA4335; color: rgba(234, 67, 53, 0.4); animation-delay: 0.25s; }
+.g-yellow { background-color: #FBBC05; color: rgba(251, 188, 5, 0.4); animation-delay: 0.5s; }
+.g-green { background-color: #34A853; color: rgba(52, 168, 83, 0.4); animation-delay: 0.75s; }
+
+.bento-card:hover .g-dot {
+  animation-duration: 1.1s;
+  transform: scale(1.2);
+}
+
+@keyframes googleDotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.65; }
+  50% { transform: scale(1.35); opacity: 1; }
+}
+
+.gdg-sub-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--about-dim-text);
+}
+
+/* ==========================================================================
+   VISUAL HOOK 4: Currently Building (Typing Console)
+   ========================================================================== */
+.hook-building-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.live-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #10b981;
+  margin-bottom: 0.5rem;
+}
+
+.live-pulse-dot {
   position: relative;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background-color: #10b981;
 }
 
-.bento-pulse-dot::after {
+.live-pulse-dot::after {
   content: '';
   position: absolute;
   inset: -3px;
   border-radius: 50%;
   background-color: #10b981;
-  opacity: 0.6;
-  animation: pulseBeacon 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  animation: livePing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-@keyframes pulseBeacon {
-  0% { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(2.5); opacity: 0; }
+@keyframes livePing {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.6); opacity: 0; }
 }
 
-/* Mini Progress / Accent Line */
-.bento-accent-line {
-  width: 100%;
-  height: 3px;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, var(--about-accent) 0%, transparent 85%);
+.typing-console-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--about-chip-bg);
+  border: 1px solid var(--about-border-subtle);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  font-family: monospace, monospace;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.typing-prompt {
+  color: var(--about-accent);
+  font-weight: 700;
+}
+
+.typing-project-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.typing-cursor {
+  color: var(--about-accent);
+  font-weight: 700;
+  animation: cursorBlink 0.9s steps(2, start) infinite;
+}
+
+@keyframes cursorBlink {
+  to { visibility: hidden; }
+}
+
+/* ==========================================================================
+   VISUAL HOOK 5: UVCE Degree Timeline & Progress
+   ========================================================================== */
+.hook-education-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   margin-top: auto;
 }
 
-/* ==========================================================================
-   4. SCROLL-VELOCITY MARQUEE DIVIDER
-   ========================================================================== */
-.velocity-marquee-section {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  padding: 2.5rem 0 3.5rem 0;
-  border-top: 1px solid var(--about-border-subtle);
-  border-bottom: 1px solid var(--about-border-subtle);
-  background: var(--about-card-bg);
-  user-select: none;
-  pointer-events: none;
-}
-
-.velocity-marquee-track {
-  display: flex;
-  width: fit-content;
-  will-change: transform;
-  white-space: nowrap;
-}
-
-.velocity-marquee-content {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-.velocity-phrase {
-  font-family: var(--font-script);
-  font-size: clamp(2.2rem, 5.5vw, 4.2rem);
-  font-weight: 700;
+.education-timeline-text {
+  font-family: var(--font-main);
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
   color: var(--text-primary);
-  letter-spacing: 0.02em;
-  opacity: 0.88;
+  margin-bottom: 0.65rem;
 }
 
-.velocity-dot {
-  font-size: 1.4rem;
-  color: var(--about-accent);
-  opacity: 0.9;
-  vertical-align: middle;
+.degree-progress-bar-wrap {
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--about-chip-bg);
+  border: 1px solid var(--about-border-subtle);
+  overflow: hidden;
+  margin-bottom: 0.45rem;
+}
+
+.degree-progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--about-accent), #f43f5e);
+  box-shadow: 0 0 10px var(--about-accent-glow);
+  transition: width 0.8s ease;
+}
+
+.bento-card:hover .degree-progress-bar-fill {
+  filter: brightness(1.2);
+  box-shadow: 0 0 14px var(--about-accent);
+}
+
+.degree-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--about-dim-text);
 }
 
 /* ==========================================================================
-   5. ACCESSIBILITY & PREFERS-REDUCED-MOTION
+   4. ACCESSIBILITY & PREFERS-REDUCED-MOTION
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .about-ambient-shape {
@@ -621,10 +923,6 @@ html.dark {
   .bento-card {
     transform: none !important;
     opacity: 1 !important;
-  }
-
-  .velocity-marquee-track {
-    transform: none !important;
   }
 }
 
