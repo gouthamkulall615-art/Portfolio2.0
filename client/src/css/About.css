@@ -6,15 +6,37 @@
 
 :root {
   --font-script: 'Dancing Script', cursive;
-  --about-accent: var(--accent-crimson-bright, #e12b48);
-  --about-accent-muted: rgba(225, 43, 72, 0.15);
-  --about-accent-glow: rgba(225, 43, 72, 0.25);
-  --about-spotlight: rgba(225, 43, 72, 0.14);
+
+  /* Amber Typography Palette (replaces former red font colors) */
+  --about-amber: #f59e0b;
+  --about-amber-muted: rgba(245, 158, 11, 0.12);
+  --about-amber-glow: rgba(245, 158, 11, 0.32);
+  --about-amber-border: rgba(245, 158, 11, 0.25);
+
+  /* Orange Underline Palette (for hand-drawn statement underlines) */
+  --about-underline-orange: #f97316;
+  --about-underline-glow: rgba(249, 115, 22, 0.45);
+
+  /* Primary Accent & Ambient */
+  --about-accent: #f59e0b;
+  --about-accent-muted: rgba(245, 158, 11, 0.12);
+  --about-accent-glow: rgba(245, 158, 11, 0.28);
+  --about-spotlight: rgba(245, 158, 11, 0.13);
 }
 
 html[data-theme="light"],
 html.light {
-  --about-spotlight: rgba(196, 30, 58, 0.08);
+  --about-amber: #d97706;
+  --about-amber-muted: rgba(217, 119, 6, 0.08);
+  --about-amber-glow: rgba(217, 119, 6, 0.2);
+  --about-amber-border: rgba(217, 119, 6, 0.2);
+  --about-underline-orange: #ea580c;
+  --about-underline-glow: rgba(234, 88, 12, 0.25);
+
+  --about-accent: #d97706;
+  --about-accent-muted: rgba(217, 119, 6, 0.08);
+  --about-accent-glow: rgba(217, 119, 6, 0.2);
+  --about-spotlight: rgba(217, 119, 6, 0.08);
   --about-border-subtle: rgba(0, 0, 0, 0.07);
   --about-card-bg: rgba(255, 255, 255, 0.85);
   --about-chip-bg: rgba(0, 0, 0, 0.04);
@@ -24,7 +46,17 @@ html.light {
 
 html[data-theme="dark"],
 html.dark {
-  --about-spotlight: rgba(225, 43, 72, 0.15);
+  --about-amber: #f59e0b;
+  --about-amber-muted: rgba(245, 158, 11, 0.12);
+  --about-amber-glow: rgba(245, 158, 11, 0.35);
+  --about-amber-border: rgba(245, 158, 11, 0.25);
+  --about-underline-orange: #f97316;
+  --about-underline-glow: rgba(249, 115, 22, 0.45);
+
+  --about-accent: #f59e0b;
+  --about-accent-muted: rgba(245, 158, 11, 0.12);
+  --about-accent-glow: rgba(245, 158, 11, 0.28);
+  --about-spotlight: rgba(245, 158, 11, 0.14);
   --about-border-subtle: rgba(255, 255, 255, 0.08);
   --about-card-bg: rgba(18, 18, 22, 0.75);
   --about-chip-bg: rgba(255, 255, 255, 0.05);
@@ -159,12 +191,12 @@ html.dark {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.25em;
-  color: var(--about-accent);
+  color: var(--about-amber);
   margin-bottom: 2rem;
   padding: 0.45rem 1.25rem;
   border-radius: 9999px;
-  background: var(--about-accent-muted);
-  border: 1px solid rgba(225, 43, 72, 0.2);
+  background: var(--about-amber-muted);
+  border: 1px solid var(--about-amber-border);
 }
 
 .statement-paragraph {
@@ -185,18 +217,18 @@ html.dark {
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
-/* Script Highlighted Words: ideas, full-stack, DSA */
+/* Script Highlighted Words: ideas, full-stack, DSA (Amber font color) */
 .statement-word.statement-highlight {
   font-family: var(--font-script);
   font-size: 1.18em;
   font-weight: 700;
-  color: var(--about-accent);
+  color: var(--about-amber);
   letter-spacing: 0.01em;
   padding: 0 0.06em;
-  text-shadow: 0 0 30px var(--about-accent-glow);
+  text-shadow: 0 0 30px var(--about-amber-glow);
 }
 
-/* Organic Hand-Drawn SVG Underline / Loop */
+/* Organic Hand-Drawn SVG Underline / Loop (Vibrant Orange color) */
 .statement-underline-svg {
   position: absolute;
   left: 0;
@@ -209,11 +241,11 @@ html.dark {
 
 .statement-underline-path {
   fill: none;
-  stroke: var(--about-accent);
+  stroke: var(--about-underline-orange);
   stroke-width: 2.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0 6px var(--about-accent-glow));
+  filter: drop-shadow(0 0 6px var(--about-underline-glow));
 }
 
 /* ==========================================================================
@@ -282,7 +314,7 @@ html.dark {
 }
 
 .stat-suffix {
-  color: var(--about-accent);
+  color: var(--about-amber);
   font-size: 0.85em;
   font-weight: 600;
   margin-left: 0.1em;
@@ -340,7 +372,7 @@ html.dark {
   font-weight: 600;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--about-accent);
+  color: var(--about-amber);
   margin-bottom: 0.5rem;
 }
 
@@ -356,7 +388,7 @@ html.dark {
 .bento-heading-script {
   font-family: var(--font-script);
   font-weight: 700;
-  color: var(--about-accent);
+  color: var(--about-amber);
   font-size: 1.15em;
   margin-left: 0.15em;
 }
@@ -461,8 +493,8 @@ html.dark {
 }
 
 .bento-card:hover {
-  border-color: rgba(225, 43, 72, 0.35);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), 0 0 25px var(--about-accent-glow);
+  border-color: var(--about-amber-border);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), 0 0 25px var(--about-amber-glow);
 }
 
 /* Custom Cursor Spotlight */
@@ -523,7 +555,7 @@ html.dark {
   font-family: var(--font-script);
   font-size: clamp(1.4rem, 2.2vw, 1.85rem);
   font-weight: 700;
-  color: var(--about-accent);
+  color: var(--about-amber);
   margin: 0 0 0.25rem 0;
   letter-spacing: 0.01em;
   white-space: nowrap;
@@ -574,15 +606,15 @@ html.dark {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--about-accent);
-  box-shadow: 0 0 12px var(--about-accent);
+  background: var(--about-amber);
+  box-shadow: 0 0 12px var(--about-amber);
   animation: mernTravel 4s ease-in-out infinite alternate;
   z-index: 2;
 }
 
 .bento-card:hover .mern-travelling-dot {
   animation-duration: 2.2s;
-  box-shadow: 0 0 18px var(--about-accent), 0 0 6px #ffffff;
+  box-shadow: 0 0 18px var(--about-amber), 0 0 6px #ffffff;
 }
 
 @keyframes mernTravel {
@@ -613,12 +645,12 @@ html.dark {
   height: 10px;
   border-radius: 50%;
   background: var(--about-card-bg);
-  border: 2px solid var(--about-accent);
+  border: 2px solid var(--about-amber);
   transition: transform 0.25s ease, background 0.25s ease;
 }
 
 .bento-card:hover .mern-node-indicator {
-  background: var(--about-accent);
+  background: var(--about-amber);
 }
 
 .mern-node-name {
@@ -667,9 +699,9 @@ html.dark {
   font-size: clamp(3.2rem, 4.5vw, 4.2rem);
   font-weight: 700;
   line-height: 0.95;
-  color: var(--about-accent);
+  color: var(--about-amber);
   letter-spacing: 0.01em;
-  text-shadow: 0 0 25px var(--about-accent-glow);
+  text-shadow: 0 0 25px var(--about-amber-glow);
 }
 
 .dsa-stat-label {
@@ -694,14 +726,14 @@ html.dark {
 .heatmap-cell {
   aspect-ratio: 1;
   border-radius: 2.5px;
-  background: var(--about-accent);
+  background: var(--about-amber);
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .heatmap-cell.level-0 { opacity: 0.12; background: var(--about-dim-text); }
 .heatmap-cell.level-1 { opacity: 0.35; }
 .heatmap-cell.level-2 { opacity: 0.65; }
-.heatmap-cell.level-3 { opacity: 1.0; box-shadow: 0 0 6px var(--about-accent-glow); }
+.heatmap-cell.level-3 { opacity: 1.0; box-shadow: 0 0 6px var(--about-amber-glow); }
 
 .bento-card:hover .heatmap-cell {
   animation: heatmapPulse 1.6s ease-in-out infinite alternate;
@@ -832,7 +864,7 @@ html.dark {
 }
 
 .typing-prompt {
-  color: var(--about-accent);
+  color: var(--about-amber);
   font-weight: 700;
 }
 
@@ -843,7 +875,7 @@ html.dark {
 }
 
 .typing-cursor {
-  color: var(--about-accent);
+  color: var(--about-amber);
   font-weight: 700;
   animation: cursorBlink 0.9s steps(2, start) infinite;
 }
@@ -884,14 +916,14 @@ html.dark {
 .degree-progress-bar-fill {
   height: 100%;
   border-radius: 9999px;
-  background: linear-gradient(90deg, var(--about-accent), #f43f5e);
-  box-shadow: 0 0 10px var(--about-accent-glow);
+  background: linear-gradient(90deg, var(--about-amber), var(--about-underline-orange));
+  box-shadow: 0 0 10px var(--about-amber-glow);
   transition: width 0.8s ease;
 }
 
 .bento-card:hover .degree-progress-bar-fill {
   filter: brightness(1.2);
-  box-shadow: 0 0 14px var(--about-accent);
+  box-shadow: 0 0 14px var(--about-amber);
 }
 
 .degree-progress-label {
